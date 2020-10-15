@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Webtrekk Team
+ * @copyright Copyright (c) 2016 Webtrekk GmbH (https://www.webtrekk.com)
+ * @package Webtrekk_TagIntegration
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <tagintegration>
+            <general>
+                <enable>0</enable>
+				<attribute_blacklist>customerPasswordHash
+customerRpToken
+customerRpTokenCreatedAt</attribute_blacklist>
+            </general>
+        </tagintegration>
+    </default>
+</config>

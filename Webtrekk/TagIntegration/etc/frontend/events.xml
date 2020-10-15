@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Webtrekk Team
+ * @copyright Copyright (c) 2016 Webtrekk GmbH (https://www.webtrekk.com)
+ * @package Webtrekk_TagIntegration
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+	<event name="checkout_cart_product_add_after">
+        <observer name="ti_datalayer_add_to_cart" instance="Webtrekk\TagIntegration\Observer\TIDatalayerAddToCart" />
+    </event>
+	<event name="checkout_onepage_controller_success_action">
+        <observer name="ti_datalayer_order_success" instance="Webtrekk\TagIntegration\Observer\TIDatalayerOrderSuccess" />
+    </event>
+    <event name="multishipping_checkout_controller_success_action">
+        <observer name="ti_datalayer_order_success" instance="Webtrekk\TagIntegration\Observer\TIDatalayerOrderSuccess" />
+    </event>
+</config>

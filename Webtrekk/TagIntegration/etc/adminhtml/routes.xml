@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- 
+/**
+ * @author Webtrekk Team
+ * @copyright Copyright (c) 2016 Webtrekk GmbH (https://www.webtrekk.com)
+ * @package Webtrekk_TagIntegration
+ */ 
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="webtrekk_tagintegration" frontName="webtrekk_tagintegration">
+            <module name="Webtrekk_TagIntegration" />
+        </route>
+    </router>
+</config>
