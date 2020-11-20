@@ -55,8 +55,11 @@ class DataLayer
         if(isset($data['productAvailableInCategory'][1])){
             $data['productSubCategory'] = $data['productAvailableInCategory'][1];
         }
-        if(isset($data['orderDiscountAmount'])) {
+        if(isset($data['orderDiscountAmount']) && $data['orderDiscountAmount'] !== '0.0000') {
             $data['couponValue'] = substr($data['orderDiscountAmount'], 1);
+        }
+        if(isset($data['orderShoppingCartStatus'])) {
+            $data['shoppingCartStatus'] = $data['orderShoppingCartStatus'];
         }
         return $data;
     }

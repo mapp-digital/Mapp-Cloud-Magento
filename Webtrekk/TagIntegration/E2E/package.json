@@ -1,0 +1,14 @@
+{
+  "name": "mapp-magento2-e2e",
+  "version": "1.0.0",
+  "description": "Cypress E2E tests for Mapp Intelligence Magento 2 plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx cypress open"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^5.3.0"
+  }
+}

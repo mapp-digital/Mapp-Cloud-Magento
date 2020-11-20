@@ -103,6 +103,7 @@ class Order extends AbstractData
     private function setTransaction($order)
     {
         $transaction = [
+            'shoppingCartStatus' => 'conf',
             'id' => $order->getIncrementId(),
             'value' => $order->getGrandTotal(),
             'totalDue' => $order->getTotalDue(),

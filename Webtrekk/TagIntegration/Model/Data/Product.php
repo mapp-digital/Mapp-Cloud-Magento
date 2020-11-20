@@ -6,6 +6,7 @@
  */
 namespace Webtrekk\TagIntegration\Model\Data;
 
+use Magento\CatalogUrlRewrite\Model\ResourceModel\Category\Product as ProductUrlRewriteResource;
 use Magento\Catalog\Helper\Data;
 use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Model\Session;
@@ -46,22 +47,30 @@ class Product extends AbstractData
     protected $_productRepository;
 
     /**
+     * @var ProductUrlRewriteResource
+     */
+    protected $_productUrlRewriteResource;
+
+    /**
      * @param Data $catalogData
      * @param CategoryRepository $categoryRepository
      * @param Session $session
      * @param ProductRepository $productRepository
+     * @param ProductUrlRewriteResource $productUrlRewriteResource
      */
     public function __construct(
         Data $catalogData,
         CategoryRepository $categoryRepository,
         Session $session,
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        ProductUrlRewriteResource $productUrlRewriteResource
     )
     {
         $this->_catalogData = $catalogData;
         $this->_categoryRepository = $categoryRepository;
         $this->_catalogSession = $session;
         $this->_productRepository = $productRepository;
+        $this->_productUrlRewriteResource = $productUrlRewriteResource;
     }
 
     private function setAvailableCategories()
@@ -149,13 +158,39 @@ class Product extends AbstractData
         }
     }
 
+    private function fallback_product_id_getter()
+    {
+        if(preg_match('/.*\/id\/(\d+)$/', $_SERVER['HTTP_REFERER'], $matches)) {
+            return $matches[1];
+        }
+        $domain = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . '/';
+        $preparedPathInfo = explode($domain, $_SERVER['HTTP_REFERER'])[1];
+        $connection = $this->_productUrlRewriteResource->getConnection();
+        $table      = $this->_productUrlRewriteResource->getTable('url_rewrite');
+        $select     = $connection->select();
+        $select->from($table, ['entity_id'])
+            ->where('entity_type = :entity_type')
+            ->where('request_path LIKE :request_path');
+
+        $result = $connection->fetchCol(
+            $select,
+            ['entity_type' => 'product', 'request_path' => $preparedPathInfo]
+        );
+        return isset($result[0]) ? $result[0] : null;
+    }
+
     private function generate()
     {
         $this->setBreadcrumb();
 
         if (!$this->_product) {
             $productId = $this->_catalogSession->getData('last_viewed_product_id');
-            $this->_product = $this->_productRepository->getById($productId);
+            if(is_null($productId)) {
+                $productId = $this->fallback_product_id_getter();
+            }
+            if(!is_null($productId)) {
+                $this->_product = $this->_productRepository->getById($productId);
+            }
         }
 
         if ($this->_product) {
