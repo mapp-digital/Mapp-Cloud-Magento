@@ -97,6 +97,14 @@ $script = "require([
                             calculatePrices();
                         }
                         window._ti.addToCartEventName = response.responseJSON.eventName;
+
+                        if(response.responseJSON.config.acquire) {
+                            (function(e){
+                                var t=document,n=t.createElement('script');
+                                n.async=!0,n.defer=!0,n.src=e,
+                                t.getElementsByTagName('head')[0].
+                                appendChild(n)})(response.responseJSON.config.acquire)
+                        }
                     }
 
                     window._tiConfig=window._tiConfig||response.responseJSON.config;

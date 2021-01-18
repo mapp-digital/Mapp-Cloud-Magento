@@ -11,6 +11,7 @@
         <policy id="script-src">
             <values>
                 <value id="mapp-intelligence-ti" type="host">https://responder.wt-safetag.com</value>
+                <value id="mapp-acquire" type="host">https://*.flx1.com/</value>
             </values>
         </policy>
     </policies>

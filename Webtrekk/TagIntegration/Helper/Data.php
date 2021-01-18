@@ -42,6 +42,10 @@ class Data extends AbstractHelper
      * @var string
      */
     const XML_PATH_ADD_TO_CART_EVENT_NAME = 'tagintegration/general/add_to_cart_event_name';
+    /**
+     * @var string
+     */
+    const XML_PATH_ACQUIRE = 'tagintegration/general/acquire';
 
     /**
      * @var Repository
@@ -77,6 +81,18 @@ class Data extends AbstractHelper
     }
 
     /**
+     * @return string | null
+     */
+    private function getAcquireLink()
+    {
+        if(preg_match('/id=(\d+?)&m=(\d+?)\D/', $this->scopeConfig->getValue(self::XML_PATH_ACQUIRE, ScopeInterface::SCOPE_STORE), $ids))
+        {
+            return 'https://c.flx1.com/' . $ids[2] . '-' . $ids[1] .'.js?id=' . $ids[1] . '&m=' . $ids[2];
+        }
+        return null;
+    }
+
+    /**
      * @return array
      */
     public function getTagIntegrationConfig()
@@ -86,7 +102,8 @@ class Data extends AbstractHelper
             'tiDomain' => $this->scopeConfig->getValue(self::XML_PATH_TAGINTEGRATION_DOMAIN, ScopeInterface::SCOPE_STORE),
             'customDomain' => $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_DOMAIN, ScopeInterface::SCOPE_STORE),
             'customPath' => $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_PATH, ScopeInterface::SCOPE_STORE),
-            'option' => (object)[]
+            'option' => (object)[],
+            'acquire' => $this->getAcquireLink()
         ];
     }
 
