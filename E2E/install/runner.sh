@@ -43,7 +43,7 @@ function uninstall {
 	log "Reset app directory..."
 	
 	log "Backing up plugin code..."
-	cp -r -f /app/app/code/Webtrekk /app/sources/Webtrekk
+	cp -r -f /app/app/code/Webtrekk /app/source/Webtrekk
 
 	log "Delete existing data in app directory..."
         find /app/ -mindepth 1 ! -regex '^/app/source.*' -delete
@@ -70,10 +70,10 @@ function install {
 		
 		
 		log "Getting plugin code..."
-		if [ -d /app/source/Webtrekk]
+		if [ -d /app/source/Webtrekk ]
 		then
 			log "Found code backup - using the backup code..."
-			cp -r -f /app/app/code/Webtrekk /app/sources/Webtrekk
+			cp -R -f /app/source/Webtrekk/ /app/app/code/Webtrekk
 		else
 			log "No backup of plugin code found - using code from src volume..."
 			cp -r /plugincode/Webtrekk/ /app/app/code/Webtrekk
@@ -112,7 +112,7 @@ function install {
 		--elasticsearch-host=es01 \
 		
 		/app/bin/magento setup:upgrade
-		app
+
 		log "Configure Mapp Cloud plugin..."
 		/app/bin/magento config:set tagintegration/general/enable 1
 		/app/bin/magento config:set tagintegration/general/tagintegration_id 136699033798929

@@ -13,7 +13,7 @@ if ($conn->connect_error) {
 // Drop Database
 $sql_drop = "DROP DATABASE magento";
 if ($conn->query($sql_drop) === TRUE) {
-    echo "Magento database dropped.";
+    echo "Magento database dropped. ";
 } else {
     echo "Error dropping database: " . $conn->error;
 }
@@ -22,7 +22,7 @@ if ($conn->query($sql_drop) === TRUE) {
 // Create database
 $sql_create = "CREATE DATABASE magento";
 if ($conn->query($sql_create) === TRUE) {
-    echo "Clean Magento database created.";
+    echo "Clean Magento database created.\n";
 } else {
     echo "Error creating database: " . $conn->error;
 }

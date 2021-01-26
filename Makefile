@@ -29,6 +29,7 @@ run-tests:
 		
 jenkins-test:
 	make prepare-host
+	make server-start
 	make uninstall
 	make uninstall-mapp
 	make install-24
@@ -42,10 +43,10 @@ cypress:
 	docker exec -it cypress bash
 	
 uninstall:
-	make server-start && docker exec -t local.domain.com bash -c "/runner.sh uninstall"
+	docker exec -t local.domain.com bash -c "/runner.sh uninstall"
 	
 uninstall-mapp:
-	make server-start && docker exec -t local.domain.com bash -c "/runner.sh uninstall_mapp"
+	docker exec -t local.domain.com bash -c "/runner.sh uninstall_mapp"
 	
 flush: 
 	docker exec -t local.domain.com bash -c "/runner.sh flush"
