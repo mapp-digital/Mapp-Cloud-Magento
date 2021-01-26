@@ -27,7 +27,7 @@ describe('MappIntelligencePluginTests: Add-to-Cart', () => {
         cy.get('input[name="ko_unique_1"', {timeout: 50000}).check();
         cy.get('button.action.continue.primary').click();
         cy.get('.action.primary.checkout').click();
-        cy.contains('Thank you for your purchase!').should('be.visible');
+        cy.contains('Thank you for your purchase!', {timeout: 120000}).should('be.visible');
         cy.window()
             .then((win) => {
                 data = win._ti;

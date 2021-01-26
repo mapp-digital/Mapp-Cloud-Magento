@@ -7,10 +7,10 @@
     "defaultCommandTimeout": 4000,
     "pageLoadTimeout": 8000,
     "video": false,
-    "screenshotsFolder": "./screenshots",
+    "screenshotsFolder": "/results/screenshots",
     "reporter": "junit",
     "reporterOptions": {
-        "mochaFile": "./results/my-test-output-[hash].xml",
+        "mochaFile": "/results/output-[hash].xml",
         "jenkinsMode": true
     }
 }
