@@ -122,11 +122,7 @@ volumes:
         driver: local
     data03:
         driver: local
-    app:
-        external: false
     db-data:
-        external: false
-    source-files:
         external: false
 networks:
     mapp:
