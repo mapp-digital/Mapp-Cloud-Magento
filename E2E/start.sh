@@ -1,4 +1,4 @@
 #!/bin/bash
-echo "Init app..."
+echo "Init cypress..."
 tail -F /dev/null
 
