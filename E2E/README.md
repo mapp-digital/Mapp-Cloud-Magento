@@ -13,7 +13,7 @@ https://local.domain.com
     Adds execution rights to scripts, created app directory for app volume within E2E/install directory
  
 ### install-24
-    Starts Mapp network and installs latest 2.4-developer version of Magento by pulling the repos, checking the version out and then starting the install process.
+    Starts Mapp network and installs latest 2.4-developer version of Magento by pulling the repos, checking the version out and then starting the install process. Will use backup of plugin code if available.
  
 ### server-start
     Starts the server -> needs to be installed first. Will be saved in volume. Creates network 'Mapp'.
@@ -40,7 +40,10 @@ https://local.domain.com
     Bash shell into Cypress container.
  
 ### uninstall
-    Uninstalls currently installed Magento version. Will keep the Magento repos under /app/sources though.
+    Uninstalls currently installed Magento version. Will keep the Magento repos under /app/sources though and creates a backup of Mapp Cloud plugin code inside add volume.
+
+### uninstall-mapp
+    Uninstalls the backup of Mapp Cloud plugin.
  
 ### flush
     Flushed the Magento 2 cache.

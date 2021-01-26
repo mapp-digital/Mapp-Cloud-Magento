@@ -1,4 +1,4 @@
-.PHONY: prepare-host install-24 server-start dev-server-start stop-server tests run-tests jenkins-test exec cypress uninstall flush upgrade
+.PHONY: prepare-host install-24 server-start dev-server-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp flush upgrade
 
 PHP=webdevops/php-apache:7.4
 
@@ -30,6 +30,7 @@ run-tests:
 jenkins-test:
 	make prepare-host
 	make uninstall
+	make uninstall-mapp
 	make install-24
 	make tests
 	make stop-server
@@ -42,6 +43,9 @@ cypress:
 	
 uninstall:
 	make server-start && docker exec -t local.domain.com bash -c "/runner.sh uninstall"
+	
+uninstall-mapp:
+	make server-start && docker exec -t local.domain.com bash -c "/runner.sh uninstall_mapp"
 	
 flush: 
 	docker exec -t local.domain.com bash -c "/runner.sh flush"
