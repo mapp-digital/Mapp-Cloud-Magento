@@ -21,7 +21,7 @@ describe('MappIntelligencePluginTests: Add-to-Cart', () => {
         cy.get('#email').type('roni_cost@example.com');
         cy.get('#pass').type('roni_cost3@example.com');
         cy.get('#send2').click();
-        cy.contains('Welcome, Veronica Costello!').should('be.visible');
+        cy.contains('Welcome, Veronica Costello!', {timeout: 100000}).should('be.visible');
         cy.visit('checkout/#shipping');
         // cy.get('button.action.continue.primary', {timeout: 50000}).should('.be.visible');
         cy.get('input[name="ko_unique_1"', {timeout: 50000}).check();

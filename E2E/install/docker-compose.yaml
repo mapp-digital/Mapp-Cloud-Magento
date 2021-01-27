@@ -24,7 +24,7 @@ services:
         volumes:
           - ./runner.sh:/runner.sh
           - ./wait-for-it.sh:/wait-for-it.sh
-          - ./drop_db.php:/drop_db.php
+          - ./db.php:/db.php
           - ./app:/app:cached
           - "./../../src:/plugincode"
         ports:

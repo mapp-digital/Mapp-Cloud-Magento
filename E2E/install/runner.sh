@@ -5,6 +5,40 @@ function log {
 	tput sgr0
 }
 
+function copy_plugin_app_to_backup {
+	if [ -d /app/app/code/Webtrekk ]
+	then
+		log "Backup plugin to source folder..."
+		cp -r -f -T /app/app/code/Webtrekk /app/source/Webtrekk
+	fi
+}
+
+function copy_plugin_backup_to_app {
+	if [ -d /app/source/Webtrekk ]
+	then
+		log "Restore plugin from backup into app..."
+		cp -r -f -T  /app/source/Webtrekk /app/app/code/Webtrekk
+	else
+		log "No backup found!"
+	fi
+}
+
+function copy_plugin_app_to_volume {
+	if [ -d /app/app/code/Webtrekk ]
+	then
+	log "Copy plugin version from app to volume directory..."
+	cp -r -f -T /app/app/code/Webtrekk /plugincode/Webtrekk
+	else
+		log "Plugin not yet installed - install with"
+		log "make plugin-install"
+	fi
+}
+
+function copy_plugin_volume_to_app {
+	log "Copy plugin version from volume into app directory..."
+	cp -r -f -T /plugincode/Webtrekk /app/app/code/Webtrekk
+}
+
 function set_version {
 	log "Making sure source directory exists..."
 	if [ ! -d "/app/source" ]
@@ -31,8 +65,9 @@ function set_version {
 	    log "Repo with sample data found!"
 	fi
 	
-	log "Updating repo..."
+	log "Updating repos..."
 	cd /app/source/app && git pull origin
+	cd /app/source/data && git pull origin
 	
 	log "Checking out version $MAGENTO_VERSION..."
 	cd /app/source/app &&  git checkout $MAGENTO_VERSION
@@ -50,12 +85,17 @@ function uninstall {
         
         wait_for_db
         log "Resetting database..."
-	php /drop_db.php
+	php /db.php drop_db
 }
 
 function uninstall_mapp {
 	log "Deleting backup of Mapp Cloud plugin..."
 	rm -r -f /app/source/Webtrekk
+}
+
+function empty_carts {
+	log "Trying to empty all carts via DB..."
+	php /db.php drop_carts
 }
 
 function install {
@@ -68,15 +108,14 @@ function install {
 		mkdir /app/magento2-sample-data/
 		cp -r /app/source/data/* /app/magento2-sample-data/
 		
-		
 		log "Getting plugin code..."
 		if [ -d /app/source/Webtrekk ]
 		then
 			log "Found code backup - using the backup code..."
-			cp -R -f /app/source/Webtrekk/ /app/app/code/Webtrekk
+			copy_plugin_backup_to_app
 		else
 			log "No backup of plugin code found - using code from src volume..."
-			cp -r /plugincode/Webtrekk/ /app/app/code/Webtrekk
+			copy_plugin_volume_to_app
 		fi
 		
 		log "Setting sample data permissions..."
@@ -89,28 +128,54 @@ function install {
 		composer install
 
 		log "Install Magento 2... "
-		php /app/bin/magento setup:install \
-		--admin-firstname=John \
-		--admin-lastname=Doe \
-		--admin-email=sascha.stieglitz@mapp.com \
-		--admin-user=admin \
-		--admin-password='test1234' \
-		--base-url=https://local.domain.com \
-		--base-url-secure=https://local.domain.com \
-		--backend-frontname=admin \
-		--db-host=mysql \
-		--db-name=magento \
-		--db-user=root \
-		--db-password=root \
-		--use-rewrites=1 \
-		--language=en_US \
-		--currency=EUR \
-		--timezone=America/New_York \
-		--use-secure-admin=1 \
-		--admin-use-security-key=1 \
-		--session-save=files \
-		--elasticsearch-host=es01 \
-		
+		if [[ $MAGENTO_VERSION = tags/2.3.5 ]]
+		then
+			log "Found 2.3.5 Version, leave out elasticsearch-host parameter..."
+			php /app/bin/magento setup:install \
+			--admin-firstname=John \
+			--admin-lastname=Doe \
+			--admin-email=sascha.stieglitz@mapp.com \
+			--admin-user=admin \
+			--admin-password='test1234' \
+			--base-url=https://local.domain.com \
+			--base-url-secure=https://local.domain.com \
+			--backend-frontname=admin \
+			--db-host=mysql \
+			--db-name=magento \
+			--db-user=root \
+			--db-password=root \
+			--use-rewrites=1 \
+			--language=en_US \
+			--currency=EUR \
+			--timezone=America/New_York \
+			--use-secure-admin=1 \
+			--admin-use-security-key=1 \
+			--session-save=files
+
+		else
+			php /app/bin/magento setup:install \
+			--admin-firstname=John \
+			--admin-lastname=Doe \
+			--admin-email=sascha.stieglitz@mapp.com \
+			--admin-user=admin \
+			--admin-password='test1234' \
+			--base-url=https://local.domain.com \
+			--base-url-secure=https://local.domain.com \
+			--backend-frontname=admin \
+			--db-host=mysql \
+			--db-name=magento \
+			--db-user=root \
+			--db-password=root \
+			--use-rewrites=1 \
+			--language=en_US \
+			--currency=EUR \
+			--timezone=America/New_York \
+			--use-secure-admin=1 \
+			--admin-use-security-key=1 \
+			--session-save=files \
+			--elasticsearch-host=es01
+
+		fi
 		/app/bin/magento setup:upgrade
 
 		log "Configure Mapp Cloud plugin..."
@@ -123,9 +188,15 @@ function install {
 		/app/bin/magento setup:upgrade
 		/app/bin/magento cache:flush
 		
-		log "Done, you can reach the store via https://local.domain.com and configure at https://local.domain.com/admin"
+		log "Done, you can now reach the store in you browser."
 		log "Make sure to add this to your /etc/hosts:"
 		log "127.0.1.1	local.domain.com"
+		log "-----------------------"
+		log "https://local.domain.com"
+		log "https://local.domain.com/admin"
+		log "User: admin"
+		log "Password: test1234"
+		log "-----------------------"
 	fi	
 }
 
@@ -141,6 +212,15 @@ function wait_for_db {
 	log "Waiting for database..."
 	bash -c "/wait-for-it.sh -t 0 mysql:3306"
 	log "Database found"
+}
+
+function print_debug_log {
+	if [ -f /app/var/log/system.log ]
+	then
+		cat /app/var/log/system.log
+	else
+		log "Nothing has been logged so far..."
+	fi
 }
 
 for arg; do
