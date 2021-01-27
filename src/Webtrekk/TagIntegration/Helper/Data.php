@@ -77,7 +77,7 @@ class Data extends AbstractHelper
     private function getAttributeBlacklist()
     {
         $attributeBlacklist = $this->scopeConfig->getValue(self::XML_PATH_ATTRIBUTE_BLACKLIST, ScopeInterface::SCOPE_STORE);
-        return explode("\r\n", $attributeBlacklist);
+        return preg_split("/(?:\r\n|,)/", $attributeBlacklist);
     }
 
     /**

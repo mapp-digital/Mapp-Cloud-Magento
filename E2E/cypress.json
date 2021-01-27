@@ -3,14 +3,14 @@
     "viewportWidth": 1920,
     "baseUrl": "https://local.domain.com",
     "watchForFileChanges": false,
-    "requestTimeout": 4000,
-    "defaultCommandTimeout": 4000,
-    "pageLoadTimeout": 8000,
+    "requestTimeout": 40000,
+    "defaultCommandTimeout": 40000,
+    "pageLoadTimeout": 80000,
     "video": false,
-    "screenshotsFolder": "./screenshots",
+    "screenshotsFolder": "/results/screenshots",
     "reporter": "junit",
     "reporterOptions": {
-        "mochaFile": "./results/my-test-output-[hash].xml",
+        "mochaFile": "/results/output-[hash].xml",
         "jenkinsMode": true
     }
 }

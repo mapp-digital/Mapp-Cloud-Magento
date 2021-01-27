@@ -5,7 +5,6 @@
  * @package Webtrekk_TagIntegration
  */
 
-use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Webtrekk\TagIntegration\Block\TIDatalayer;
 
 $script = "require([
@@ -150,16 +149,17 @@ $script = "require([
             });
         });";
 
-?>
-
-<?=
-/**
- * @var SecureHtmlRenderer $secureRenderer
- * @var TIDatalayer $this
- */
-$secureRenderer->renderTag(
-    'script',
-    ['type' => 'text/javascript'],
-    "window._ti=" . $this->getDataLayer() .";" . $script,
-    false);
-?>
+// SecureHtmlRenderer is available since version 2.4
+if (class_exists('Magento\Framework\View\Helper\SecureHtmlRenderer')) {
+    /**
+     * @var Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+     * @var TIDatalayer $this
+     */
+    echo $secureRenderer->renderTag(
+        'script',
+        ['type' => 'text/javascript'],
+        'window._ti=' . $this->getDataLayer() . ';' . $script,
+        false);
+} else {  
+    echo '<script type="text/javascript">' .  'window._ti=' . $this->getDataLayer() .';' . $script . '</script>';
+}

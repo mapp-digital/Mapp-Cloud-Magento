@@ -84,7 +84,7 @@ class Get implements HttpGetActionInterface
         $dataLayer  = $this->_dataLayerHelper->mappify($this->_dataLayerModel->getVariables());
         $dataLayer = $this->_tiHelper->removeParameterByBlacklist($dataLayer);
         $data = [
-                "eventName" => $isAddToCart ? $this->_tiHelper->getAddToCartEventName() : null,
+                "eventName" => $this->_tiHelper->getAddToCartEventName(),
                 "dataLayer" => $dataLayer
         ];
         if(!$isAddToCart) {
