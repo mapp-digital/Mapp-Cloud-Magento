@@ -95,15 +95,17 @@ https://local.domain.com
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Listen for XDebug",
+            "name": "Magento 2 XDebug",
             "type": "php",
             "request": "launch",
             "port": 9000,
             "stopOnEntry": false,
             "pathMappings": {
-                "/app": "${workspaceFolder}/E2E/install/app"
+                "/app/": "${workspaceFolder}/E2E/install/app/",
+                "/app/app/code/MappDigital/": "${workspaceFolder}/src/MappDigital/"
               },
         }
     ]
 }
 ```
+Run `make plugin-install` to apply changes in src directoy to running server. For certain changes you also need to run `make upgrade` or `make flush`.
