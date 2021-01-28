@@ -7,7 +7,7 @@ prepare-host:
 	
 install-23:
 	make prepare-host
-	export MAGENTO_VERSION=tags/2.3.5  && make old-server-start
+	export MAGENTO_VERSION=tags/2.3.4  && make old-server-start
 	docker exec -t local.domain.com bash -c "/runner.sh set_version install"
 	
 install-24:
@@ -25,7 +25,7 @@ dev-server-start:
 	cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:7.4" && docker-compose up -d
 
 old-dev-server-start:
-	cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:7.3" && docker-compose up -d
+	cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:7.2" && docker-compose up -d
 
 stop-server:
 	export PHPIMAGE=$(PHP) && cd ./E2E/install && docker-compose down

@@ -6,28 +6,28 @@ function log {
 }
 
 function copy_plugin_app_to_backup {
-	if [ -d /app/app/code/Webtrekk ]
+	if [ -d /app/app/code/MappDigital ]
 	then
 		log "Backup plugin to source folder..."
-		cp -r -f -T /app/app/code/Webtrekk /app/source/Webtrekk
+		cp -r -f -T /app/app/code/MappDigital /app/source/MappDigital
 	fi
 }
 
 function copy_plugin_backup_to_app {
-	if [ -d /app/source/Webtrekk ]
+	if [ -d /app/source/MappDigital ]
 	then
 		log "Restore plugin from backup into app..."
-		cp -r -f -T  /app/source/Webtrekk /app/app/code/Webtrekk
+		cp -r -f -T  /app/source/MappDigital /app/app/code/MappDigital
 	else
 		log "No backup found!"
 	fi
 }
 
 function copy_plugin_app_to_volume {
-	if [ -d /app/app/code/Webtrekk ]
+	if [ -d /app/app/code/MappDigital ]
 	then
 	log "Copy plugin version from app to volume directory..."
-	cp -r -f -T /app/app/code/Webtrekk /plugincode/Webtrekk
+	cp -r -f -T /app/app/code/MappDigital /plugincode/MappDigital
 	else
 		log "Plugin not yet installed - install with"
 		log "make plugin-install"
@@ -36,7 +36,7 @@ function copy_plugin_app_to_volume {
 
 function copy_plugin_volume_to_app {
 	log "Copy plugin version from volume into app directory..."
-	cp -r -f -T /plugincode/Webtrekk /app/app/code/Webtrekk
+	cp -r -f -T /plugincode/MappDigital /app/app/code/MappDigital
 }
 
 function set_version {
@@ -78,7 +78,7 @@ function uninstall {
 	log "Reset app directory..."
 	
 	log "Backing up plugin code..."
-	cp -r -f /app/app/code/Webtrekk /app/source/Webtrekk
+	cp -r -f /app/app/code/MappDigital /app/source/MappDigital
 
 	log "Delete existing data in app directory..."
         find /app/ -mindepth 1 ! -regex '^/app/source.*' -delete
@@ -90,7 +90,7 @@ function uninstall {
 
 function uninstall_mapp {
 	log "Deleting backup of Mapp Cloud plugin..."
-	rm -r -f /app/source/Webtrekk
+	rm -r -f /app/source/MappDigital
 }
 
 function empty_carts {
@@ -109,7 +109,7 @@ function install {
 		cp -r /app/source/data/* /app/magento2-sample-data/
 		
 		log "Getting plugin code..."
-		if [ -d /app/source/Webtrekk ]
+		if [ -d /app/source/MappDigital ]
 		then
 			log "Found code backup - using the backup code..."
 			copy_plugin_backup_to_app
@@ -128,9 +128,9 @@ function install {
 		composer install
 
 		log "Install Magento 2... "
-		if [[ $MAGENTO_VERSION = tags/2.3.5 ]]
+		if [[ $MAGENTO_VERSION = tags/2.3.4 ]]
 		then
-			log "Found 2.3.5 Version, leave out elasticsearch-host parameter..."
+			log "Found 2.3.4 Version, leave out elasticsearch-host parameter..."
 			php /app/bin/magento setup:install \
 			--admin-firstname=John \
 			--admin-lastname=Doe \
@@ -187,6 +187,7 @@ function install {
 		log "Finish up installation..."
 		/app/bin/magento setup:upgrade
 		/app/bin/magento cache:flush
+		/app/bin/magento maintenance:disable
 		
 		log "Done, you can now reach the store in you browser."
 		log "Make sure to add this to your /etc/hosts:"

@@ -85,5 +85,25 @@ https://local.domain.com
 ---
  &nbsp;
  ## Xdebug config
- Mapping in IntelliJ like this:
+ ### IntelliJ  
  ![IntelliJ settings](./assets/xdebug_IntelliJ_server.png)
+
+ ### VSCode
+ launch.json
+``` json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Listen for XDebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9000,
+            "stopOnEntry": false,
+            "pathMappings": {
+                "/app": "${workspaceFolder}/E2E/install/app"
+              },
+        }
+    ]
+}
+```

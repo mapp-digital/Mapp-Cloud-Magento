@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2021 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <tagintegration>
+            <general>
+                <enable>0</enable>
+				<attribute_blacklist>customerPasswordHash
+customerRpToken
+customerRpTokenCreatedAt</attribute_blacklist>
+            </general>
+        </tagintegration>
+    </default>
+</config>
