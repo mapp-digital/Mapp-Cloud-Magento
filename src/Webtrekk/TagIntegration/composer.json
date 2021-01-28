@@ -2,7 +2,7 @@
     "name": "webtrekk/tagintegration",
     "description": "N/A",
     "require": {
-        "php": "~7.3.0",
+        "php": "~7.2.30",
         "magento/module-config": "103.*.*",
         "magento/module-store": "103.*.*",
         "magento/module-backend": "103.*.*",

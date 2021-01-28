@@ -16,7 +16,7 @@ install-24:
 	docker exec -t local.domain.com bash -c "/runner.sh set_version install"
 
 old-server-start:
-	cd ./E2E/install && export PHPIMAGE=webdevops/php-apache:7.3 && docker-compose up -d
+	cd ./E2E/install && export PHPIMAGE=webdevops/php-apache:7.2 && docker-compose up -d
 
 server-start:
 	cd ./E2E/install && export PHPIMAGE=$(PHP) && docker-compose up -d
