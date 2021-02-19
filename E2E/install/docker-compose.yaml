@@ -55,6 +55,7 @@ services:
           - ./../cypress:/cypress
           - ./../cypress.json:/cypress.json
           - ./../start.sh:/start.sh
+          - ./../boot_cypress.sh:/boot_cypress.sh
           - ./../results:/results
           - ./wait-for-it.sh:/wait-for-it.sh
         networks:

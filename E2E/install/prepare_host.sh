@@ -14,11 +14,11 @@ else
 	log "Temporary app directory for app volume found!"
 fi
 
-log "Setting file permissions for scrips..."
+log "Setting file permissions for scripts..."
 chmod +x ./E2E/install/runner.sh 
 chmod +x "./E2E/install/wait-for-it.sh"
 chmod +x ./E2E/install/db.php 
 chmod +x ./E2E/start.sh 
 
-chown 1000:1000 ./E2E/install/app
+chmod 777 ./E2E/install/app
 

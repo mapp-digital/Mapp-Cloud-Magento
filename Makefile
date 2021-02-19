@@ -1,6 +1,7 @@
 .PHONY: prepare-host cleanup-host install-23 install-24 old-server-start server-start dev-server-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp empty-carts flush upgrade log-debug plugin-backup plugin-restore plugin-copy-app-to-volume plugin-install
 
 PHP=webdevops/php-apache:7.4
+USER_NAME := $(shell id -un)
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
 USER_GROUP = $(USER_ID):$(GROUP_ID)
@@ -9,7 +10,7 @@ prepare-host:
 	bash ./E2E/install/prepare_host.sh
 	
 cleanup-host:
-	docker exec -t local.domain.com bash -c "chown -R $(USER_GROUP) /app"
+	docker exec -t local.domain.com bash -c "rm -f -R /app/*"
 	
 install-23:
 	make prepare-host
@@ -38,12 +39,12 @@ stop-server:
 	
 tests:
 	make empty-carts
-	docker exec -t cypress bash -c "cypress run"
+	docker exec -t cypress bash -c "/boot_cypress.sh $(USER_NAME) $(USER_ID) $(GROUP_ID)"
 
 run-tests:
 	make server-start
 	make empty-carts
-	docker exec -t cypress bash -c "cypress run"
+	docker exec -t cypress bash -c "/boot_cypress.sh $(USER_NAME) $(USER_ID) $(GROUP_ID)"
 	make stop-server
 		
 jenkins-test:
