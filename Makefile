@@ -3,12 +3,13 @@
 PHP=webdevops/php-apache:7.4
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
+USER_GROUP = $(USER_ID):$(GROUP_ID)
 
 prepare-host:
 	bash ./E2E/install/prepare_host.sh
 	
 cleanup-host:
-	docker exec -t local.domain.com bash -c "chown -R $USER_ID:$GROUP_ID /app"
+	docker exec -t local.domain.com bash -c "chown -R $(USER_GROUP) /app"
 	
 install-23:
 	make prepare-host
