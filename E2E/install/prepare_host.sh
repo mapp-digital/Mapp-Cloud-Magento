@@ -17,6 +17,8 @@ fi
 log "Setting file permissions for scrips..."
 chmod +x ./E2E/install/runner.sh 
 chmod +x "./E2E/install/wait-for-it.sh"
-chmod +x ./E2E/install/drop_db.php 
+chmod +x ./E2E/install/db.php 
 chmod +x ./E2E/start.sh 
+
+chown 1000:1000 ./E2E/install/app
 

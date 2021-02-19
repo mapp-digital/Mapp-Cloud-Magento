@@ -1,9 +1,14 @@
-.PHONY: prepare-host install-23 install-24 old-server-start server-start dev-server-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp empty-carts flush upgrade log-debug plugin-backup plugin-restore plugin-copy-app-to-volume plugin-install
+.PHONY: prepare-host cleanup-host install-23 install-24 old-server-start server-start dev-server-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp empty-carts flush upgrade log-debug plugin-backup plugin-restore plugin-copy-app-to-volume plugin-install
 
 PHP=webdevops/php-apache:7.4
+USER_ID := $(shell id -u)
+GROUP_ID := $(shell id -g)
 
 prepare-host:
 	bash ./E2E/install/prepare_host.sh
+	
+cleanup-host:
+	docker exec -t local.domain.com bash -c "chown -R $USER_ID:$GROUP_ID /app"
 	
 install-23:
 	make prepare-host
@@ -47,6 +52,7 @@ jenkins-test:
 	make uninstall-mapp
 	make install-24
 	make tests
+	make cleanup-host
 	make stop-server
 
 jenkins-test-complete:
@@ -58,6 +64,7 @@ jenkins-test-complete:
 	make uninstall
 	make install-24
 	make tests
+	make cleanup-host
 	make stop-server
 
 exec:
