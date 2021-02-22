@@ -39,16 +39,17 @@ stop-server:
 	
 tests:
 	make empty-carts
-	docker exec -t cypress bash -c "/boot_cypress.sh $(USER_NAME) $(USER_ID) $(GROUP_ID)"
+	docker exec -t cypress bash -c "/cypress_run.sh $(USER_NAME) $(USER_ID) $(GROUP_ID)"
 
 run-tests:
 	make server-start
 	make empty-carts
-	docker exec -t cypress bash -c "/boot_cypress.sh $(USER_NAME) $(USER_ID) $(GROUP_ID)"
+	docker exec -t cypress bash -c "/cypress_run.sh $(USER_NAME) $(USER_ID) $(GROUP_ID)"
 	make stop-server
 		
 jenkins-test:
 	make prepare-host
+	chmod 777 ./E2E/install/app
 	make server-start
 	make uninstall
 	make uninstall-mapp
@@ -59,6 +60,7 @@ jenkins-test:
 
 jenkins-test-complete:
 	make prepare-host
+	chmod 777 ./E2E/install/app
 	make server-start
 	make uninstall
 	make install-23

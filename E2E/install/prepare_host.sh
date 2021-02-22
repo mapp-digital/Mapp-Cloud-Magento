@@ -18,8 +18,4 @@ log "Setting file permissions for scripts..."
 chmod +x ./E2E/install/runner.sh 
 chmod +x "./E2E/install/wait-for-it.sh"
 chmod +x ./E2E/install/db.php 
-chmod +x ./E2E/start.sh 
-chmod +x ./E2E/boot_cypress.sh 
-
-chmod 777 ./E2E/install/app
-
+chmod +x ./E2E/cypress_entrypoint.sh 

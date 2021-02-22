@@ -12,6 +12,9 @@ https://local.domain.com
 ### prepare-host 
     Adds execution rights to scripts, created app directory for app volume within E2E/install directory
 
+### cleanup-host:
+    Deletes everything inside app directory from within php server, so `make server-start` has to be executed before
+
 ### install-23
     Starts Mapp network and installs 2.3 version of Magento by pulling the repos, checking the version out and then starting the install process. Will use backup of plugin code if available.
  
