@@ -6,3 +6,6 @@
 
 # 1.0.2
 - remove requirements in composer.json
+
+# 1.0.3
+- change copyright year
