@@ -26,7 +26,7 @@ old-server-start:
 	cd ./E2E/install && export PHPIMAGE=webdevops/php-apache:7.2 && docker-compose up -d
 
 server-start:
-	cd ./E2E/install && export PHPIMAGE=$(PHP) && docker-compose up -d
+	cd ./E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP) && docker-compose up -d
 	
 dev-server-start:
 	cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:7.4" && docker-compose up -d
