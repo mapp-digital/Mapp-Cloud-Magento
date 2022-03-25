@@ -16,5 +16,11 @@ customerRpToken
 customerRpTokenCreatedAt</attribute_blacklist>
             </general>
         </tagintegration>
+        <mapp_gtm>
+            <general>
+                <gtm_enable>0</gtm_enable>
+                <gtm_datalayer>dataLayer</gtm_datalayer>
+            </general>
+        </mapp_gtm>
     </default>
 </config>

@@ -9,7 +9,7 @@ namespace MappDigital\Cloud\Observer;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use MappDigital\Cloud\Helper\Data;
+use MappDigital\Cloud\Helper\Config;
 
 class TIDatalayerOrderSuccess implements ObserverInterface
 {
@@ -19,18 +19,18 @@ class TIDatalayerOrderSuccess implements ObserverInterface
      */
     protected $_checkoutSession;
     /**
-     * @var Data
+     * @var Config
      */
-    protected $_tiHelper;
+    protected $_config;
 
     /**
      * @param Session $checkoutSession
-     * @param Data $tiHelper
+     * @param Config $config
      */
-    public function __construct(Session $checkoutSession, Data $tiHelper)
+    public function __construct(Session $checkoutSession, Config $config)
     {
         $this->_checkoutSession = $checkoutSession;
-        $this->_tiHelper = $tiHelper;
+        $this->_config = $config;
     }
 
     /**
@@ -38,7 +38,7 @@ class TIDatalayerOrderSuccess implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        if ($this->_tiHelper->isEnabled()) {
+        if ($this->_config->isEnabled()) {
             $orderIds = $observer->getEvent()->getOrderIds();
 
             if (!empty($orderIds) && is_array($orderIds)) {

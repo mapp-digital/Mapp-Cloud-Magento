@@ -8,7 +8,8 @@ namespace MappDigital\Cloud\Block;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
-use MappDigital\Cloud\Helper\Data;
+use MappDigital\Cloud\Helper\Config;
+use MappDigital\Cloud\Helper\TrackingScript;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
 use MappDigital\Cloud\Model\DataLayer;
 
@@ -16,9 +17,9 @@ class TIDatalayer extends Template
 {
 
     /**
-     * @var Data
+     * @var Config
      */
-    protected $_tiHelper = null;
+    protected $_config;
 
     /**
      * @var DataLayerHelper
@@ -33,14 +34,14 @@ class TIDatalayer extends Template
 
     /**
      * @param Context $context
-     * @param Data $tiHelper
+     * @param Config $config
      * @param DataLayerHelper $dataLayerHelper
      * @param DataLayer $dataLayer
      * @param array $data
      */
-    public function __construct(Context $context, Data $tiHelper, DataLayerHelper $dataLayerHelper, DataLayer $dataLayer, array $data = [])
+    public function __construct(Context $context, Config $config, DataLayerHelper $dataLayerHelper, DataLayer $dataLayer, array $data = [])
     {
-        $this->_tiHelper = $tiHelper;
+        $this->_config = $config;
         $this->_dataLayerHelper = $dataLayerHelper;
         $this->_dataLayerModel = $dataLayer;
 
@@ -54,7 +55,7 @@ class TIDatalayer extends Template
      */
     protected function _toHtml()
     {
-        if (!$this->_tiHelper->isEnabled()) {
+        if (!$this->_config->isEnabled()) {
             return '';
         }
 
@@ -68,7 +69,15 @@ class TIDatalayer extends Template
     {
         $this->_dataLayerModel->setPageDataLayer();
         $data = $this->_dataLayerHelper->mappifyPage($this->_dataLayerModel->getVariables());
-        $data = $this->_tiHelper->removeParameterByBlacklist($data);
+        $data = $this->_config->removeParameterByBlacklist($data);
         return json_encode($data, JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * @return string
+     */
+    public function getScript()
+    {
+        return TrackingScript::generateJS($this->_config->getConfig());
     }
 }

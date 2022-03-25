@@ -11,7 +11,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Store\Model\ScopeInterface;
 
-class Data extends AbstractHelper
+class Config extends AbstractHelper
 {
 
     /**
@@ -45,7 +45,23 @@ class Data extends AbstractHelper
     /**
      * @var string
      */
-    const XML_PATH_ACQUIRE = 'tagintegration/general/acquire';
+    const XML_PATH_ACQUIRE = 'mapp_acquire/general/acquire';
+    /**
+     * @var string
+     */
+    const XML_PATH_GTM_ENABLE = 'mapp_gtm/general/gtm_enable';
+    /**
+     * @var string
+     */
+    const XML_PATH_GTM_LOAD = 'mapp_gtm/general/gtm_load';
+    /**
+     * @var string
+     */
+    const XML_PATH_GTM_ID = 'mapp_gtm/general/gtm_id';
+    /**
+     * @var string
+     */
+    const XML_PATH_GTM_DATALAYER = 'mapp_gtm/general/gtm_datalayer';
 
     /**
      * @var Repository
@@ -68,7 +84,7 @@ class Data extends AbstractHelper
      */
     public function isEnabled()
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_ENABLE, ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_ENABLE, ScopeInterface::SCOPE_STORE) || $this->scopeConfig->isSetFlag(self::XML_PATH_GTM_ENABLE, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -85,7 +101,8 @@ class Data extends AbstractHelper
      */
     private function getAcquireLink()
     {
-        if(preg_match('/id=(\d+?)&m=(\d+?)\D/', $this->scopeConfig->getValue(self::XML_PATH_ACQUIRE, ScopeInterface::SCOPE_STORE), $ids))
+        $acquireScript = $this->scopeConfig->getValue(self::XML_PATH_ACQUIRE, ScopeInterface::SCOPE_STORE);
+        if(!is_null($acquireScript) && preg_match('/id=(\d+?)&m=(\d+?)\D/', $acquireScript, $ids))
         {
             return 'https://c.flx1.com/' . $ids[2] . '-' . $ids[1] .'.js?id=' . $ids[1] . '&m=' . $ids[2];
         }
@@ -95,15 +112,30 @@ class Data extends AbstractHelper
     /**
      * @return array
      */
-    public function getTagIntegrationConfig()
+    public function getGTMConfig()
     {
         return [
+            'enable' => $this->scopeConfig->getValue(self::XML_PATH_GTM_ENABLE, ScopeInterface::SCOPE_STORE),
+            'load' => $this->scopeConfig->getValue(self::XML_PATH_GTM_LOAD, ScopeInterface::SCOPE_STORE),
+            'id' => $this->scopeConfig->getValue(self::XML_PATH_GTM_ID, ScopeInterface::SCOPE_STORE),
+            'datalayer' => $this->scopeConfig->getValue(self::XML_PATH_GTM_DATALAYER, ScopeInterface::SCOPE_STORE)
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfig()
+    {
+        return [
+            'tiEnable' => $this->scopeConfig->getValue(self::XML_PATH_ENABLE, ScopeInterface::SCOPE_STORE),
             'tiId' => $this->scopeConfig->getValue(self::XML_PATH_TAGINTEGRATION_ID, ScopeInterface::SCOPE_STORE),
             'tiDomain' => $this->scopeConfig->getValue(self::XML_PATH_TAGINTEGRATION_DOMAIN, ScopeInterface::SCOPE_STORE),
             'customDomain' => $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_DOMAIN, ScopeInterface::SCOPE_STORE),
             'customPath' => $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_PATH, ScopeInterface::SCOPE_STORE),
             'option' => (object)[],
-            'acquire' => $this->getAcquireLink()
+            'acquire' => $this->getAcquireLink(),
+            'gtm' => $this->getGTMConfig()
         ];
     }
 

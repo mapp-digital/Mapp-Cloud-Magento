@@ -11,7 +11,7 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
-use MappDigital\Cloud\Helper\Data;
+use MappDigital\Cloud\Helper\Config;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
 use MappDigital\Cloud\Model\DataLayer;
 
@@ -28,9 +28,9 @@ class Get implements HttpGetActionInterface
     protected $_request;
 
     /**
-     * @var Data
+     * @var Config
      */
-    protected $_tiHelper;
+    protected $_config;
 
     /**
      * @var DataLayer
@@ -45,21 +45,21 @@ class Get implements HttpGetActionInterface
     /**
      * @param JsonFactory $resultJsonFactory
      * @param Http $request
-     * @param Data $tiHelper
+     * @param Config $config
      * @param DataLayer $dataLayer
      * @param DataLayerHelper $dataLayerHelper
      */
     public function __construct(
         JsonFactory $resultJsonFactory,
         Http $request,
-        Data $tiHelper,
+        Config $config,
         DataLayer $dataLayer,
         DataLayerHelper $dataLayerHelper
     )
     {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->_request = $request;
-        $this->_tiHelper = $tiHelper;
+        $this->_config = $config;
         $this->_dataLayerModel = $dataLayer;
         $this->_dataLayerHelper = $dataLayerHelper;
     }
@@ -82,14 +82,12 @@ class Get implements HttpGetActionInterface
         }
         $this->_dataLayerModel->setCartDataLayer();
         $dataLayer  = $this->_dataLayerHelper->mappify($this->_dataLayerModel->getVariables());
-        $dataLayer = $this->_tiHelper->removeParameterByBlacklist($dataLayer);
+        $dataLayer = $this->_config->removeParameterByBlacklist($dataLayer);
         $data = [
-                "eventName" => $this->_tiHelper->getAddToCartEventName(),
+                "eventName" => $this->_config->getAddToCartEventName(),
                 "dataLayer" => $dataLayer
         ];
-        if(!$isAddToCart) {
-            $data['config'] = $this->_tiHelper->getTagIntegrationConfig();
-        }
+        $data['config'] = $this->_config->getConfig();
         return $this->resultJsonFactory->create()->setData($data);
     }
 }

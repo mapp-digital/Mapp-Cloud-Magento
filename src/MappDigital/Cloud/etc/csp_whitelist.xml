@@ -12,6 +12,7 @@
             <values>
                 <value id="mapp-intelligence-ti" type="host">https://responder.wt-safetag.com</value>
                 <value id="mapp-acquire" type="host">https://*.flx1.com/</value>
+                <value id="mapp-gtm" type="host">https://www.googletagmanager.com</value>
             </values>
         </policy>
     </policies>

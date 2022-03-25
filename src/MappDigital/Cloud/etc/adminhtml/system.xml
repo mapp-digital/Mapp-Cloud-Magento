@@ -8,17 +8,17 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="webtrekk" translate="label" sortOrder="400">
+        <tab id="mapp" translate="label" sortOrder="400">
             <label>Mapp Cloud</label>
         </tab>
 		<section id="tagintegration" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>Tag Integration</label>
-            <tab>webtrekk</tab>
+            <label>Mapp Intelligence - Tag Integration</label>
+            <tab>mapp</tab>
             <resource>MappDigital_Cloud::tagintegration</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
                 <field id="enable" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable Mapp Intelligence TagIntegration</label>
+                    <label>Enable tracking via Mapp Tag Integration</label>
                     <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
                     <tooltip>
                         Here you can activate and deactivate the Mapp Intelligence extension.
@@ -61,15 +61,6 @@
                         <field id="*/*/enable">1</field>
                     </depends>
                 </field>
-				<field id="acquire" translate="label" type="textarea" sortOrder="75" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Mapp Acquire</label>
-					<tooltip>
-                        If you use Mapp Acquire alongside Mapp Intelligence, please add your Mapp Acquire tracking script here.
-                    </tooltip>
-					<depends>
-                        <field id="*/*/enable">1</field>
-                    </depends>
-                </field>
                 <field id="attribute_blacklist" translate="label" type="textarea" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Attribute Blacklist</label>
                     <tooltip>
@@ -87,6 +78,64 @@
                     <depends>
                         <field id="*/*/enable">1</field>
                     </depends>
+                </field>
+            </group>
+        </section>
+        <section id="mapp_gtm" translate="label" type="text" sortOrder="101" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>Mapp Intelligence - Google Tag Manager</label>
+        <tab>mapp</tab>
+        <resource>MappDigital_Cloud::mapp_gtm</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>General</label>
+                <field id="gtm_enable" translate="label comment" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable tracking via Google Tag Manager</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <tooltip>
+                        Activate if you want to use Mapp Intelligence via Google Tag Manager
+                    </tooltip>
+                </field>
+                <field id="gtm_load" translate="label comment" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Load GTM via Mapp Cloud</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <tooltip>
+                        Activate if you want to load Google Tag Manager via Mapp Cloud plugin, keep deactivated if you load GTM elsewhere (other plugin, theme etc.)
+                    </tooltip>
+                    <depends>
+                        <field id="*/*/gtm_enable">1</field>
+                    </depends>
+                </field>
+                <field id="gtm_id" translate="label" type="text" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>GTM ID</label>
+                    <tooltip>
+                        Enter your GTM ID
+                    </tooltip>
+                    <depends>
+                        <field id="*/*/gtm_enable">1</field>
+                        <field id="*/*/gtm_load">1</field>
+                    </depends>
+                </field>
+                <field id="gtm_datalayer" translate="label" type="text" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>GTM datalayer variable name</label>
+                    <tooltip>
+                        Enter the name of the datalayer variable (default: dataLayer)
+                    </tooltip>
+                    <depends>
+                        <field id="*/*/gtm_enable">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+        <section id="mapp_acquire" translate="label" type="text" sortOrder="102" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Mapp Acquire</label>
+            <tab>mapp</tab>
+            <resource>MappDigital_Cloud::mapp_acquire</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="acquire" translate="label" type="textarea" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Mapp Acquire script</label>
+                    <tooltip>
+                        If you use Mapp Acquire alongside Mapp Intelligence, please add your Mapp Acquire tracking script here.
+                    </tooltip>
                 </field>
             </group>
         </section>

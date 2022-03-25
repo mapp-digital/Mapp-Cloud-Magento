@@ -9,7 +9,7 @@ namespace MappDigital\Cloud\Observer;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use MappDigital\Cloud\Helper\Data;
+use MappDigital\Cloud\Helper\Config;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
 use MappDigital\Cloud\Model\Data\Product;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
@@ -23,9 +23,9 @@ class TIDatalayerAddToCart implements ObserverInterface
      */
     protected $_checkoutSession;
     /**
-     * @var Data
+     * @var Config
      */
-    protected $_tiHelper;
+    protected $_config;
     /**
      * @var Product
      */
@@ -43,21 +43,21 @@ class TIDatalayerAddToCart implements ObserverInterface
 
     /**
      * @param Session $checkoutSession
-     * @param Data $tiHelper
+     * @param Config $_config
      * @param Product $product
      * @param ProductAttributeRepositoryInterface $productAttributeRepositoryInterface
      * @param Http $request
      */
     public function __construct(
         Session $checkoutSession,
-        Data $tiHelper,
+        Config $config,
         Product $product,
         ProductAttributeRepositoryInterface $productAttributeRepositoryInterface,
         Http $request
     )
     {
         $this->_checkoutSession = $checkoutSession;
-        $this->_tiHelper = $tiHelper;
+        $this->_config = $config;
         $this->_product = $product;
         $this->_productAttributeRepositoryInterface = $productAttributeRepositoryInterface;
         $this->_request = $request;
@@ -68,7 +68,7 @@ class TIDatalayerAddToCart implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        if ($this->_tiHelper->isEnabled()) {
+        if ($this->_config->isEnabled()) {
             $item = $observer->getEvent()->getData('quote_item');
             $product = $observer->getEvent()->getData('product');
 
