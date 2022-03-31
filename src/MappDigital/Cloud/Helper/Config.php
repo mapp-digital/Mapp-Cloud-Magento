@@ -62,6 +62,14 @@ class Config extends AbstractHelper
      * @var string
      */
     const XML_PATH_GTM_DATALAYER = 'mapp_gtm/general/gtm_datalayer';
+    /**
+     * @var string
+     */
+    const XML_PATH_GTM_TRIGGER_BASKET = 'mapp_gtm/general/gtm_trigger_basket';
+    /**
+     * @var string
+     */
+    const XML_PATH_GTM_ADD_TO_CART_EVENTNAME = 'mapp_gtm/general/gtm_add_to_cart_eventname';
 
     /**
      * @var Repository
@@ -118,7 +126,9 @@ class Config extends AbstractHelper
             'enable' => $this->scopeConfig->getValue(self::XML_PATH_GTM_ENABLE, ScopeInterface::SCOPE_STORE),
             'load' => $this->scopeConfig->getValue(self::XML_PATH_GTM_LOAD, ScopeInterface::SCOPE_STORE),
             'id' => $this->scopeConfig->getValue(self::XML_PATH_GTM_ID, ScopeInterface::SCOPE_STORE),
-            'datalayer' => $this->scopeConfig->getValue(self::XML_PATH_GTM_DATALAYER, ScopeInterface::SCOPE_STORE)
+            'datalayer' => $this->scopeConfig->getValue(self::XML_PATH_GTM_DATALAYER, ScopeInterface::SCOPE_STORE),
+            'triggerBasket' => $this->scopeConfig->getValue(self::XML_PATH_GTM_TRIGGER_BASKET, ScopeInterface::SCOPE_STORE),
+            'event' => $this->scopeConfig->getValue(self::XML_PATH_GTM_ADD_TO_CART_EVENTNAME, ScopeInterface::SCOPE_STORE)
         ];
     }
 

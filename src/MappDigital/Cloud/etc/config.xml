@@ -14,12 +14,15 @@
 				<attribute_blacklist>customerPasswordHash
 customerRpToken
 customerRpTokenCreatedAt</attribute_blacklist>
+                <add_to_cart_event_name>add-to-cart</add_to_cart_event_name>
             </general>
         </tagintegration>
         <mapp_gtm>
             <general>
                 <gtm_enable>0</gtm_enable>
                 <gtm_datalayer>dataLayer</gtm_datalayer>
+                <gtm_trigger_basket>mapp.load</gtm_trigger_basket>
+                <gtm_add_to_cart_eventname>add-to-cart</gtm_add_to_cart_eventname>
             </general>
         </mapp_gtm>
     </default>

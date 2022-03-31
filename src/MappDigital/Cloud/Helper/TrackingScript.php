@@ -12,11 +12,12 @@ class TrackingScript
     public static function generateJS($config) {
         $requireArray = "'jquery'";
         $requireArgument = "$";
-        $addToCartHelper = "";
+        $addToCartHelper = "''";
         $tiLoader = "";
         $gtmLoader = "";
         $gtmAddToCartPush = "";
         $gtmCreateProductArray = "";
+        $gtmEvent = $config["gtm"]["triggerBasket"] === "mapp.load" ? "window.wtSmart.action.data.add('{$config["gtm"]["event"]}');" : "";
         $wtSmartLoader = "";
 
         if($config['tiEnable'] === "1") {
@@ -57,30 +58,40 @@ class TrackingScript
                 }
             }";
         }
-
         if($config["gtm"]["enable"] === "1") {
             $requireArray = "'jquery','wtSmart'";
             $requireArgument = "$, wtSmart";
             $wtSmartLoader = "window.wtSmart = window.wtSmart ? window.wtSmart : wtSmart.use(window, window.document);";
-            $gtmCreateProductArray = "var gtmProduct = {
-                id: window._ti.productId,
-                status: window._ti.shoppingCartStatus ==='add' ? 'basket' : window._ti.shoppingCartStatus,
-                cost: window._ti.productCost,
-                quantity: window._ti.productQuantity,
-                soldOut: window._ti.productSoldOut === '1'
-            };
-            $.each(window._ti, function(key, value) {
-                gtmProduct[key] = value;
-            });
-            window._ti.gtmProductArray=[gtmProduct];";
+            $gtmCreateProductArray = "if(window._ti.hasOwnProperty('shoppingCartStatus')) {
+                var status = 'view';
+                if(window._ti.shoppingCartStatus ==='add') {
+                    status = 'basket';
+                }
+                if(window._ti.shoppingCartStatus ==='conf') {
+                    status = 'confirmation';
+                }
+                var gtmProduct = {
+                    id: window._ti.productId,
+                    status: status,
+                    cost: window._ti.productCost,
+                    quantity: window._ti.productQuantity,
+                    soldOut: window._ti.soldOut
+                };
+                $.each(window._ti, function(key, value) {
+                    if(key !== 'gtmProductArray') {
+                        gtmProduct[key] = value;
+                    }           
+                });
+                window._ti.gtmProductArray=[gtmProduct];
+            }";
 
             $gtmAddToCartPush = "window[config.gtm.datalayer] = window[config.gtm.datalayer] || [];
                         window[config.gtm.datalayer].push(function() {
                           this.reset();
                         });
-                        window.wtSmart.action.data.add('add-to-cart');
+                        {$gtmEvent}
                             window[config.gtm.datalayer].push({
-                                event: 'mapp.load',
+                                event: '{$config['gtm']['triggerBasket']}',
                                 mapp: {gtmProductArray: JSON.parse(JSON.stringify(window._ti.gtmProductArray))}
                             });";
             if($config["gtm"]["load"] === "1") {
