@@ -26,7 +26,7 @@ function copy_plugin_backup_to_app {
 function copy_plugin_app_to_volume {
 	if [ -d /app/app/code/MappDigital ]
 	then
-	log "Copy plugin version from app to volume directory..."
+	log "Copy plugin version from app to volume directory (src directory)..."
 	cp -r -f -T /app/app/code/MappDigital /plugincode/MappDigital
 	else
 		log "Plugin not yet installed - install with"
@@ -35,7 +35,7 @@ function copy_plugin_app_to_volume {
 }
 
 function copy_plugin_volume_to_app {
-	log "Copy plugin version from volume into app directory..."
+	log "Copy plugin version from volume (src directory) into app directory..."
 	cp -r -f -T /plugincode/MappDigital /app/app/code/MappDigital
 }
 

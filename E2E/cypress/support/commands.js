@@ -23,3 +23,18 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add(
+    'testTrackRequest',
+    {
+        prevSubject: false,
+    },
+    (interceptor) => {
+        return cy.wait(interceptor).then((interception) => {
+            const url =interception.request.url;
+            const urlSearchParams = new URLSearchParams(url);
+            const isSmartpixel = /136699033798929\/wt\?p=6/.test(interception.request.url);
+            return {params: Object.fromEntries(urlSearchParams.entries()), version: isSmartpixel ? '6' : '5'};
+        });
+    }
+)

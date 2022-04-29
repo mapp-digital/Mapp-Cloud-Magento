@@ -4,6 +4,7 @@ describe('MappIntelligencePluginTests: Homepage', () => {
 
     it('homepage basic datalayer', () => {
         let data;
+        let gtmData;
         cy.server();
         cy.route('GET', '/mappintelligence/data/get').as('get');
         cy.visit('/').then(()=> {
@@ -26,12 +27,19 @@ describe('MappIntelligencePluginTests: Homepage', () => {
         cy.window()
             .then((win) => {
                 data = win._ti;
+                gtmData = win.dataLayer.filter(d => d?.event === 'mapp.load');
             })
             .then(() => {
                 expect(data.pageName).to.equal('local.domain.com/');
                 expect(data.pageTitle).to.equal('Home Page');
                 expect(data.contentCategory).to.equal('Cms');
                 expect(data.addToCartEventName).to.equal('add-to-cart');
+
+                expect(gtmData.length).to.equal(1);
+                expect(gtmData[0].event).to.equal('mapp.load');
+                expect(gtmData[0].mapp.pageName).to.equal('local.domain.com/');
+                expect(gtmData[0].mapp.pageTitle).to.equal('Home Page');
+                expect(gtmData[0].mapp.contentCategory).to.equal('Cms');
             });
     });
 });

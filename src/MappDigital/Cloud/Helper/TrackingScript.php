@@ -32,6 +32,12 @@ class TrackingScript
                 e.parentNode.insertBefore(a,e)}})(window,document,'script',_tiConfig);";
 
             $addToCartHelper = "function(conf) {
+                var pixel = conf.instance.config;
+                if (conf.type === 'before' && conf.mode === 'click' && pixel.productStatus === 'add') {
+                    pixel.contentGroup = {};
+                    pixel.customParameter = {};
+                }
+            
                 if(
                     window._ti &&
                     window._ti.hasOwnProperty('addProductEntityId') &&
@@ -80,7 +86,12 @@ class TrackingScript
                 $.each(window._ti, function(key, value) {
                     if(key !== 'gtmProductArray') {
                         gtmProduct[key] = value;
-                    }           
+                    }
+                    if($.isArray(value)) {
+                        $.each(value, function(arrKey, arrValue) {
+                            gtmProduct[key + (arrKey+1)] = arrValue;
+                        })
+                    }       
                 });
                 window._ti.gtmProductArray=[gtmProduct];
             }";
@@ -212,11 +223,14 @@ class TrackingScript
                                 }
                                 if(config.tiEnable === '1') {
                                 window.wts.push(['linkId', addToCartEventName]);
-                                window.wts.push(['send', 'pageupdate']);
+                                window.wts.push(['send', 'pageupdate', true]);
                                 }
                                 {$gtmCreateProductArray}
                                 {$gtmAddToCartPush}
-                                window._ti = JSON.parse(dataLayerBackup);
+                                setTimeout(function() {
+                                    restoreDataLayer(JSON.parse(dataLayerBackup));
+                                    window.wts.push(['linkId', 'false']);
+                                }, 500);               
                             }
                         },
                         error: function (xhr, status, errorThrown) {
