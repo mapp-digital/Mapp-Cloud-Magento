@@ -9,3 +9,6 @@
 
 # 1.0.3
 - change copyright year
+
+# 1.1.0
+- Add Google Tag Manager support

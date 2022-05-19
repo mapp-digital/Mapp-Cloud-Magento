@@ -183,6 +183,10 @@ function install {
 		/app/bin/magento config:set tagintegration/general/tagintegration_id 136699033798929
 		/app/bin/magento config:set tagintegration/general/tagintegration_domain responder.wt-safetag.com
 		/app/bin/magento config:set tagintegration/general/attribute_blacklist customerPasswordHash,customerRpToken,customerRpTokenCreatedAt
+		/app/bin/magento config:set mapp_gtm/general/gtm_enable 1
+		/app/bin/magento config:set mapp_gtm/general/gtm_load 1
+		/app/bin/magento config:set mapp_gtm/general/gtm_id GTM-WBQK267
+		/app/bin/magento config:set mapp_gtm/general/gtm_add_to_cart_eventname gtm-add-to-cart
 
 		log "Finish up installation..."
 		/app/bin/magento setup:upgrade
