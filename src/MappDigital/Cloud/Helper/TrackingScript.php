@@ -10,6 +10,9 @@ namespace MappDigital\Cloud\Helper;
 class TrackingScript
 {
     public static function generateJS($config) {
+
+        $_psVersion = self::getVersion();
+
         $requireArray = "'jquery'";
         $requireArgument = "$";
         $addToCartHelper = "''";
@@ -29,7 +32,7 @@ class TrackingScript
                 if('undefined'!==typeof c.wt_r&&!isNaN(c.wt_r)){var b= new Date,a=b.getTime()+1E3*parseInt(c.wt_r);b.setTime(a);
                 d.cookie='wt_r=1;path=/;expires='+b.toUTCString()}};a.onerror=function(){'undefined'!==typeof c.wt_mcp_hide&&
                 'function'===typeof c.wt_mcp_hide.show&&(c.wt_mcp_hide.show(),c.wt_mcp_hide.show=function(){})};a.src='//'+g(f);
-                e.parentNode.insertBefore(a,e)}})(window,document,'script',_tiConfig);";
+                e.parentNode.insertBefore(a,e)}})(window,document,'script',_tiConfig);window.wts=window.wts||[];window.wts.push(['_ps', 64, '$_psVersion'])";
 
             $addToCartHelper = "function(conf) {
                 var pixel = conf.instance.config;
@@ -67,7 +70,8 @@ class TrackingScript
         if($config["gtm"]["enable"] === "1") {
             $requireArray = "'jquery','wtSmart'";
             $requireArgument = "$, wtSmart";
-            $wtSmartLoader = "window.wtSmart = window.wtSmart ? window.wtSmart : wtSmart.use(window, window.document);";
+            $wtSmartLoader = "window.wtSmart = window.wtSmart ? window.wtSmart : wtSmart.use(window, window.document);
+                window.wtSmart._ps && window.wtSmart._ps(64, '$_psVersion');";
             $gtmCreateProductArray = "if(window._ti.hasOwnProperty('shoppingCartStatus')) {
                 var status = 'view';
                 if(window._ti.shoppingCartStatus ==='add') {
@@ -238,5 +242,12 @@ class TrackingScript
                     });
                 });
             });";
+    }
+
+    public static function getVersion()
+    {
+        $path = dirname(__FILE__) . '/../composer.json';
+        $packages = json_decode(file_get_contents($path), true);
+        return $packages["version"];
     }
 }
