@@ -77,40 +77,6 @@ describe('MappIntelligencePluginTests: Product detail', () => {
     });
 
     it('product view ajax add-to-cart', () => {
-        const expectationsForPI = {
-            '5': (params) => {
-                expect(params.cg1).to.equal('Catalog');
-                expect(params.cg2).to.equal('Product');
-                expect(params.ca1).to.equal('Tanks');
-                expect(params.ca2).to.equal('Eco Friendly');
-                expect(params.ca3).to.equal('Argus All-Weather Tank');
-                expect(params.ba).to.equal('700');
-                expect(params.co).to.equal('22');
-                expect(params.qn).to.equal('1');
-                expect(params.st).to.equal('view');
-                expect(params.fns).to.equal('1');
-                expect(params.la).to.equal('en');
-                expect(params.one).to.equal('1');
-                expect(params.pu).to.equal('https://local.domain.com/argus-all-weather-tank.html');
-                expect(params.eid).to.match(/^2\d{18}$/);
-            },
-            '6': (params) => {
-                expect(params.cg1).to.equal('Catalog');
-                expect(params.cg2).to.equal('Product');
-                expect(params.ca1).to.equal('Tanks');
-                expect(params.ca2).to.equal('Eco Friendly');
-                expect(params.ca3).to.equal('Argus All-Weather Tank');
-                expect(params.ba).to.equal('700');
-                expect(params.co).to.equal('22');
-                expect(params.qn).to.equal('1');
-                expect(params.st).to.equal('view');
-                expect(params.fns).to.equal('1');
-                expect(params.la).to.equal('en');
-                expect(params.one).to.equal('1');
-                expect(params.pu).to.equal('https://local.domain.com/argus-all-weather-tank.html');
-                expect(params.eid).to.match(/^2\d{18}$/);
-            }
-        }
 
         const expectationsForAddtoCart = {
             '5': (params) => {
@@ -148,14 +114,6 @@ describe('MappIntelligencePluginTests: Product detail', () => {
                 expect(params.eid).to.match(/^2\d{18}$/);
             }
         }
-
-        cy.visit('/argus-all-weather-tank.html');
-        cy.testTrackRequest('@trackRequest').then(trackRequest => {
-            expectationsForPI[trackRequest.version](trackRequest.params);
-        });
-        cy.testTrackRequest('@trackRequest').then(trackRequest => {
-            expectationsForPI[trackRequest.version](trackRequest.params);
-        });
 
         cy.get('#option-label-size-143-item-166').click();
         cy.get('#option-label-color-93-item-52').click();

@@ -21,6 +21,6 @@ if ! id -un "${USER_ID}" > /dev/null 2>&1; then
   adduser --disabled-password --gecos '' --uid "${USER_ID}" --gid "${GROUP_ID}" "${NEW_USER_GROUP_NAME}"
 fi
 
-cypress run
+cypress run --browser chrome
 
 chown -R "${USER_ID}:${GROUP_ID}" /results

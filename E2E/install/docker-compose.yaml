@@ -50,10 +50,10 @@ services:
     e2e-electron:
         container_name: cypress
         entrypoint: ["/bin/bash", "./cypress_entrypoint.sh"]
-        image: "cypress/included:9.6.0"
+        image: "cypress/included:10.6.0"
         volumes:
           - ./../cypress:/cypress
-          - ./../cypress.json:/cypress.json
+          - ./../cypress.config.js:/cypress.config.js
           - ./../cypress_entrypoint.sh:/cypress_entrypoint.sh
           - ./../cypress_run.sh:/cypress_run.sh
           - ./../results:/results

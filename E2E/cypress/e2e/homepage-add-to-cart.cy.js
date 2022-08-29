@@ -30,9 +30,6 @@ describe('MappIntelligencePluginTests: Add-to-Cart', () => {
 
         const expectationsForAddToCart = {
             '5': (params) => {
-                expect(params.cg1).to.not.exist;
-                expect(params.cp1).to.not.exist;
-                expect(params.fns).to.not.exist;
                 expect(params.ba).to.equal('14');
                 expect(params.ca1).to.equal('Gear');
                 expect(params.ca2).to.equal('Collections');
@@ -44,9 +41,6 @@ describe('MappIntelligencePluginTests: Add-to-Cart', () => {
                 expect(params.eid).to.match(/^2\d{18}$/);
             },
             '6': (params) => {
-                expect(params.cg1).to.not.exist;
-                expect(params.cp1).to.not.exist;
-                expect(params.fns).to.not.exist;
                 expect(params.ba).to.equal('14');
                 expect(params.co).to.equal('45');
                 expect(params.ca1).to.equal('Gear');
