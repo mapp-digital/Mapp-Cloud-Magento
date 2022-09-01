@@ -20,7 +20,7 @@ install-23:
 	
 install-24:
 	make prepare-host
-	export MAGENTO_VERSION=2.4-develop && make server-start
+	export MAGENTO_VERSION=2.4-develop && make server8-start
 	docker exec -t local.domain.com bash -c "/runner.sh set_version install"
 
 old-server-start:

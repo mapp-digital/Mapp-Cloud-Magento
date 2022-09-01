@@ -33,6 +33,10 @@ function drop_carts() {
     run_query("DELETE FROM magento.quote;", "Deleting quote items - all carts are empty now!");
   }
 
+function set_blank_theme() {
+    run_query('INSERT INTO core_config_data (scope, scope_id, path,VALUE ) VALUES ("stores", 1, "design/theme/theme_id", 2 );', "Setting blank theme - don't forget to flush and reindex!");
+}
+
 if(key_exists(1, $argv) && function_exists($argv[1])) {
     call_user_func($argv[1]);
 } else {

@@ -56,22 +56,22 @@ function set_version {
 	    log "Mag2 repo found!"
 	fi
 	
-	log "Checking for existing sample data repo..."
-	if [ ! -d "/app/source/data" ]
-	then
-	    log "No repo found - start download..." && cd /app/source/
-	    git clone https://github.com/magento/magento2-sample-data.git data
-	else
-	    log "Repo with sample data found!"
-	fi
+	# log "Checking for existing sample data repo..."
+	# if [ ! -d "/app/source/data" ]
+	# then
+	#     log "No repo found - start download..." && cd /app/source/
+	#     git clone https://github.com/magento/magento2-sample-data.git data
+	# else
+	#     log "Repo with sample data found!"
+	# fi
 	
 	log "Updating repos..."
 	cd /app/source/app && git pull origin
-	cd /app/source/data && git pull origin
+	# cd /app/source/data && git pull origin
 	
 	log "Checking out version $MAGENTO_VERSION..."
 	cd /app/source/app &&  git checkout $MAGENTO_VERSION
-	cd /app/source/data &&  git checkout $MAGENTO_VERSION
+	# cd /app/source/data &&  git checkout $MAGENTO_VERSION
 }
 
 function uninstall {
@@ -105,8 +105,8 @@ function install {
 	else
 		log "Copy data from source to app directory..."
 		cp -r /app/source/app/* /app/
-		mkdir /app/magento2-sample-data/
-		cp -r /app/source/data/* /app/magento2-sample-data/
+		# mkdir /app/magento2-sample-data/
+		# cp -r /app/source/data/* /app/magento2-sample-data/
 		
 		log "Getting plugin code..."
 		if [ -d /app/source/MappDigital ]
@@ -118,9 +118,9 @@ function install {
 			copy_plugin_volume_to_app
 		fi
 		
-		log "Setting sample data permissions..."
-		php -f /app/magento2-sample-data/dev/tools/build-sample-data.php -- --ce-source="/app/"
-		chown -R :application /app/magento2-sample-data/
+		# log "Setting sample data permissions..."
+		# php -f /app/magento2-sample-data/dev/tools/build-sample-data.php -- --ce-source="/app/"
+		# chown -R :application /app/magento2-sample-data/
 		
 		wait_for_db
 		log "Install composer components..."
@@ -188,7 +188,14 @@ function install {
 		/app/bin/magento config:set mapp_gtm/general/gtm_id GTM-WBQK267
 		/app/bin/magento config:set mapp_gtm/general/gtm_add_to_cart_eventname gtm-add-to-cart
 
+		log "Setting theme to Blank..."
+		php /db.php set_blank_theme
+
+		log "Creating test products and customer account..."
+		php /testdata.php
+
 		log "Finish up installation..."
+		/app/bin/magento indexer:reindex
 		/app/bin/magento setup:upgrade
 		/app/bin/magento cache:flush
 		/app/bin/magento maintenance:disable

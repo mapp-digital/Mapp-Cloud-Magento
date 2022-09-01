@@ -14,7 +14,7 @@ services:
           - PHP_MAX_EXECUTION_TIME=3000
           - PHP_POST_MAX_SIZE=900M
           - PHP_UPLOAD_MAX_FILESIZE=2024M
-          - COMPOSER_VERSION=1
+          - COMPOSER_VERSION=2
           - XDEBUG_REMOTE_AUTOSTART=1
           - XDEBUG_REMOTE_CONNECT_BACK=1
           ## IMPORTANT: please change this ip address to your docker host ip. Get your docker host ip:
@@ -23,6 +23,7 @@ services:
           ##- XDEBUG_REMOTE_PORT=9000
         volumes:
           - ./runner.sh:/runner.sh
+          - ./testdata.php:/testdata.php
           - ./wait-for-it.sh:/wait-for-it.sh
           - ./db.php:/db.php
           - ./app:/app:cached
