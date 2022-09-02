@@ -33,7 +33,7 @@ server8-start:
 	cd ./E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker-compose up -d
 	
 dev-server-start:
-	cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:7.4" && docker-compose up -d
+	cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:8.1" && docker-compose up -d
 
 old-dev-server-start:
 	cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:7.2" && docker-compose up -d

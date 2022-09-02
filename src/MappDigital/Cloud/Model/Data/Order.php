@@ -73,10 +73,8 @@ class Order extends AbstractData
             $productData['qty'] = intval($item->getQtyOrdered());
             $productData['quantity'] = intval($item->getQtyOrdered());
 
-            if (!$productData['price']) {
-                $productData['price'] = $item->getPrice();
-                $productData['cost'] = $item->getPrice();
-            }
+            $productData['price'] = $item->getPrice();
+            $productData['cost'] = $item->getPrice();
 
             $productData['attributes'] = array();
             $allAttributesForProduct = array();

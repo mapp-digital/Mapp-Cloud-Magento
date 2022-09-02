@@ -2,10 +2,10 @@
 
 class Magento_REST {
     const URL = "http://local.domain.com/rest";
-    private $DATA_VARIATION = "ABCDEFGHI2";
+    private $DATA_VARIATION = "";
     private $token;
     private $attribute_set_id;
-    private $attribute_sets;
+    private $attribute_group_id;
     private $color_attribute_id;
     private $category1;
     private $category2;
@@ -31,6 +31,81 @@ class Magento_REST {
 
         $this->link_variations($configurable_product, [$variant1, $variant2, $variant3]);
         echo "Configurable product created: " . $configurable_product["name"] . "\n";
+
+        $bundleProduct1 = $this->post("/default/V1/products", $this->get_simple_product("Mapp Bundle Item 1", "bundleitem1", 12));
+        $bundleProduct2 = $this->post("/default/V1/products", $this->get_simple_product("Mapp Bundle Item 2", "bundleitem2", 99));
+        $bundle = $this->post("/default/V1/products", $this->get_bundle($bundleProduct1, $bundleProduct2));
+    }
+
+    private function get_bundle($child1, $child2)
+    {
+        return [
+            "product" => [
+            "sku" => "mappbundle{$this->DATA_VARIATION}",
+            "name" => "Mapp Bundle{$this->DATA_VARIATION}",
+            "attribute_set_id" => $this->attribute_set_id,
+            "status" => 1,
+            "visibility" => 4,
+            "type_id" => "bundle",
+            "extension_attributes" => [
+                "category_links" => [
+                    [
+                    "position" => 0,
+                    "category_id" => $this->category1["id"]
+                    ],
+                    [
+                    "position" => 0,
+                    "category_id" => $this->category2["id"]
+                    ]
+                ],
+                "stock_item" => [
+                    "qty" => "123456",
+                    "is_in_stock" => true
+                ],
+                "bundle_product_options" => [
+                    [
+                      "option_id" => 1,
+                      "title" => "Mapp Bundle{$this->DATA_VARIATION}",
+                      "required" => true,
+                      "type" => "select",
+                      "position" => 1,
+                      "sku" => "mappbundle{$this->DATA_VARIATION}",
+                      "product_links" => [
+                        [
+                          "id" => "1",
+                          "sku" => $child1["sku"],
+                          "option_id" => 1,
+                          "qty" => 1,
+                          "position" => 1,
+                          "is_default" => false,
+                          "price" => 12,
+                          "price_type" => null,
+                          "can_change_quantity" => 0
+                        ],
+                        [
+                          "id" => "2",
+                          "sku" => $child2["sku"],
+                          "option_id" => 1,
+                          "qty" => 1,
+                          "position" => 2,
+                          "is_default" => false,
+                          "price" => 99,
+                          "price_type" => null,
+                          "can_change_quantity" => 0
+                        ]
+                      ]
+                    ]
+                  ]
+                    
+                ],
+                "custom_attributes" => [
+                    [
+                        "attribute_code" => "price_view",
+                        "value" => "0"
+                    ]
+                ]
+        ]      
+    ];
     }
 
     private function get_config_option()
@@ -57,7 +132,7 @@ class Magento_REST {
         $this->post("/default/V1/configurable-products/$sku/options", $this->get_config_option());
         for ($i=0; $i < count($children); $i++) { 
             $variant = $children[$i];
-            $this->post("/default/V1/configurable-products/$sku/child", $this->get_child_sku($variant));
+           $this->post("/default/V1/configurable-products/$sku/child", $this->get_child_sku($variant));
         }
     }
 
@@ -69,13 +144,15 @@ class Magento_REST {
         ];
     }
 
-    private function get_simple_product() {
+    private function get_simple_product($name ="Mapp Simple Product", $sku="mappsimple", $price=70) {
+        $name = "{$name}{$this->DATA_VARIATION}";
+        $sku = "{$sku}{$this->DATA_VARIATION}";
         return [
                 "product" => [
-                "sku" => "mappsimple{$this->DATA_VARIATION}",
-                "name" => "Mapp Simple Product{$this->DATA_VARIATION}",
+                "sku" => $sku,
+                "name" => $name,
                 "attribute_set_id" => $this->attribute_set_id,
-                "price" => 70,
+                "price" => $price,
                 "status" => 1,
                 "visibility" => 4,
                 "type_id" => "simple",
@@ -168,6 +245,18 @@ class Magento_REST {
 
     private function get_attribute_data() 
     {
+        $attribute_set_goups = $this->get("/default/V1/products/attribute-sets/groups/list?searchCriteria[currentPage]=1");
+        $attribute_set_goups = $attribute_set_goups["items"];
+        for ($i=0; $i < count($attribute_set_goups); $i++) { 
+            $group = $attribute_set_goups[$i];
+            if($group["attribute_group_name"] === "Product Details") {
+                $this->attribute_set_id = $group["attribute_set_id"];
+                $this->attribute_group_id = $group["attribute_group_id"];
+                break;
+            }
+        }
+        $this->post("/default/V1/products/attribute-sets/attributes", $this->get_attribute_payload());
+
         $attribute_sets = $this->get("/default/V1/products/attribute-sets/sets/list?searchCriteria[currentPage]=1");
         $this->attribute_set_id = $attribute_sets["items"][0]["attribute_set_id"];
         $this->attribute_sets = $this->get("/default/V1/products/attribute-sets/$this->attribute_set_id/attributes");
@@ -178,6 +267,15 @@ class Magento_REST {
                 break;
             }
         }
+    }
+
+    private function get_attribute_payload() {
+        return [
+            "attributeSetId" => $this->attribute_set_id,
+            "attributeGroupId" => $this->attribute_group_id,
+            "attributeCode" => "color",
+            "sortOrder" => 99
+        ];
     }
 
     private function create_categories()
