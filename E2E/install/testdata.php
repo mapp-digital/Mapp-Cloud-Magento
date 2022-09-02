@@ -21,20 +21,21 @@ class Magento_REST {
         
         $customer = $this->post("/default/V1/customers", $this->get_customer());
         echo "Customer created: ". $customer["email"] . " - Test1234!\n";
-        $simple_product = $this->post("/default/V1/products", $this->get_simple_product());
 
+        $simple_product = $this->post("/default/V1/products", $this->get_simple_product());
         echo "Simple product created: " . $simple_product["name"] . "\n";
+
         $configurable_product = $this->post("/default/V1/products", $this->get_configurable_product());
         $variant1 = $this->post("/default/V1/products", $this->get_product_variant("green", $this->green_id));
         $variant2 = $this->post("/default/V1/products", $this->get_product_variant("red", $this->red_id));
         $variant3 = $this->post("/default/V1/products", $this->get_product_variant("blue", $this->blue_id));
-
         $this->link_variations($configurable_product, [$variant1, $variant2, $variant3]);
         echo "Configurable product created: " . $configurable_product["name"] . "\n";
 
         $bundleProduct1 = $this->post("/default/V1/products", $this->get_simple_product("Mapp Bundle Item 1", "bundleitem1", 12));
         $bundleProduct2 = $this->post("/default/V1/products", $this->get_simple_product("Mapp Bundle Item 2", "bundleitem2", 99));
         $bundle = $this->post("/default/V1/products", $this->get_bundle($bundleProduct1, $bundleProduct2));
+        echo "Product Bundle created: " . $bundle["name"] . "\n";
     }
 
     private function get_bundle($child1, $child2)
@@ -245,16 +246,10 @@ class Magento_REST {
 
     private function get_attribute_data() 
     {
-        $attribute_set_goups = $this->get("/default/V1/products/attribute-sets/groups/list?searchCriteria[currentPage]=1");
-        $attribute_set_goups = $attribute_set_goups["items"];
-        for ($i=0; $i < count($attribute_set_goups); $i++) { 
-            $group = $attribute_set_goups[$i];
-            if($group["attribute_group_name"] === "Product Details") {
-                $this->attribute_set_id = $group["attribute_set_id"];
-                $this->attribute_group_id = $group["attribute_group_id"];
-                break;
-            }
-        }
+        $query = $this->get_query("attribute_group_name", "Product Details");
+        $attribute_set_goups = $this->get("/default/V1/products/attribute-sets/groups/list$query");
+        $this->attribute_set_id = $attribute_set_goups["items"][0]["attribute_set_id"];
+        $this->attribute_group_id = $attribute_set_goups["items"][0]["attribute_group_id"];
         $this->post("/default/V1/products/attribute-sets/attributes", $this->get_attribute_payload());
 
         $attribute_sets = $this->get("/default/V1/products/attribute-sets/sets/list?searchCriteria[currentPage]=1");
@@ -327,6 +322,13 @@ class Magento_REST {
             ],
             "password"=> "Test1234!"
         ];
+    }
+
+    private function get_query($field, $value, $condition = "eq")
+    {
+        $s = "searchCriteria[filter_groups][0][filters][0]";
+        $v = urlencode($value);
+        return "?".$s."[field]=".$field."&".$s."[value]=".$v."&".$s."[condition_type]=".$condition;
     }
 
     private function get_token()

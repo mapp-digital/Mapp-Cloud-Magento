@@ -197,7 +197,6 @@ function install {
 		log "Finish up installation..."
 		/app/bin/magento indexer:reindex
 		/app/bin/magento setup:upgrade
-		/app/bin/magento cache:flush
 		/app/bin/magento maintenance:disable
 		
 		log "Done, you can now reach the store in you browser."
