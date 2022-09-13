@@ -1,6 +1,6 @@
-.PHONY: prepare-host cleanup-host install-23 install-24 old-server-start server-start server8-start dev-server-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp empty-carts flush upgrade log-debug plugin-backup plugin-restore plugin-copy-app-to-volume plugin-install
+.PHONY: prepare-host cleanup-host install-23 install-24 old-server-start server7-start server8-start dev-server-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp empty-carts flush upgrade log-debug plugin-backup plugin-restore plugin-copy-app-to-volume plugin-install check
 
-PHP=webdevops/php-apache:7.4
+PHP7=webdevops/php-apache:7.4
 PHP8=webdevops/php-apache:8.1
 USER_NAME := $(shell id -un)
 USER_ID := $(shell id -u)
@@ -9,6 +9,9 @@ USER_GROUP = $(USER_ID):$(GROUP_ID)
 
 prepare-host:
 	bash ./E2E/install/prepare_host.sh
+
+check:
+	bash ./E2E/install/check.sh
 	
 cleanup-host:
 	docker exec -t local.domain.com bash -c "rm -f -R /app/*"
@@ -24,19 +27,19 @@ install-24:
 	docker exec -t local.domain.com bash -c "/runner.sh set_version install"
 
 old-server-start:
-	cd ./E2E/install && export PHPIMAGE=webdevops/php-apache:7.2 && docker-compose up -d
+	make check && cd ./E2E/install && export PHPIMAGE=webdevops/php-apache:7.2 && docker-compose up -d
 
-server-start:
-	cd ./E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP) && docker-compose up -d
+server7-start:
+	make check && cd ./E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP7) && docker-compose up -d
 
 server8-start:
-	cd ./E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker-compose up -d
+	make check && cd ./E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker-compose up -d
 	
 dev-server-start:
-	cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:8.1" && docker-compose up -d
+	make check && cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:8.1" && docker-compose up -d
 
 old-dev-server-start:
-	cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:7.2" && docker-compose up -d
+	make check && cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:7.2" && docker-compose up -d
 
 stop-server:
 	cd ./E2E/install && docker-compose down
@@ -46,7 +49,7 @@ tests:
 	docker exec -t cypress bash -c "/cypress_run.sh $(USER_NAME) $(USER_ID) $(GROUP_ID)"
 
 run-tests:
-	make server-start
+	make server8-start
 	make empty-carts
 	docker exec -t cypress bash -c "/cypress_run.sh $(USER_NAME) $(USER_ID) $(GROUP_ID)"
 	make stop-server
@@ -54,7 +57,7 @@ run-tests:
 jenkins-test:
 	make prepare-host
 	chmod 777 ./E2E/install/app
-	make server-start
+	make server8-start
 	make uninstall
 	make uninstall-mapp
 	make install-24
@@ -65,7 +68,7 @@ jenkins-test:
 jenkins-test-complete:
 	make prepare-host
 	chmod 777 ./E2E/install/app
-	make server-start
+	make server8-start
 	make uninstall
 	make install-23
 	make tests

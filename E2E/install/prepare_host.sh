@@ -19,3 +19,4 @@ chmod +x ./E2E/install/runner.sh
 chmod +x "./E2E/install/wait-for-it.sh"
 chmod +x ./E2E/install/db.php 
 chmod +x ./E2E/cypress_entrypoint.sh 
+chmod +x ./E2E/install/check.sh 
