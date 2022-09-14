@@ -1,4 +1,4 @@
-.PHONY: prepare-host cleanup-host install-23 install-24 old-server-start server7-start server8-start dev-server-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp empty-carts flush upgrade log-debug plugin-backup plugin-restore plugin-copy-app-to-volume plugin-install check
+.PHONY: prepare-host cleanup-host install-23 install-24 old-server-start server7-start server8-start dev-server8-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp empty-carts flush upgrade log-debug plugin-backup plugin-restore plugin-copy-app-to-volume plugin-install check
 
 PHP7=webdevops/php-apache:7.4
 PHP8=webdevops/php-apache:8.1
@@ -35,11 +35,8 @@ server7-start:
 server8-start:
 	make check && cd ./E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker-compose up -d
 	
-dev-server-start:
+dev-server8-start:
 	make check && cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:8.1" && docker-compose up -d
-
-old-dev-server-start:
-	make check && cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:7.2" && docker-compose up -d
 
 stop-server:
 	cd ./E2E/install && docker-compose down

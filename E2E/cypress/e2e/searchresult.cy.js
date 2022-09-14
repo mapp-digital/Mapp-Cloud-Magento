@@ -16,7 +16,7 @@ describe('MappIntelligencePluginTests: Searchresult', () => {
                 expect(params.fns).to.equal('1');
                 expect(params.la).to.equal('en');
                 expect(params.one).to.equal('1');
-                expect(params.pu).to.equal('https://local.domain.com/catalogsearch/result/?q=Argus');
+                expect(params.pu).to.equal('https://local.domain.com/catalogsearch/result/?q=mapp');
                 expect(params.eid).to.match(/^2\d{18}$/);
             },
             '6': (params) => {
@@ -26,11 +26,11 @@ describe('MappIntelligencePluginTests: Searchresult', () => {
                 expect(params.fns).to.equal('1');
                 expect(params.la).to.equal('en');
                 expect(params.one).to.equal('1');
-                expect(params.pu).to.equal('https://local.domain.com/catalogsearch/result/?q=Argus');
+                expect(params.pu).to.equal('https://local.domain.com/catalogsearch/result/?q=mapp');
                 expect(params.eid).to.match(/^2\d{18}$/);
             }
         }
-        cy.visit('/catalogsearch/result/?q=Argus');
+        cy.visit('/catalogsearch/result/?q=mapp');
         cy.testTrackRequest('@trackRequest').then(trackRequest => {
             expectationsForPI[trackRequest.version](trackRequest.params);
         });
@@ -44,17 +44,17 @@ describe('MappIntelligencePluginTests: Searchresult', () => {
             })
             .then(() => {
                 expect(data.pageName).to.equal('local.domain.com/catalogsearch/result/');
-                expect(data.pageTitle).to.equal('Search results for: \'Argus\'');
+                expect(data.pageTitle).to.equal('Search results for: \'mapp\'');
                 expect(data.contentCategory).to.equal('Catalogsearch');
                 expect(data.contentSubcategory).to.equal('Result');
-                expect(data.internalSearch).to.equal('Argus');
+                expect(data.internalSearch).to.equal('mapp');
                 expect(data.pageNumber).to.equal('1');
             });
     });
 
     it('search result basic datalayer page 2', () => {
         let data;
-        cy.visit('/catalogsearch/result/index/?p=2&q=yoga');
+        cy.visit('/catalogsearch/result/index/?p=2&q=mapp');
         const expectationsForPI = {
             '5': (params) => {
                 expect(params.cg1).to.equal('Catalogsearch');
@@ -63,7 +63,7 @@ describe('MappIntelligencePluginTests: Searchresult', () => {
                 expect(params.fns).to.equal('1');
                 expect(params.la).to.equal('en');
                 expect(params.one).to.equal('1');
-                expect(params.pu).to.equal('https://local.domain.com/catalogsearch/result/index/?p=2&q=yoga');
+                expect(params.pu).to.equal('https://local.domain.com/catalogsearch/result/index/?p=2&q=mapp');
                 expect(params.eid).to.match(/^2\d{18}$/);
             },
             '6': (params) => {
@@ -73,7 +73,7 @@ describe('MappIntelligencePluginTests: Searchresult', () => {
                 expect(params.fns).to.equal('1');
                 expect(params.la).to.equal('en');
                 expect(params.one).to.equal('1');
-                expect(params.pu).to.equal('https://local.domain.com/catalogsearch/result/index/?p=2&q=yoga');
+                expect(params.pu).to.equal('https://local.domain.com/catalogsearch/result/index/?p=2&q=mapp');
                 expect(params.eid).to.match(/^2\d{18}$/);
             }
         }
@@ -89,10 +89,10 @@ describe('MappIntelligencePluginTests: Searchresult', () => {
             })
             .then(() => {
                 expect(data.pageName).to.equal('local.domain.com/catalogsearch/result/index/');
-                expect(data.pageTitle).to.equal('Search results for: \'yoga\'');
+                expect(data.pageTitle).to.equal('Search results for: \'mapp\'');
                 expect(data.contentCategory).to.equal('Catalogsearch');
                 expect(data.contentSubcategory).to.equal('Result');
-                expect(data.internalSearch).to.equal('yoga');
+                expect(data.internalSearch).to.equal('mapp');
                 expect(data.pageNumber).to.equal('2');
             });
     });

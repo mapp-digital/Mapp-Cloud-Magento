@@ -36,6 +36,19 @@ class Magento_REST {
         $bundleProduct2 = $this->post("/default/V1/products", $this->get_simple_product("Mapp Bundle Item 2", "bundleitem2", 99));
         $bundle = $this->post("/default/V1/products", $this->get_bundle($bundleProduct1, $bundleProduct2));
         echo "Product Bundle created: " . $bundle["name"] . "\n";
+
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 1", "otheritem1", 30));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 2", "otheritem2", 31));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 3", "otheritem3", 32));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 4", "otheritem4", 33));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 5", "otheritem5", 34));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 6", "otheritem6", 35));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 7", "otheritem7", 36));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 8", "otheritem8", 37));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 9", "otheritem9", 38));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 10", "otheritem10", 39));
+        $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 11", "otheritem11", 40));
+        echo "11 other simple products created!\n";
     }
 
     private function get_bundle($child1, $child2)

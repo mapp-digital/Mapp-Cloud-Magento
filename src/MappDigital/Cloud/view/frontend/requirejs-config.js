@@ -1,5 +1,5 @@
 var config = {
     paths: {
-        'wtSmart': 'https://responder.wt-safetag.com/smartpixel/smart-pixel.min'
+        'wtSmart': 'MappDigital_Cloud/js/smartpixel.min'
     }
 };

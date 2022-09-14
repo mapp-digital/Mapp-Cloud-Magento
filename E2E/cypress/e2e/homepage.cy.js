@@ -31,14 +31,14 @@ describe('MappIntelligencePluginTests: Homepage', () => {
             })
             .then(() => {
                 expect(data.pageName).to.equal('local.domain.com/');
-                expect(data.pageTitle).to.equal('Home Page');
+                expect(data.pageTitle).to.equal('Home page');
                 expect(data.contentCategory).to.equal('Cms');
                 expect(data.addToCartEventName).to.equal('add-to-cart');
 
                 expect(gtmData.length).to.equal(1);
                 expect(gtmData[0].event).to.equal('mapp.load');
                 expect(gtmData[0].mapp.pageName).to.equal('local.domain.com/');
-                expect(gtmData[0].mapp.pageTitle).to.equal('Home Page');
+                expect(gtmData[0].mapp.pageTitle).to.equal('Home page');
                 expect(gtmData[0].mapp.contentCategory).to.equal('Cms');
             });
     });
