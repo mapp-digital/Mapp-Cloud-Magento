@@ -16,3 +16,6 @@
 # 1.1.1
 - Load Smartpixel from Magento server
 - add pageupdate for TI
+
+# 1.1.2
+- enable support for auto sendinfo

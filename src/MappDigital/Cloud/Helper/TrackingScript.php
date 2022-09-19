@@ -127,7 +127,6 @@ class TrackingScript
         return "require([{$requireArray}],
             function({$requireArgument}) {
                 'use strict';
-                {$tiLoader}
                 {$wtSmartLoader}
                 {$gtmLoader}
                 {$acquireLoader}
@@ -193,9 +192,7 @@ class TrackingScript
             
                         }
                         const config = response.responseJSON.config;
-                        if(config.tiEnable === '1') {
-                            window.wts.push(['send', 'pageupdate']);
-                        }
+                        {$tiLoader}
                         if(config.gtm.enable === '1') {
                             {$gtmCreateProductArray}   
                             window[config.gtm.datalayer] = window[config.gtm.datalayer] || [];
