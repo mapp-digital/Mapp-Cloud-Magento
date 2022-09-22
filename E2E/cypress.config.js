@@ -8,7 +8,7 @@ module.exports = defineConfig({
   requestTimeout: 40000,
   defaultCommandTimeout: 40000,
   pageLoadTimeout: 80000,
-  video: true,
+  video: false,
   screenshotsFolder: '/results/screenshots',
   reporter: 'junit',
   reporterOptions: {

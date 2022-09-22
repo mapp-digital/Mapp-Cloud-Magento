@@ -327,14 +327,31 @@ class Magento_REST {
 
     private function get_customer()
     {
-        return [
-            "customer" => [
-                "email"=> "test{$this->DATA_VARIATION}@mapp.com",
-                "firstname"=> "Mapp",
-                "lastname"=> "User"
-            ],
-            "password"=> "Test1234!"
-        ];
+        return ["customer"=> [
+
+            "default_billing"=> "1",
+            "default_shipping"=> "1",
+            "email"=> "test{$this->DATA_VARIATION}@mapp.com",
+            "firstname"=> "Mapp",
+            "lastname"=> "User",
+            "addresses"=> [
+                [
+                    "country_id"=> "DE",
+                    "street"=> [
+                        "mystreet 15"
+                    ],
+                    "telephone"=> "+4917699999999",
+                    "postcode"=> "10164",
+                    "city"=> "Berlin",
+                    "firstname"=> "Mapp",
+                    "lastname"=> "User",
+                    "default_shipping"=> true,
+                    "default_billing"=> true
+                ]
+            ]
+        ],
+         "password"=> "Test1234!"
+    ];
     }
 
     private function get_query($field, $value, $condition = "eq")

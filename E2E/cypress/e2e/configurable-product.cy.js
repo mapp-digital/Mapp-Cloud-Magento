@@ -112,5 +112,43 @@ describe('Configurable Product', () => {
         cy.testTrackRequest('@trackRequest').then(trackRequest => {
             expectationsForAddToCartEvent[trackRequest.version](trackRequest.params);
         });
+
+        cy.get("#qty").clear().type("6");
+        cy.contains("Add to Cart").click();
+
+        const expectationsForMultipleAddToCartEvent = {
+            '5': (params) => {
+
+                expect(params.ca1).to.equal('MAPP main category');
+                expect(params.ca2).to.equal('MAPP sub category');
+                expect(params.ca3).to.equal('Mapp Configurable Product');
+                expect(params.ba).to.equal('2');
+                expect(params.co).to.equal('138');
+                expect(params.qn).to.equal('6');
+                expect(params.st).to.equal('add');
+                expect(params.la).to.equal('en');
+                expect(params.pu).to.equal('https://local.domain.com/mapp-configurable-product.html');
+                expect(params.eid).to.match(/^2\d{18}$/);
+            },
+            '6': (params) => {
+                expect(params.ca1).to.equal('MAPP main category');
+                expect(params.ca2).to.equal('MAPP sub category');
+                expect(params.ca3).to.equal('Mapp Configurable Product');
+                expect(params.ba).to.equal('2');
+                expect(params.co).to.equal('138');
+                expect(params.qn).to.equal('6');
+                expect(params.st).to.equal('add');
+                expect(params.la).to.equal('en');
+                expect(params.pu).to.equal('https://local.domain.com/mapp-configurable-product.html');
+                expect(params.eid).to.match(/^2\d{18}$/);
+            }
+        }
+
+        cy.testTrackRequest('@trackRequest').then(trackRequest => {
+            expectationsForMultipleAddToCartEvent[trackRequest.version](trackRequest.params);
+        });
+        cy.testTrackRequest('@trackRequest').then(trackRequest => {
+            expectationsForMultipleAddToCartEvent[trackRequest.version](trackRequest.params);
+        });
     });
 });

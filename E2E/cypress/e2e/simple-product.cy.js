@@ -112,5 +112,42 @@ describe('Simple Product', () => {
         cy.testTrackRequest('@trackRequest').then(trackRequest => {
             expectationsForAddToCartEvent[trackRequest.version](trackRequest.params);
         });
+        cy.get("#qty").clear().type("5");
+        cy.contains("Add to Cart").click();
+
+        const expectationsForMultipleAddToCartEvent = {
+            '5': (params) => {
+
+                expect(params.ca1).to.equal('MAPP main category');
+                expect(params.ca2).to.equal('MAPP sub category');
+                expect(params.ca3).to.equal('Mapp Simple Product');
+                expect(params.ba).to.equal('1');
+                expect(params.co).to.equal('350');
+                expect(params.qn).to.equal('5');
+                expect(params.st).to.equal('add');
+                expect(params.la).to.equal('en');
+                expect(params.pu).to.equal('https://local.domain.com/mapp-simple-product.html');
+                expect(params.eid).to.match(/^2\d{18}$/);
+            },
+            '6': (params) => {
+                expect(params.ca1).to.equal('MAPP main category');
+                expect(params.ca2).to.equal('MAPP sub category');
+                expect(params.ca3).to.equal('Mapp Simple Product');
+                expect(params.ba).to.equal('1');
+                expect(params.co).to.equal('350');
+                expect(params.qn).to.equal('5');
+                expect(params.st).to.equal('add');
+                expect(params.la).to.equal('en');
+                expect(params.pu).to.equal('https://local.domain.com/mapp-simple-product.html');
+                expect(params.eid).to.match(/^2\d{18}$/);
+            }
+        }
+
+        cy.testTrackRequest('@trackRequest').then(trackRequest => {
+            expectationsForMultipleAddToCartEvent[trackRequest.version](trackRequest.params);
+        });
+        cy.testTrackRequest('@trackRequest').then(trackRequest => {
+            expectationsForMultipleAddToCartEvent[trackRequest.version](trackRequest.params);
+        });
     });
 });
