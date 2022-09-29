@@ -20,5 +20,8 @@
 # 1.1.2
 - enable support for auto sendinfo
 
-# 1.1.2
+# 1.1.3
 - improved fallback for getting product id
+
+# 1.1.4
+- support query parameter in fallback
