@@ -19,3 +19,6 @@
 
 # 1.1.2
 - enable support for auto sendinfo
+
+# 1.1.2
+- improved fallback for getting product id

@@ -75,7 +75,7 @@ class Get implements HttpGetActionInterface
         $isAddToCart = isset($params['add']);
         if(!$isAddToCart) {
             if (isset($params['product'])) {
-                $this->_dataLayerModel->setProductDataLayer();
+                $this->_dataLayerModel->setProductDataLayer($params['product']);
             }
             $this->_dataLayerModel->setCustomerDataLayer();
             $this->_dataLayerModel->setOrderDataLayer();

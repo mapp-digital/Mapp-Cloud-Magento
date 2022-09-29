@@ -158,13 +158,8 @@ class Product extends AbstractData
         }
     }
 
-    private function fallback_product_id_getter()
+    private function fallback_product_id_getter($productUrlFragment)
     {
-        if(preg_match('/.*\/id\/(\d+)$/', $_SERVER['HTTP_REFERER'], $matches)) {
-            return $matches[1];
-        }
-        $domain = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . '/';
-        $preparedPathInfo = explode($domain, $_SERVER['HTTP_REFERER'])[1];
         $connection = $this->_productUrlRewriteResource->getConnection();
         $table      = $this->_productUrlRewriteResource->getTable('url_rewrite');
         $select     = $connection->select();
@@ -174,19 +169,19 @@ class Product extends AbstractData
 
         $result = $connection->fetchCol(
             $select,
-            ['entity_type' => 'product', 'request_path' => $preparedPathInfo]
+            ['entity_type' => 'product', 'request_path' => $productUrlFragment]
         );
-        return isset($result[0]) ? $result[0] : null;
+        return $result[0] ?? null;
     }
 
-    private function generate()
+    private function generate($productUrlFragment)
     {
         $this->setBreadcrumb();
 
         if (!$this->_product) {
             $productId = $this->_catalogSession->getData('last_viewed_product_id');
             if(is_null($productId)) {
-                $productId = $this->fallback_product_id_getter();
+                $productId = $this->fallback_product_id_getter($productUrlFragment);
             }
             if(!is_null($productId)) {
                 $this->_product = $this->_productRepository->getById($productId);
@@ -212,9 +207,9 @@ class Product extends AbstractData
     /**
      * @return array
      */
-    public function getDataLayer()
+    public function getDataLayer($productUrlFragment)
     {
-        $this->generate();
+        $this->generate($productUrlFragment);
 
         return $this->_data;
     }

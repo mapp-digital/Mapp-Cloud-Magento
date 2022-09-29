@@ -171,7 +171,7 @@ class TrackingScript
                 window.wts = window.wts || [];
                 window.wts.push(['_mappAddToCartHelper']);
                 $.ajax({
-                    url: mappEndpoint + (isProductView ? '?product=1' : ''),
+                    url: mappEndpoint + (isProductView ? '?product='+location.href.split('/').pop() : ''),
                     type: 'GET',
                     dataType: 'json',
                     complete: function(response) {
