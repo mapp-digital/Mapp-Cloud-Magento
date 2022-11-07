@@ -192,4 +192,11 @@ class DataLayer
         }
         return $existingProducts;
     }
+
+    public static function getUrlFragment($product)
+    {
+        $url = $product->getProductUrl();
+        preg_match("/.+\/(.+?)(?:$|\?)/", $url, $match);
+        return $match[1];
+    }
 }

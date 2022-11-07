@@ -68,8 +68,10 @@ class Order extends AbstractData
         $existingProductData = [];
 
         foreach ($items as $item) {
-            $this->_product->setProduct($item->getProduct());
-            $productData = $this->_product->getDataLayer();
+            $product = $item->getProduct();
+            $urlFragment = DataLayerHelper::getUrlFragment($product);
+            $this->_product->setProduct($product);
+            $productData = $this->_product->getDataLayer($urlFragment);
             $productData['qty'] = intval($item->getQtyOrdered());
             $productData['quantity'] = intval($item->getQtyOrdered());
 

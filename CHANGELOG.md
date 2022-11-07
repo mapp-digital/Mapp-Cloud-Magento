@@ -25,3 +25,6 @@
 
 # 1.1.4
 - support query parameter in fallback
+
+# 1.1.5
+- add fallback to add-to-cart and order events

@@ -74,7 +74,8 @@ class TIDatalayerAddToCart implements ObserverInterface
 
             if ($product) {
                 $this->_product->setProduct($product);
-                $productData = $this->_product->getDataLayer();
+                $urlFragment = DataLayerHelper::getUrlFragment($product);
+                $productData = $this->_product->getDataLayer($urlFragment);
                 $productData['qty'] = intval($item->getQtyToAdd());
                 $productData['quantity'] = intval($item->getQtyToAdd());
                 $productData['status'] = 'add';
