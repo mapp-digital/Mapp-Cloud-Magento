@@ -1,0 +1,22 @@
+{
+    "name": "mappdigital/module-cloud",
+    "description": "Mapp Digital Integrations Module For Magento 2",
+    "type": "magento2-module",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Richard Cripps",
+            "email": "richard.cripps@ayko.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MappDigital\\Cloud\\": ""
+        }
+    }
+}
