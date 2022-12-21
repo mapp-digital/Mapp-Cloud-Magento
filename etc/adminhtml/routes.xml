@@ -11,7 +11,7 @@
         <route id="MappDigital_Cloud" frontName="MappDigital_Cloud">
             <module name="MappDigital_Cloud" />
         </route>
-        <route id="mappconnect" frontName="mappconnect">
+        <route id="mapp_connect" frontName="mapp_connect">
             <module name="MappDigital_Cloud"/>
         </route>
     </router>

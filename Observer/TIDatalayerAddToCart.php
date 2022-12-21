@@ -6,89 +6,77 @@
  */
 namespace MappDigital\Cloud\Observer;
 
+use Magento\Catalog\Model\Product as MagentoProductModel;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use MappDigital\Cloud\Helper\Config;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
-use MappDigital\Cloud\Model\Data\Product;
+use MappDigital\Cloud\Model\Data\Product as MappProductModel;
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Framework\App\Request\Http;
 
 class TIDatalayerAddToCart implements ObserverInterface
 {
-
-    /**
-     * @var Session
-     */
-    protected $_checkoutSession;
-    /**
-     * @var Config
-     */
-    protected $_config;
-    /**
-     * @var Product
-     */
-    protected $_product;
-
-    /**
-     * @var ProductAttributeRepositoryInterface
-     */
-    protected $_productAttributeRepositoryInterface;
-
-    /**
-     * @var Http
-     */
-    protected $_request;
+    protected Session $checkoutSession;
+    protected Config $config;
+    protected MappProductModel $mappProductModel;
+    protected ProductAttributeRepositoryInterface $productAttributeRepositoryInterface;
+    protected Http $request;
 
     /**
      * @param Session $checkoutSession
-     * @param Config $_config
-     * @param Product $product
+     * @param Config $config
+     * @param MappProductModel $mappProductModel
      * @param ProductAttributeRepositoryInterface $productAttributeRepositoryInterface
      * @param Http $request
      */
     public function __construct(
         Session $checkoutSession,
         Config $config,
-        Product $product,
+        MappProductModel $mappProductModel,
         ProductAttributeRepositoryInterface $productAttributeRepositoryInterface,
         Http $request
     )
     {
-        $this->_checkoutSession = $checkoutSession;
-        $this->_config = $config;
-        $this->_product = $product;
-        $this->_productAttributeRepositoryInterface = $productAttributeRepositoryInterface;
-        $this->_request = $request;
+        $this->checkoutSession = $checkoutSession;
+        $this->config = $config;
+        $this->mappProductModel = $mappProductModel;
+        $this->productAttributeRepositoryInterface = $productAttributeRepositoryInterface;
+        $this->request = $request;
     }
 
     /**
      * @param Observer $observer
+     * @return void
+     * @throws NoSuchEntityException
      */
     public function execute(Observer $observer)
     {
-        if ($this->_config->isEnabled()) {
+        if ($this->config->isEnabled()) {
             $item = $observer->getEvent()->getData('quote_item');
+            /** @var MagentoProductModel $product */
             $product = $observer->getEvent()->getData('product');
 
-            if ($product) {
-                $this->_product->setProduct($product);
+            if ($product->hasData()) {
+                $this->mappProductModel->setProduct($product);
+
                 $urlFragment = DataLayerHelper::getUrlFragment($product);
-                $productData = $this->_product->getDataLayer($urlFragment);
+                $productData = $this->mappProductModel->getDataLayer($urlFragment);
                 $productData['qty'] = intval($item->getQtyToAdd());
                 $productData['quantity'] = intval($item->getQtyToAdd());
                 $productData['status'] = 'add';
+                $allAttributesForProduct = [];
 
-                $productData['attributes'] = array();
-                $allAttributesForProduct = array();
                 if($item->getProductType() === 'configurable') {
                     $selectedOptions = json_decode($item->getOptionsByCode()['attributes']->getValue(), true);
                     foreach ($selectedOptions as $attributeCodeId => $optionValueId) {
-                        $attributeRepo = $this->_productAttributeRepositoryInterface->get($attributeCodeId);
+                        $attributeRepo = $this->productAttributeRepositoryInterface->get($attributeCodeId);
                         $allAttributesForProduct[$attributeRepo->getAttributeCode()] = $attributeRepo->getSource()->getOptionText($optionValueId);
                     }
                 }
+
                 $productData['attributes'] = $allAttributesForProduct;
                 $productData['price'] = $item->getPrice();
                 $productData['cost'] = $item->getPrice();
@@ -96,12 +84,13 @@ class TIDatalayerAddToCart implements ObserverInterface
                 $productData['name'] = $item->getName();
                 $productData['weight'] = $item->getWeight();
 
-                $existingProductData = $this->_checkoutSession->getData('webtrekk_add_product');
+                $existingProductData = $this->checkoutSession->getData('webtrekk_addproduct');
+
                 if (!$existingProductData) {
                     $existingProductData = [];
                 }
-                $productDataMerge = DataLayerHelper::merge($existingProductData, $productData);
-                $this->_checkoutSession->setData('webtrekk_add_product', $productDataMerge);
+
+                $this->checkoutSession->setData('webtrekk_addproduct', DataLayerHelper::merge($existingProductData, $productData));
             }
         }
     }

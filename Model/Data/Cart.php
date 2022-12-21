@@ -10,44 +10,37 @@ use Magento\Checkout\Model\Session;
 
 class Cart extends AbstractData
 {
+    protected Session $checkoutSession;
+    protected Product $product;
 
-    /**
-     * @var Session
-     */
-    protected $_checkoutSession;
-
-    /**
-     * @var Product
-     */
-    protected $_product;
-
-    /**
-     * @param Session $checkoutSession
-     * @param Product $product
-     */
-    public function __construct(Session $checkoutSession, Product $product)
-    {
-        $this->_checkoutSession = $checkoutSession;
-        $this->_product = $product;
+    public function __construct(
+        Session $checkoutSession,
+        Product $product
+    ) {
+        $this->checkoutSession = $checkoutSession;
+        $this->product = $product;
     }
 
     private function generate()
     {
-        $productData = $this->_checkoutSession->getData('webtrekk_add_product');
+        $productData = $this->checkoutSession->getData('webtrekk_addproduct');
+
         if ($productData) {
             $this->set('product', $productData);
-
-            $this->_checkoutSession->setData('webtrekk_add_product', null);
+            $this->checkoutSession->setData('webtrekk_addproduct', null);
         }
     }
+
+    // -----------------------------------------------
+    // SETTERS AND GETTERS
+    // -----------------------------------------------
 
     /**
      * @return array
      */
-    public function getDataLayer()
+    public function getDataLayer(): array
     {
         $this->generate();
-
-        return $this->_data;
+        return $this->_data ?? [];
     }
 }

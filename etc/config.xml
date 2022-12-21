@@ -10,7 +10,7 @@
     <default>
         <tagintegration>
             <general>
-                <enable>0</enable>
+                <enable>1</enable>
 				<attribute_blacklist>customerPasswordHash
 customerRpToken
 customerRpTokenCreatedAt</attribute_blacklist>
@@ -19,7 +19,7 @@ customerRpTokenCreatedAt</attribute_blacklist>
         </tagintegration>
         <mapp_gtm>
             <general>
-                <gtm_enable>0</gtm_enable>
+                <gtm_enable>1</gtm_enable>
                 <gtm_datalayer>dataLayer</gtm_datalayer>
                 <gtm_trigger_basket>mapp.load</gtm_trigger_basket>
                 <gtm_add_to_cart_eventname>add-to-cart</gtm_add_to_cart_eventname>
@@ -27,7 +27,7 @@ customerRpTokenCreatedAt</attribute_blacklist>
         </mapp_gtm>
         <mapp_connect>
             <general>
-                <enable>0</enable>
+                <enable>1</enable>
             </general>
             <export>
                 <customer_enable>1</customer_enable>

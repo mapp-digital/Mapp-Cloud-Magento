@@ -6,6 +6,7 @@
  */
 namespace MappDigital\Cloud\Model\Data;
 
+use Magento\Customer\Model\Address;
 use Magento\Customer\Model\Session;
 
 class Customer extends AbstractData
@@ -28,47 +29,37 @@ class Customer extends AbstractData
      * @var \Magento\Customer\Model\Session
      */
     protected $_customerSession;
+
     /**
      * @var \Magento\Customer\Model\Customer
      */
     protected $_customer;
-    /**
-     * @var \Magento\Customer\Model\Address
-     */
-    protected $_billingAddress;
-    /**
-     * @var \Magento\Customer\Model\Address
-     */
-    protected $_shippingAddress;
+    protected ?Address $billingAddress = null;
+    protected ?Address $shippingAddress = null;
 
     /**
      * @param Session $customerSession
      */
-    public function __construct(Session $customerSession)
-    {
+    public function __construct(
+        Session $customerSession
+    ) {
         $this->_customerSession = $customerSession;
     }
 
-    /**
-     * @param string $value
-     * @param string $pattern
-     * @param string $replacement
-     *
-     * @return string
-     */
-    private function validate($value = '', $pattern = '', $replacement = '')
+    private function generate()
     {
-        $validatedValue = '';
-        if ($value) {
-            $validatedValue = strtolower($value);
+        if ($this->_customerSession->isLoggedIn()) {
+            $this->_customer = $this->_customerSession->getCustomer();
 
-            if ($pattern) {
-                $validatedValue = preg_replace($pattern, $replacement, $validatedValue);
-            }
+            $this->setAttributes();
+            $this->setAddresses();
+            $this->setCDBData();
         }
-
-        return $validatedValue;
     }
+
+    // -----------------------------------------------
+    // SETTERS AND GETTERS
+    // -----------------------------------------------
 
     /**
      * @return array
@@ -89,9 +80,9 @@ class Customer extends AbstractData
     /**
      * @return array
      */
-    private function getTelephoneHashes()
+    private function getTelephoneHashes(): array
     {
-        $telephone = $this->validate($this->_billingAddress->getTelephone(), '/(\s|\D)/');
+        $telephone = $this->validate($this->billingAddress->getTelephone(), '/(\s|\D)/');
         $telephoneHashes = [];
 
         if ($telephone) {
@@ -100,29 +91,6 @@ class Customer extends AbstractData
         }
 
         return $telephoneHashes;
-    }
-
-    /**
-     * @return array
-     */
-    private function getAddressHashes()
-    {
-        // @format '<Firstname>|<Lastname>|<Postcode>|<Street>|<Streetnumber>'
-        $addressStrings = [];
-        $addressStrings[] = $this->_billingAddress->getFirstname();
-        $addressStrings[] = $this->_billingAddress->getLastname();
-        $addressStrings[] = $this->_billingAddress->getPostcode();
-        $addressStrings[] = implode('', $this->_billingAddress->getStreet());
-
-        $address = $this->validate(implode('|', $addressStrings), self::ADDRESS_PATTERN, self::ADDRESS_REPLACEMENT);
-        $addressHashes = [];
-
-        if ($address) {
-            $addressHashes['md5'] = hash('md5', $address);
-            $addressHashes['sha256'] = hash('sha256', $address);
-        }
-
-        return $addressHashes;
     }
 
     private function setAttributes()
@@ -136,16 +104,16 @@ class Customer extends AbstractData
 
     private function setAddresses()
     {
-        $this->_billingAddress = $this->_customer->getPrimaryBillingAddress();
-        $this->_shippingAddress = $this->_customer->getPrimaryShippingAddress();
-
         $addresses = [];
 
-        if ($this->_billingAddress) {
-            $addresses['billing'] = $this->_billingAddress->getData();
+        if ($this->_customer->getPrimaryBillingAddress()) {
+            $this->billingAddress = $this->_customer->getPrimaryBillingAddress();
+            $addresses['billing'] = $this->billingAddress->getData();
         }
-        if ($this->_shippingAddress) {
-            $addresses['shipping'] = $this->_shippingAddress->getData();
+
+        if ($this->_customer->getPrimaryShippingAddress()) {
+            $this->shippingAddress = $this->_customer->getPrimaryShippingAddress();
+            $addresses['shipping'] = $this->shippingAddress->getData();
         }
 
         $this->set('address', $addresses);
@@ -156,7 +124,7 @@ class Customer extends AbstractData
         $cdbData = [];
         $cdbData['email'] = $this->getEmailHashes();
 
-        if ($this->_billingAddress) {
+        if ($this->billingAddress) {
             $cdbData['telephone'] = $this->getTelephoneHashes();
             $cdbData['address'] = $this->getAddressHashes();
         }
@@ -164,24 +132,64 @@ class Customer extends AbstractData
         $this->set('CDB', $cdbData);
     }
 
-    private function generate()
+    /**
+     * @return array
+     */
+    private function getAddressHashes()
     {
-        if ($this->_customerSession->isLoggedIn()) {
-            $this->_customer = $this->_customerSession->getCustomer();
+        // @format '<Firstname>|<Lastname>|<Postcode>|<Street>|<Streetnumber>'
+        $addressStrings = [];
 
-            $this->setAttributes();
-            $this->setAddresses();
-            $this->setCDBData();
+        if ($this->billingAddress) {
+            $addressStrings[] = $this->billingAddress->getFirstname();
+            $addressStrings[] = $this->billingAddress->getLastname();
+            $addressStrings[] = $this->billingAddress->getPostcode();
+            $addressStrings[] = implode('', $this->billingAddress->getStreet());
         }
+
+        $address = $this->validate(implode('|', $addressStrings), self::ADDRESS_PATTERN, self::ADDRESS_REPLACEMENT);
+        $addressHashes = [];
+
+        if ($address) {
+            $addressHashes['md5'] = hash('md5', $address);
+            $addressHashes['sha256'] = hash('sha256', $address);
+        }
+
+        return $addressHashes;
     }
 
     /**
      * @return array
      */
-    public function getDataLayer()
+    public function getDataLayer(): array
     {
         $this->generate();
 
-        return $this->_data;
+        return $this->_data ?? [];
+    }
+
+    // -----------------------------------------------
+    // UTILITY
+    // -----------------------------------------------
+
+    /**
+     * @param string $value
+     * @param string $pattern
+     * @param string $replacement
+     *
+     * @return string
+     */
+    private function validate($value = '', $pattern = '', $replacement = '')
+    {
+        $validatedValue = '';
+        if ($value) {
+            $validatedValue = strtolower($value);
+
+            if ($pattern) {
+                $validatedValue = preg_replace($pattern, $replacement, $validatedValue);
+            }
+        }
+
+        return $validatedValue;
     }
 }

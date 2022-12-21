@@ -1,23 +1,31 @@
 <?php
 namespace MappDigital\Cloud\Plugin;
 
+use GuzzleHttp\Exception\GuzzleException;
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use MappDigital\Cloud\Model\Connect\Client;
+use Psr\Log\LoggerInterface;
+use \MappDigital\Cloud\Helper\Data as MappConnectHelper;
+
 class SubscriptionManagerPlugin
 {
-
-    protected $scopeConfig;
-    protected $customerRepository;
-    protected $helper;
-    protected $logger;
+    protected ScopeConfigInterface $scopeConfig;
+    protected CustomerRepositoryInterface $customerRepository;
+    protected MappConnectHelper $helper;
+    protected LoggerInterface $logger;
 
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
-        \MappDigital\Cloud\Helper\Data $helper,
-        \Psr\Log\LoggerInterface $logger
+        ScopeConfigInterface $scopeConfig,
+        CustomerRepositoryInterface $customerRepository,
+        MappConnectHelper $helper,
+        LoggerInterface $logger
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->customerRepository= $customerRepository;
-        $this->_helper = $helper;
+        $this->helper = $helper;
         $this->logger = $logger;
     }
 
@@ -26,100 +34,176 @@ class SubscriptionManagerPlugin
         if (!$result) {
             return $result;
         }
-        $this->logger->debug('MappConnect: SubscribeManager subscribe');
+
+        $this->logger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Guest Newsletter Subscribe');
+        $this->logger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Base Method: subscribe');
+
         try {
-            if (($mappconnect = $this->_helper->getMappConnectClient())
-            && $this->_helper->getConfigValue('export', 'newsletter_enable')) {
+            if ($this->helper->getConfigValue('export', 'newsletter_enable')) {
                 $data = [
                  'email' => $email,
-                 'group' => $this->_helper->getConfigValue('group', 'subscribers')
+                 'group' => $this->helper->getConfigValue('group', 'subscribers')
                 ];
-                if ($this->_helper->getConfigValue('export', 'newsletter_doubleoptin')) {
+
+                if ($this->helper->getConfigValue('export', 'newsletter_doubleoptin')) {
+                    $this->logger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- Double Opt In Added');
                     $data['doubleOptIn'] = true;
                 }
-                $this->logger->debug('MappConnect: sending newsletter', ['data' => $data]);
-                $mappconnect->event('newsletter', $data);
+
+                $this->getMappClient()->event('newsletter', $data);
+
+                $this->logger->debug(
+                    'Mapp Connect: -- PLUGIN INTERCEPTOR -- Sent Event Via Connect Client',
+                    ['data' => $data]
+                );
             }
-        } catch (\Exception $e) {
-            $this->logger->error('MappConnect: cannot sync subscribe event', ['exception' => $e]);
+        } catch (\Exception | GuzzleException $exception) {
+            $this->logger->error('Mapp Connect -- ERROR -- Failure to send guest newsletter via connect API', ['exception' => $exception]);
+            $this->logger->error($exception);
         }
+
         return $result;
     }
 
+    /**
+     * @param $subject
+     * @param $result
+     * @return mixed
+     */
     public function afterUnsubscribe($subject, $result)
     {
         if (!$result) {
             return $result;
         }
-        $this->logger->debug('MappConnect: SubscribeManager unsubscribe');
-        $email = $subject->getEmail();
+
+        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Customer Newsletter Subscribe');
+        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: subscribeCustomer');
+
         try {
-            if (($mappconnect = $this->_helper->getMappConnectClient())
-            && $this->_helper->getConfigValue('export', 'newsletter_enable')) {
+            if ($this->helper->getConfigValue('export', 'newsletter_enable')) {
                 $data = [
-                 'email' => $email,
-                 'group' => $this->_helper->getConfigValue('group', 'subscribers'),
+                 'email' => $subject->getEmail() ?? '',
+                 'group' => $this->helper->getConfigValue('group', 'subscribers'),
                  'unsubscribe' => true
                 ];
+
                 $this->logger->debug('MappConnect: sending newsletter', ['data' => $data]);
-                $mappconnect->event('newsletter', $data);
+                $this->getMappClient()->event('newsletter', $data);
             }
-        } catch (\Exception $e) {
-            $this->logger->error('MappConnect: cannot sync unsubscribe event', ['exception' => $e]);
+        } catch (GuzzleException $exception) {
+            $this->logger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made', ['exception' => $exception]);
+            $this->logger->error($exception);
+        } catch (LocalizedException $exception) {
+            $this->logger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', ['exception' => $exception]);
+            $this->logger->error($exception);
         }
+
         return $result;
     }
 
+    /**
+     * @param $subject
+     * @param $result
+     * @param $customerId
+     * @return mixed
+     */
     public function afterSubscribeCustomer($subject, $result, $customerId)
     {
         if (!$result) {
             return $result;
         }
-        $this->logger->debug('MappConnect: SubscribeManager subscribe');
-        $customer = $this->customerRepository->getById($customerId);
-        $email = $customer->getEmail();
+
+        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Newsletter Subscribe Existing Customer');
+        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: subscribeCustomer');
+
         try {
-            if (($mappconnect = $this->_helper->getMappConnectClient())
-            && $this->_helper->getConfigValue('export', 'newsletter_enable')) {
+            if ($this->helper->getConfigValue('export', 'newsletter_enable')) {
+                $customer = $this->customerRepository->getById($customerId);
+                $email = $customer->getEmail();
+
                 $data = [
-                 'email' => $email,
-                 'group' => $this->_helper->getConfigValue('group', 'subscribers')
+                    'email' => $email,
+                    'group' => $this->helper->getConfigValue('group', 'subscribers')
                 ];
-                if ($this->_helper->getConfigValue('export', 'newsletter_doubleoptin')) {
+
+                if ($this->helper->getConfigValue('export', 'newsletter_doubleoptin')) {
                     $data['doubleOptIn'] = true;
                 }
-                $this->logger->debug('MappConnect: sending newsletter', ['data' => $data]);
-                $mappconnect->event('newsletter', $data);
+
+                $this->logger->debug(
+                    'MappConnect: -- PLUGIN INTERCEPTOR -- Newsletter Send Event Via Connect Client',
+                    ['data' => $data]
+                );
+
+                $this->getMappClient()->event('newsletter', $data);
             }
-        } catch (\Exception $e) {
-            $this->logger->error('MappConnect: cannot sync subscribe event', ['exception' => $e]);
+        } catch (NoSuchEntityException $exception) {
+            $this->logger->error('Mapp Connect -- ERROR -- The Customer Could Not Be Found', ['exception' => $exception]);
+            $this->logger->error($exception);
+        } catch (GuzzleException $exception) {
+            $this->logger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made', ['exception' => $exception]);
+            $this->logger->error($exception);
+        } catch (LocalizedException $exception) {
+            $this->logger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', ['exception' => $exception]);
+            $this->logger->error($exception);
         }
+
         return $result;
     }
 
+    /**
+     * @param $subject
+     * @param $result
+     * @param $customerId
+     * @return mixed
+     */
     public function afterUnsubscribeCustomer($subject, $result, $customerId)
     {
         if (!$result) {
             return $result;
         }
-        $this->logger->debug('MappConnect: SubscribeManager unsubscribe');
-        $customer = $this->customerRepository->getById($customerId);
-        $email = $customer->getEmail();
+
+        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Newsletter Unsubscribe Existing Customer');
+        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: unsubscribeCustomer');
+
         try {
-            if (($mappconnect = $this->_helper->getMappConnectClient())
-            && $this->_helper->getConfigValue('export', 'newsletter_enable')) {
+            if ($this->helper->getConfigValue('export', 'newsletter_enable')) {
+                $customer = $this->customerRepository->getById($customerId);
+
                 $data = [
-                 'email' => $email,
-                 'group' => $this->_helper->getConfigValue('group', 'subscribers'),
-                 'unsubscribe' => true
+                    'email' => $customer->getEmail(),
+                    'group' => $this->helper->getConfigValue('group', 'subscribers'),
+                    'unsubscribe' => true
                 ];
+
+                $this->logger->debug(
+                    'MappConnect: -- PLUGIN INTERCEPTOR -- Unsubscribe Event Sent Via Connect Client',
+                    ['data' => $data]
+                );
+
                 $this->logger->debug('MappConnect: sending newsletter', ['data' => $data]);
-                $mappconnect->event('newsletter', $data);
+                $this->getMappClient()->event('newsletter', $data);
             }
-        } catch (\Exception $e) {
-            $this->logger->error('MappConnect: cannot sync unsubscribe event', ['exception' => $e]);
+        } catch (NoSuchEntityException $exception) {
+            $this->logger->error('Mapp Connect -- ERROR -- The Customer Could Not Be Found', ['exception' => $exception]);
+            $this->logger->error($exception);
+        } catch (GuzzleException $exception) {
+            $this->logger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made', ['exception' => $exception]);
+            $this->logger->error($exception);
+        } catch (LocalizedException $exception) {
+            $this->logger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', ['exception' => $exception]);
+            $this->logger->error($exception);
         }
 
         return $result;
+    }
+
+    /**
+     * @return Client|null
+     * @throws LocalizedException
+     */
+    private function getMappClient(): ?Client
+    {
+        return $this->helper->getMappConnectClient();
     }
 }

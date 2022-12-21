@@ -2,52 +2,65 @@
 
 namespace MappDigital\Cloud\Model\Config\Backend;
 
+use GuzzleHttp\Exception\GuzzleException;
+use Magento\Framework\Data\OptionSourceInterface;
 use \MappDigital\Cloud\Helper\Data;
 use \Magento\Framework\Message\ManagerInterface;
 
-class Template implements \Magento\Framework\Option\ArrayInterface
-{
 
-    protected $_helper;
-    protected $_messageManager;
+class Template implements OptionSourceInterface
+{
+    private static $cache = null;
+
+    protected $helper;
+    protected $messageManager;
 
     public function __construct(
         Data $helper,
         ManagerInterface $messageManager
     ) {
-        $this->_helper = $helper;
-        $this->_messageManager = $messageManager;
+        $this->helper = $helper;
+        $this->messageManager = $messageManager;
     }
 
-    private static $cache = null;
-
-    private function getMessages()
+    /**
+     * @return array
+     * @throws GuzzleException
+     */
+    private function getMessages(): array
     {
-        if (self::$cache != null) {
+        if (self::$cache !== null) {
             return self::$cache;
         }
+
         try {
-            if ($mc = $this->_helper->getMappConnectClient()) {
-                self::$cache = $mc->getMessages();
+            if ($mappConnectClient = $this->helper->getMappConnectClient()) {
+                self::$cache = $mappConnectClient->getMessages();
             } else {
                 return [];
             }
         } catch (\Exception $e) {
-            $this->_messageManager->addExceptionMessage($e);
+            $this->messageManager->addExceptionMessage($e);
             self::$cache = [];
         }
+
         return self::$cache;
     }
 
+    /**
+     * @return array[]
+     * @throws GuzzleException
+     */
     public function toOptionArray()
     {
-        $ret = [[
+        $default = [[
         'value' => 0,
         'label' => __('Magento Default')
         ]];
+
         foreach ($this->getMessages() as $value => $label) {
-            array_push($ret, ['value' => $value, 'label' => $label]);
+            $default[] = ['value' => $value, 'label' => $label];
         }
-        return $ret;
+        return $default;
     }
 }

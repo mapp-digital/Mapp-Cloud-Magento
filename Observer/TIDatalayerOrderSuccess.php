@@ -13,24 +13,19 @@ use MappDigital\Cloud\Helper\Config;
 
 class TIDatalayerOrderSuccess implements ObserverInterface
 {
-
-    /**
-     * @var Session
-     */
-    protected $_checkoutSession;
-    /**
-     * @var Config
-     */
-    protected $_config;
+    protected Session $checkoutSession;
+    protected Config $config;
 
     /**
      * @param Session $checkoutSession
      * @param Config $config
      */
-    public function __construct(Session $checkoutSession, Config $config)
-    {
-        $this->_checkoutSession = $checkoutSession;
-        $this->_config = $config;
+    public function __construct(
+        Session $checkoutSession,
+        Config $config
+    ) {
+        $this->checkoutSession = $checkoutSession;
+        $this->config = $config;
     }
 
     /**
@@ -38,11 +33,11 @@ class TIDatalayerOrderSuccess implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        if ($this->_config->isEnabled()) {
-            $orderIds = $observer->getEvent()->getOrderIds();
+        if ($this->config->isEnabled()) {
+            $orderIds = $observer->getEvent()->getOrderIds() ?? [];
 
-            if (!empty($orderIds) && is_array($orderIds)) {
-                $this->_checkoutSession->setData('webtrekk_order_success', $orderIds);
+            if (count($orderIds)) {
+                $this->checkoutSession->setData('webtrekk_order_success', $orderIds);
             }
         }
     }

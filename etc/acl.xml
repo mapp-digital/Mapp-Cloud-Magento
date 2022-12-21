@@ -16,6 +16,7 @@
                             <resource id="MappDigital_Cloud::tagintegration" title="Mapp Tag Integration" />
                             <resource id="MappDigital_Cloud::mapp_gtm" title="Mapp Google Tag Manager" />
                             <resource id="MappDigital_Cloud::mapp_acquire" title="Mapp Acquire" />
+                            <resource id="MappDigital_Cloud::mapp_connect" title="Mapp Acquire" />
                         </resource>
                     </resource>
                 </resource>

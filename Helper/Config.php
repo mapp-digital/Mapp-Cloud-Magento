@@ -13,97 +13,36 @@ use Magento\Store\Model\ScopeInterface;
 
 class Config extends AbstractHelper
 {
-
-    /**
-     * @var string
-     */
     const XML_PATH_ENABLE = 'tagintegration/general/enable';
-
-    /**
-     * @var string
-     */
     const XML_PATH_TAGINTEGRATION_ID = 'tagintegration/general/tagintegration_id';
-
-    /**
-     * @var string
-     */
     const XML_PATH_TAGINTEGRATION_DOMAIN = 'tagintegration/general/tagintegration_domain';
-
-    /**
-     * @var string
-     */
     const XML_PATH_CUSTOM_DOMAIN = 'tagintegration/general/custom_domain';
-
-    /**
-     * @var string
-     */
     const XML_PATH_CUSTOM_PATH = 'tagintegration/general/custom_path';
-
-    /**
-     * @var string
-     */
     const XML_PATH_ATTRIBUTE_BLACKLIST = 'tagintegration/general/attribute_blacklist';
-
-    /**
-     * @var string
-     */
     const XML_PATH_ADD_TO_CART_EVENT_NAME = 'tagintegration/general/add_to_cart_event_name';
-
-    /**
-     * @var string
-     */
     const XML_PATH_ACQUIRE = 'mapp_acquire/general/acquire';
-
-    /**
-     * @var string
-     */
     const XML_PATH_GTM_ENABLE = 'mapp_gtm/general/gtm_enable';
-
-    /**
-     * @var string
-     */
     const XML_PATH_GTM_LOAD = 'mapp_gtm/general/gtm_load';
-
-    /**
-     * @var string
-     */
     const XML_PATH_GTM_ID = 'mapp_gtm/general/gtm_id';
-
-    /**
-     * @var string
-     */
     const XML_PATH_GTM_DATALAYER = 'mapp_gtm/general/gtm_datalayer';
-
-    /**
-     * @var string
-     */
     const XML_PATH_GTM_TRIGGER_BASKET = 'mapp_gtm/general/gtm_trigger_basket';
-
-    /**
-     * @var string
-     */
     const XML_PATH_GTM_ADD_TO_CART_EVENTNAME = 'mapp_gtm/general/gtm_add_to_cart_eventname';
 
-    /**
-     * @var Repository
-     */
-    protected $_assetRepository;
+    protected Repository $assetRepository;
 
-    /**
-     * @param Context $context
-     * @param Repository $assetRepository
-     */
-    public function __construct(Context $context, Repository $assetRepository)
-    {
-        $this->_assetRepository = $assetRepository;
+    public function __construct(
+        Context $context,
+        Repository $assetRepository
+    ) {
+        $this->assetRepository = $assetRepository;
 
         parent::__construct($context);
     }
 
     /**
-     * @return string|null
+     * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag(self::XML_PATH_ENABLE, ScopeInterface::SCOPE_STORE) || $this->scopeConfig->isSetFlag(self::XML_PATH_GTM_ENABLE, ScopeInterface::SCOPE_STORE);
     }
@@ -123,17 +62,18 @@ class Config extends AbstractHelper
     private function getAcquireLink()
     {
         $acquireScript = $this->scopeConfig->getValue(self::XML_PATH_ACQUIRE, ScopeInterface::SCOPE_STORE);
-        if(!is_null($acquireScript) && preg_match('/id=(\d+?)&m=(\d+?)\D/', $acquireScript, $ids))
-        {
+
+        if(!is_null($acquireScript) && preg_match('/id=(\d+?)&m=(\d+?)\D/', $acquireScript, $ids)) {
             return 'https://c.flx1.com/' . $ids[2] . '-' . $ids[1] .'.js?id=' . $ids[1] . '&m=' . $ids[2];
         }
+
         return null;
     }
 
     /**
      * @return array
      */
-    public function getGTMConfig()
+    public function getGTMConfig(): array
     {
         return [
             'enable' => $this->scopeConfig->getValue(self::XML_PATH_GTM_ENABLE, ScopeInterface::SCOPE_STORE),
@@ -148,7 +88,7 @@ class Config extends AbstractHelper
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return [
             'tiEnable' => $this->scopeConfig->getValue(self::XML_PATH_ENABLE, ScopeInterface::SCOPE_STORE),
@@ -165,19 +105,23 @@ class Config extends AbstractHelper
     /**
      * @return string
      */
-    public function getAddToCartEventName()
+    public function getAddToCartEventName(): string
     {
         $configValue = $this->scopeConfig->getValue(self::XML_PATH_ADD_TO_CART_EVENT_NAME, ScopeInterface::SCOPE_STORE);
         return is_null($configValue) ? 'add-to-cart': $configValue;
     }
 
-    public function removeParameterByBlacklist(array $data = [])
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function removeParameterByBlacklist(array $data = []): array
     {
         $blacklist = $this->getAttributeBlacklist();
         for ($i = 0, $l = count($blacklist); $i < $l; $i++) {
             $key = $blacklist[$i];
 
-            if (strpos($key, '*') !== false) {
+            if (str_contains($key, '*')) {
                 $keyRegExp = implode('.*', explode('*', $key));
                 $matches = preg_grep('/' . $keyRegExp . '/', array_keys($data));
                 foreach ($matches as $k => $v) {

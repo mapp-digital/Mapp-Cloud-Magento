@@ -2,105 +2,239 @@
 
 namespace MappDigital\Cloud\Model\Connect;
 
+use Closure;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Utils;
+use GuzzleHttp\Client as GuzzleHttpClient;
+use Magento\Framework\Exception\LocalizedException;
+use MappDigital\Cloud\Helper\Data as ConnectHelper;
+use \Firebase\JWT\JWT;
+use \Psr\Http\Message\RequestInterface;
+
 class Client
 {
-    protected $integrationId = null;
-    protected $secret = null;
-    protected $baseUrl = null;
-    protected $client = null;
+    protected ConnectHelper $connectHelper;
+    protected string $integrationId = '';
+    protected string $secret = '';
+    protected string $baseUrl = '';
+    protected ?GuzzleHttpClient $client = null;
 
     const USERAGENT = 'MappConnectClientPHP/0.1.0';
 
-    public function __construct($baseUrl, $integrationId, $secret, $options = array()) {
-        $this->baseUrl = $baseUrl;
-        $this->integrationId = $integrationId;
-        $this->secret = $secret;
-
-        $handlerStack = \GuzzleHttp\HandlerStack::create(\GuzzleHttp\choose_handler());
-        $handlerStack->push($this->handleAuthorizationHeader());
-
-        $this->client = new \GuzzleHttp\Client([
-            'base_uri' => $this->baseUrl,
-            'headers'  => [
-                'User-Agent' => self::USERAGENT,
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ],
-            'handler' => $handlerStack,
-            'timeout'  => isset($options['timeout']) ? $options['timeout'] : 10.0
-        ]);
+    public function __construct(
+        ConnectHelper $connectHelper
+    ) {
+        $this->connectHelper = $connectHelper;
     }
 
-    public function ping() {
-        $pong = $this->get('integration/'.$this->integrationId.'/ping');
-        if (!$pong || !$pong['pong'])
+    /**
+     * @param array $options
+     * @return GuzzleHttpClient
+     * @throws LocalizedException
+     */
+    public function getClient(array $options = []): GuzzleHttpClient
+    {
+        if (is_null($this->client)) {
+            $handlerStack = HandlerStack::create(Utils::chooseHandler());
+            $handlerStack->push($this->handleAuthorizationHeader());
+
+            $this->client = new GuzzleHttpClient([
+                'base_uri' => $this->getBaseUrl(),
+                'headers'  => [
+                    'User-Agent' => self::USERAGENT,
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ],
+                'handler' => $handlerStack,
+                'timeout'  => $options['timeout'] ?? 10.0
+            ]);
+        }
+
+        return $this->client;
+    }
+
+    /**
+     * @return string
+     * @throws LocalizedException
+     */
+    public function getBaseUrl(): string
+    {
+        if (!$this->baseUrl) {
+            $this->baseUrl = $this->connectHelper->getBaseURL();
+        }
+
+        return $this->baseUrl;
+    }
+
+    /**
+     * @return string
+     * @throws LocalizedException
+     */
+    public function getIntegrationId(): string
+    {
+        if (!$this->integrationId) {
+            $this->integrationId = $this->connectHelper->getConfigValue('integration', 'integration_id');
+        }
+
+        return $this->integrationId;
+    }
+
+    /**
+     * @return string
+     * @throws LocalizedException
+     */
+    public function getSecret(): string
+    {
+        if (!$this->secret) {
+            $this->secret = $this->connectHelper->getConfigValue('integration', 'integration_secret');
+        }
+
+        return $this->secret;
+    }
+
+    /**
+     * @return bool
+     * @throws GuzzleException
+     * @throws LocalizedException
+     */
+    public function ping(): bool
+    {
+        $pong = $this->get('integration/'.$this->getIntegrationId().'/ping');
+
+        if (!$pong || !$pong['pong']) {
             return false;
+        }
+
         return true;
     }
 
-    public function connect($config) {
-        return $this->post('integration/'.$this->integrationId.'/connect', json_encode($config));
+    /**
+     * @param $config
+     * @return mixed
+     * @throws GuzzleException
+     * @throws LocalizedException
+     */
+    public function connect($config)
+    {
+        return $this->post('integration/' . $this->getIntegrationId() . '/connect', json_encode($config));
     }
 
-    public function getMessages() {
-        return $this->get('integration/'.$this->integrationId.'/message');
+    /**
+     * @return mixed
+     * @throws GuzzleException
+     * @throws LocalizedException
+     */
+    public function getMessages()
+    {
+        return $this->get('integration/' . $this->getIntegrationId() . '/message');
     }
 
-    public function getGroups() {
-        return $this->get('integration/'.$this->integrationId.'/group');
+    /**
+     * @return mixed
+     * @throws GuzzleException
+     * @throws LocalizedException
+     */
+    public function getGroups()
+    {
+        return $this->get('integration/' . $this->getIntegrationId() . '/group');
     }
 
-    public function get($url, $query = null) {
-        $req = $this->client->get($url, [
+    /**
+     * @param $url
+     * @param $query
+     * @return mixed
+     * @throws GuzzleException|LocalizedException
+     */
+    public function get($url, $query = null)
+    {
+        $response = $this->getClient()->get($url, [
             'headers' => [
                 'User-Agent' => self::USERAGENT,
                 'Accept'     => 'application/json'
             ],
             'query' => $query
         ]);
-        return json_decode( $req->getBody(), true);
+
+        return json_decode($response->getBody(), true);
     }
 
-    public function event($subtype, $data) {
-        return $this->post('integration/'.$this->integrationId.'/event?subtype='.urlencode($subtype), json_encode($data));
+    /**
+     * @param $subtype
+     * @param $data
+     * @return mixed
+     * @throws GuzzleException
+     * @throws LocalizedException
+     */
+    public function event($subtype, $data)
+    {
+        return $this->post(
+            'integration/' . $this->getIntegrationId() . '/event?subtype=' . urlencode($subtype),
+            json_encode($data)
+        );
     }
 
-    public function put($url, $data = NULL) {
-        $req = $this->client->request('PUT', $url, [
+    /**
+     * @param $url
+     * @param $data
+     * @return mixed
+     * @throws GuzzleException|LocalizedException
+     */
+    public function put($url, $data = NULL)
+    {
+        $req = $this->getClient()->request('PUT', $url, [
             'headers' => [
                 'User-Agent' => self::USERAGENT,
-                'Accept'     => 'application/json',
+                'Accept' => 'application/json',
             ],
             'body' => $data
         ]);
 
-        return json_decode( $req->getBody(), true);
+        return json_decode($req->getBody(), true);
     }
 
-    public function post($url, $data = NULL) {
-        $req = $this->client->request('POST', $url, [
+    /**
+     * @param $url
+     * @param $data
+     * @return mixed
+     * @throws GuzzleException|LocalizedException
+     */
+    public function post($url, $data = NULL)
+    {
+        $req = $this->getClient()->request('POST', $url, [
             'headers' => [
                 'User-Agent' => self::USERAGENT,
-                'Accept'     => 'application/json'
+                'Accept' => 'application/json'
             ],
             'body' => $data
         ]);
-        $body = $req->getBody();
-        return json_decode( $req->getBody(), true);
+
+        return json_decode($req->getBody(), true);
     }
 
-    public function getToken(RequestInterface $request) {
+    /**
+     * @param RequestInterface $request
+     * @return string
+     * @throws LocalizedException
+     */
+    public function getToken(RequestInterface $request): string
+    {
         $token = [
             "request-hash" => $this->getRequestHash(
                 $request->getUri()->getPath(),
                 $request->getBody(),
                 $request->getUri()->getQuery()),
-            "exp" => time()+3600
+            "exp" => time() + 3600
         ];
-        return JWT::encode($token, $this->secret, 'HS256');
+
+        return JWT::encode($token, $this->getSecret(), 'HS256');
     }
 
-    private function handleAuthorizationHeader() {
+    /**
+     * @return Closure
+     */
+    private function handleAuthorizationHeader(): Closure
+    {
         return function (callable $handler) {
             return function (RequestInterface $request, array $options) use ($handler) {
                 if ($this->secret) {
@@ -111,13 +245,24 @@ class Client
         };
     }
 
-    public function getRequestHash(String $url, String $body = NULL, String $queryString = NULL) {
+    /**
+     * @param String $url
+     * @param String|NULL $body
+     * @param String|NULL $queryString
+     * @return string
+     */
+    public function getRequestHash(string $url, string $body = null, string $queryString = null): string
+    {
         $url = preg_replace('/^.*\/api\/v/', '/api/v', $url);
-        $data = $url;
-        if (!empty($body))
-            $data .= "|" . $body;
-        if (!empty($queryString))
-            $data .= "|" . $queryString;
-        return sha1($data);
+
+        if (!empty($body)) {
+            $url .= "|" . $body;
+        }
+
+        if (!empty($queryString)) {
+            $url .= "|" . $queryString;
+        }
+
+        return sha1($url);
     }
 }

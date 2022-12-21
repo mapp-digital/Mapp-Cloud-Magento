@@ -9,8 +9,8 @@ namespace MappDigital\Cloud\Helper;
 
 class TrackingScript
 {
-    public static function generateJS($config) {
-
+    public static function generateJS($config)
+    {
         $_psVersion = self::getVersion();
 
         $requireArray = "'jquery'";
@@ -40,7 +40,7 @@ class TrackingScript
                     pixel.contentGroup = {};
                     pixel.customParameter = {};
                 }
-            
+
                 if(
                     window._ti &&
                     window._ti.hasOwnProperty('addProductEntityId') &&
@@ -95,7 +95,7 @@ class TrackingScript
                         $.each(value, function(arrKey, arrValue) {
                             gtmProduct[key + (arrKey+1)] = arrValue;
                         })
-                    }       
+                    }
                 });
                 window._ti.gtmProductArray=[gtmProduct];
             }";
@@ -175,7 +175,7 @@ class TrackingScript
                     type: 'GET',
                     dataType: 'json',
                     complete: function(response) {
-            
+
                         if(window._ti) {
                             if(response.responseJSON && response.responseJSON.dataLayer) {
                                 $.extend(window._ti, response.responseJSON.dataLayer);
@@ -189,12 +189,12 @@ class TrackingScript
                                 calculatePrices();
                             }
                             window._ti.addToCartEventName = response.responseJSON.eventName;
-            
+
                         }
                         const config = response.responseJSON.config;
                         {$tiLoader}
                         if(config.gtm.enable === '1') {
-                            {$gtmCreateProductArray}   
+                            {$gtmCreateProductArray}
                             window[config.gtm.datalayer] = window[config.gtm.datalayer] || [];
                             window[config.gtm.datalayer].push({
                                 event: 'mapp.load',
@@ -205,7 +205,7 @@ class TrackingScript
                     error: function (xhr, status, errorThrown) {
                     }
                 });
-            
+
                 $(document).on('ajax:addToCart', function() {
                     $.ajax({
                         url: mappEndpoint + '?add=1',
@@ -234,7 +234,7 @@ class TrackingScript
                                 setTimeout(function() {
                                     restoreDataLayer(JSON.parse(dataLayerBackup));
                                     window.wts.push(['linkId', 'false']);
-                                }, 500);               
+                                }, 500);
                             }
                         },
                         error: function (xhr, status, errorThrown) {

@@ -2,79 +2,79 @@
 
 namespace MappDigital\Cloud\Plugin\Mail;
 
-use MappDigital\Cloud\Helper\Data;
+use Magento\Framework\Exception\LocalizedException;
+use MappDigital\Cloud\Helper\Data as MappConnectHelper;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use MappDigital\Cloud\Framework\Mail\Transport;
 use Magento\Framework\Mail\Template\FactoryInterface;
 
 class TransportBuilderPlugin
 {
+    protected array $parameters = [];
 
-    protected $dataHelper;
-
-    protected $parameters;
-
-    protected $templateFactory;
-
-    protected $_config;
+    protected MappConnectHelper $mappConnectHelper;
+    protected FactoryInterface $templateFactory;
 
     public function __construct(
-        Data $dataHelper,
-        FactoryInterface $templateFactory
-    ) {
-        $this->dataHelper = $dataHelper;
+        MappConnectHelper $mappConnectHelper,
+        FactoryInterface  $templateFactory
+    )
+    {
+        $this->mappConnectHelper = $mappConnectHelper;
         $this->templateFactory = $templateFactory;
         $this->reset();
     }
 
+    /**
+     * @throws LocalizedException
+     */
     public function aroundGetTransport(TransportBuilder $subject, \Closure $proceed)
     {
-        if ($mappconnect = $this->dataHelper->getMappConnectClient()) {
+        $mappConnectClient = $this->mappConnectHelper->getMappConnectClient();
 
-            if ($this->dataHelper->getConfigValue('export', 'newsletter_enable')
+        if ($this->mappConnectHelper->getConfigValue('export', 'newsletter_enable')
             && in_array($this->parameters['identifier'], [
-              "newsletter_subscription_confirm_email_template",
-              "newsletter_subscription_success_email_template",
-              "newsletter_subscription_un_email_template"
+                "newsletter_subscription_confirm_email_template",
+                "newsletter_subscription_success_email_template",
+                "newsletter_subscription_un_email_template"
             ])) {
-                $result = new Transport($mappconnect, 0, []);
-                $this->reset();
-                return $result;
+            $result = new Transport($mappConnectClient, 0, []);
+            $this->reset();
+            return $result;
+        }
+
+        if ($messageId = $this->mappConnectHelper->templateIdToConfig($this->parameters['identifier'])) {
+            if ($this->mappConnectHelper->getConfigValue('export', 'transaction_enable')
+                && in_array($this->parameters['identifier'], [
+                    "sales_email_order_template",
+                    "sales_email_order_guest_template"
+                ])) {
+                $messageId = 0;
             }
 
-            if ($messageId = $this->dataHelper->templateIdToConfig($this->parameters['identifier'])) {
-
-                if ($this->dataHelper->getConfigValue('export', 'transaction_enable')
-                && in_array($this->parameters['identifier'], [
-                "sales_email_order_template",
-                "sales_email_order_guest_template"
-                ])) {
-                    $messageId = 0;
-                }
-
-                $template = $this->templateFactory->get($this->parameters['identifier'], $this->parameters['model'])
+            $template = $this->templateFactory->get($this->parameters['identifier'], $this->parameters['model'])
                 ->setVars($this->parameters['vars'])
                 ->setOptions($this->parameters['options']);
 
-                $template->processTemplate();
-                $filer = $template->getTemplateFilter();
+            $template->processTemplate();
+            $filer = $template->getTemplateFilter();
 
-                $params = $this->parameters;
+            $params = $this->parameters;
+            $params['params'] = [];
 
-                $params['params'] = [];
-                foreach ($template->getVariablesOptionArray() as $v) {
-                    $label = 'param_'.strtolower($v['label']->render());
-                    $label = preg_replace('/[^a-z0-9]+/', '_', $label);
-                    $label = preg_replace('/_+$/', '', $label);
-                    $params['params'][$label] = $filer->filter($v['value']);
-                }
-
-                $result = new Transport($mappconnect, $messageId, $params);
-                $this->reset();
-                return $result;
-
+            foreach ($template->getVariablesOptionArray() as $v) {
+                $label = 'param_' . strtolower($v['label']->render());
+                $label = preg_replace('/[^a-z0-9]+/', '_', $label);
+                $label = preg_replace('/_+$/', '', $label);
+                $params['params'][$label] = $filer->filter($v['value']);
             }
+
+            $result = new Transport($mappConnectClient, $messageId, $params);
+            $this->reset();
+
+            return $result;
         }
+
         $returnValue = $proceed();
         $this->reset();
         return $returnValue;
@@ -113,11 +113,11 @@ class TransportBuilderPlugin
     protected function reset()
     {
         $this->parameters = [
-          'options' => null,
-          'identifier' => null,
-          'model' => null,
-          'vars' => null,
-          'to' => []
+            'options' => null,
+            'identifier' => null,
+            'model' => null,
+            'vars' => null,
+            'to' => []
         ];
     }
 }

@@ -16,50 +16,23 @@ use MappDigital\Cloud\Model\Data\Product;
 
 class DataLayer extends DataObject
 {
+    protected Context $_context;
+    protected Product $_product;
+    protected Page $_page;
+    protected Customer $_customer;
+    protected Cart $_cart;
+    protected Order $_order;
+    protected array $_variables = [];
+    protected string $fullActionName = '';
 
-    /**
-     * @var Context
-     */
-    protected $_context;
-    /**
-     * @var Product
-     */
-    protected $_product;
-    /**
-     * @var Page
-     */
-    protected $_page;
-    /**
-     * @var Customer
-     */
-    protected $_customer;
-    /**
-     * @var Cart
-     */
-    protected $_cart;
-    /**
-     * @var Order
-     */
-    protected $_order;
-    /**
-     * @var array
-     */
-    protected $_variables = [];
-    /**
-     * @var string
-     */
-    protected $_fullActionName;
-
-    /**
-     * @param Context $context
-     * @param Product $product
-     * @param Page $page
-     * @param Customer $customer
-     * @param Cart $cart
-     * @param Order $order
-     */
-    public function __construct(Context $context, Product $product, Page $page, Customer $customer, Cart $cart, Order $order)
-    {
+    public function __construct(
+        Context $context,
+        Product $product,
+        Page $page,
+        Customer $customer,
+        Cart $cart,
+        Order $order
+    ) {
         $this->_context = $context;
         $this->_product = $product;
         $this->_page = $page;
@@ -67,15 +40,7 @@ class DataLayer extends DataObject
         $this->_cart = $cart;
         $this->_order = $order;
 
-        $this->fullActionName = $this->_context->getRequest()->getFullActionName();
-    }
-
-    /**
-     * @return array
-     */
-    public function getVariables()
-    {
-        return $this->_variables;
+        $this->fullActionName = $this->_context->getRequest()->getFullActionName() ?? '';
     }
 
     /**
@@ -93,29 +58,9 @@ class DataLayer extends DataObject
         }
     }
 
-    /**
-     * @param string $prefix
-     * @param mixed $data
-     */
-    private function _addArray($prefix = "", $data = [])
-    {
-        if (is_object($data) || is_array($data)) {
-            foreach ($data as $key => $value) {
-                $suffix = ucfirst(implode('', explode('_', ucwords($key, '_'))));
-                if (is_object($value) || is_array($value)) {
-                    if (count($value) > 0 && isset($value[0])) {
-                        $this->addVariable($prefix . $suffix, $value);
-                    } else {
-                        $this->_addArray($prefix . $suffix, $value);
-                    }
-                } else {
-                    $this->addVariable($prefix . $suffix, $value);
-                }
-            }
-        } else {
-            $this->addVariable($prefix, $data);
-        }
-    }
+    // -----------------------------------------------
+    // SETTERS AND GETTERS
+    // -----------------------------------------------
 
     public function setPageDataLayer()
     {
@@ -151,6 +96,42 @@ class DataLayer extends DataObject
         if (!empty($orderData)) {
             $this->_addArray('product', $orderData['product']);
             $this->_addArray('order', $orderData['order']);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getVariables(): array
+    {
+        return $this->_variables;
+    }
+
+    // -----------------------------------------------
+    // UTILITY
+    // -----------------------------------------------
+
+    /**
+     * @param string $prefix
+     * @param mixed $data
+     */
+    private function _addArray($prefix = "", $data = [])
+    {
+        if (is_object($data) || is_array($data)) {
+            foreach ($data as $key => $value) {
+                $suffix = ucfirst(implode('', explode('_', ucwords($key, '_'))));
+                if (is_object($value) || is_array($value)) {
+                    if (count($value) > 0 && isset($value[0])) {
+                        $this->addVariable($prefix . $suffix, $value);
+                    } else {
+                        $this->_addArray($prefix . $suffix, $value);
+                    }
+                } else {
+                    $this->addVariable($prefix . $suffix, $value);
+                }
+            }
+        } else {
+            $this->addVariable($prefix, $data);
         }
     }
 }

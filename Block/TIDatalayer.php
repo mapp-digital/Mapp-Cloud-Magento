@@ -15,47 +15,30 @@ use MappDigital\Cloud\Model\DataLayer;
 
 class TIDatalayer extends Template
 {
+    protected Config $config;
+    protected DataLayerHelper $dataLayerHelper;
+    protected DataLayer $dataLayerModel;
 
-    /**
-     * @var Config
-     */
-    protected $_config;
-
-    /**
-     * @var DataLayerHelper
-     */
-    protected $_dataLayerHelper;
-
-    /**
-     * @var DataLayer
-     */
-    protected $_dataLayerModel = null;
-
-
-    /**
-     * @param Context $context
-     * @param Config $config
-     * @param DataLayerHelper $dataLayerHelper
-     * @param DataLayer $dataLayer
-     * @param array $data
-     */
-    public function __construct(Context $context, Config $config, DataLayerHelper $dataLayerHelper, DataLayer $dataLayer, array $data = [])
-    {
-        $this->_config = $config;
-        $this->_dataLayerHelper = $dataLayerHelper;
-        $this->_dataLayerModel = $dataLayer;
-
+    public function __construct(
+        Context $context,
+        Config $config,
+        DataLayerHelper $dataLayerHelper,
+        DataLayer $dataLayer,
+        array $data = []
+    ){
         parent::__construct($context, $data);
+
+        $this->config = $config;
+        $this->dataLayerHelper = $dataLayerHelper;
+        $this->dataLayerModel = $dataLayer;
     }
-
-
 
     /**
      * @return string
      */
     protected function _toHtml()
     {
-        if (!$this->_config->isEnabled()) {
+        if (!$this->config->isEnabled()) {
             return '';
         }
 
@@ -63,21 +46,21 @@ class TIDatalayer extends Template
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getDataLayer()
+    public function getDataLayer(): string
     {
-        $this->_dataLayerModel->setPageDataLayer();
-        $data = $this->_dataLayerHelper->mappifyPage($this->_dataLayerModel->getVariables());
-        $data = $this->_config->removeParameterByBlacklist($data);
-        return json_encode($data, JSON_PRETTY_PRINT);
+        $this->dataLayerModel->setPageDataLayer();
+        $data = $this->dataLayerHelper->mappifyPage($this->dataLayerModel->getVariables());
+        $data = $this->config->removeParameterByBlacklist($data);
+        return json_encode($data ?? [], JSON_PRETTY_PRINT);
     }
 
     /**
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
-        return TrackingScript::generateJS($this->_config->getConfig());
+        return TrackingScript::generateJS($this->config->getConfig());
     }
 }

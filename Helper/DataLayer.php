@@ -102,7 +102,7 @@ class DataLayer
 
         $allDataLayerAttributes = array_keys($existingProducts); // get all  existing keys
         foreach ($productToBeAdded as $key => $_) { // add all keys of new product
-            array_push($allDataLayerAttributes, $key);
+            $allDataLayerAttributes[] = $key;
         }
         $allDataLayerAttributes = array_unique($allDataLayerAttributes); // get rid of duplicates
         foreach ($allDataLayerAttributes as $dataLayerAttribute) {

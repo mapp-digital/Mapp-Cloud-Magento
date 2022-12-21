@@ -2,30 +2,41 @@
 
 namespace MappDigital\Cloud\Plugin\Sales\Model\ResourceModel;
 
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
+use Magento\Catalog\Helper\Product;
+use Magento\Customer\Model\Address\Config;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Session\StorageInterface;
+use Magento\Payment\Helper\Data;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\ResourceModel\Order;
 use Magento\Sales\Model\ResourceModel\Order\Interceptor;
+use Psr\Log\LoggerInterface;
+use MappDigital\Cloud\Helper\Data as MappConnectHelper;
 
 class OrderPlugin
 {
-    protected $scopeConfig;
-    protected $_helper;
-    protected $productHelper;
-    protected $addressConfig;
-    protected $paymentHelper;
-    protected $logger;
+    protected ScopeConfigInterface $scopeConfig;
+    protected MappConnectHelper $helper;
+    protected Product $productHelper;
+    protected Config $addressConfig;
+    protected Data $paymentHelper;
+    protected StorageInterface $storage;
+    protected LoggerInterface $logger;
 
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \MappDigital\Cloud\Helper\Data $helper,
-        \Magento\Catalog\Helper\Product $productHelper,
-        \Magento\Customer\Model\Address\Config $addressConfig,
-        \Magento\Payment\Helper\Data $paymentHelper,
-        \Magento\Framework\Session\StorageInterface $storage,
-        \Psr\Log\LoggerInterface $logger
+        ScopeConfigInterface $scopeConfig,
+        MappConnectHelper $helper,
+        Product $productHelper,
+        Config $addressConfig,
+        Data $paymentHelper,
+        StorageInterface $storage,
+        LoggerInterface $logger
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->_helper = $helper;
+        $this->helper = $helper;
         $this->productHelper = $productHelper;
         $this->addressConfig = $addressConfig;
         $this->paymentHelper = $paymentHelper;
@@ -37,69 +48,85 @@ class OrderPlugin
     {
         $options = $item->getProductOptions();
         $options = array_merge(
-            isset($options['options']) ? $options['options'] : [],
-            isset($options['additional_options']) ? $options['additional_options'] : [],
-            isset($options['attributes_info']) ? $options['attributes_info'] : []
+            $options['options'] ?? [],
+            $options['additional_options'] ?? [],
+            $options['attributes_info'] ?? []
         );
-        $ret = [];
-        foreach ($options as $opt) {
-            $ret[] = $opt['label'].': '.$opt['value'];
+
+        $formattedOptions = [];
+        foreach ($options as $option) {
+            $formattedOptions[] = $option['label'] . ': ' . $option['value'];
         }
-        return implode(', ', $ret);
+
+        return implode(', ', $formattedOptions);
     }
 
-    protected function getCategories($item)
+    /**
+     * @param $item
+     * @return string
+     */
+    protected function getCategories($item): string
     {
-        $ret = [];
+        $categories = [];
+
         foreach ($item->getProduct()->getCategoryCollection()->addAttributeToSelect('name') as $category) {
-            $ret[]  = $category->getName();
+            $categories[] = $category->getName();
         }
-        return implode(', ', $ret);
+
+        return implode(', ', $categories);
     }
 
+    /**
+     * @param Order $subject
+     * @param Interceptor $interceptor
+     * @param OrderInterface $order
+     * @return OrderInterface
+     * @throws GuzzleException
+     * @throws LocalizedException
+     * @throws Exception
+     */
     public function afterSave(Order $subject, Interceptor $interceptor, OrderInterface $order): OrderInterface
     {
-        $transaction_key = 'mappconnect_transaction_'.$order->getId();
+        $transactionKey = 'mappconnect_transaction_' . $order->getId();
 
-        if ($sendonstatus = $this->_helper->getConfigValue('export', 'transaction_send_on_status')) {
-          if (!$order->dataHasChangedFor(OrderInterface::STATUS)) {
-            return $order;
-          }
-          if ($order->getStatus() != $sendonstatus) {
-            return $order;
-          }
+        if ($requireOrderStatusForExport = $this->helper->getConfigValue('export', 'transaction_send_on_status')) {
+            if (!$order->dataHasChangedFor(OrderInterface::STATUS) || $order->getStatus() != $requireOrderStatusForExport) {
+                return $order;
+            }
         } else {
-          //backward compatibility if config is not set
-          if ($order->getState() != \Magento\Sales\Model\Order::STATE_NEW) {
-            return $order;
-          }
+            //backward compatibility if config is not set
+            if ($order->getState() != \Magento\Sales\Model\Order::STATE_NEW) {
+                return $order;
+            }
         }
 
-        $this->logger->debug('MappConnect: Order plugin called');
+        $this->logger->debug('Mapp Connect: Order plugin called');
 
-        if ($this->_helper->getConfigValue('export', 'transaction_enable')
-          && ($this->storage->getData($transaction_key) != true)) {
+        if ($this->helper->getConfigValue('export', 'transaction_enable') && $this->storage->getData($transactionKey) != true) {
             $data = $order->getData();
             $data['items'] = [];
             unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
 
             foreach ($order->getAllVisibleItems() as $item) {
-                $item_data = $item->getData();
-                $item_data['base_image'] = $this->productHelper->getImageUrl($item->getProduct());
-                $item_data['url_path'] = $item->getProduct()->getProductUrl();
-                $item_data['categories'] = $this->getCategories($item);
-                $item_data['manufacturer'] = $item->getProduct()->getAttributeText('manufacturer');
+                $itemData = $item->getData();
+                $itemData['base_image'] = $this->productHelper->getImageUrl($item->getProduct());
+                $itemData['url_path'] = $item->getProduct()->getProductUrl();
+                $itemData['categories'] = $this->getCategories($item);
+                $itemData['manufacturer'] = $item->getProduct()->getAttributeText('manufacturer');
 
-                $item_data['variant'] = $this->getSelectedOptions($item);
-                unset($item_data['product_options'], $item_data['extension_attributes'], $item_data['parent_item']);
+                $itemData['variant'] = $this->getSelectedOptions($item);
+                unset($itemData['product_options'], $itemData['extension_attributes'], $itemData['parent_item']);
 
-                $data['items'][] = $item_data;
+                $data['items'][] = $itemData;
             }
 
-            if ($billingAddress = $order->getBillingAddress())
+            if ($billingAddress = $order->getBillingAddress()) {
                 $data['billingAddress'] = $billingAddress->getData();
-            if ($shippingAddress = $order->getShippingAddress())
+            }
+
+            if ($shippingAddress = $order->getShippingAddress()) {
                 $data['shippingAddress'] = $shippingAddress->getData();
+            }
 
             $renderer = $this->addressConfig->getFormatByCode('html')->getRenderer();
 
@@ -111,12 +138,12 @@ class OrderPlugin
                 $data['store_id']
             );
 
-            $messageId = $this->_helper->templateIdToConfig("sales_email_order_template");
+            $messageId = $this->helper->templateIdToConfig('sales_email_order_template');
 
             if (isset($data['customer_is_guest']) && $data['customer_is_guest']) {
-                $messageId = $this->_helper->templateIdToConfig("sales_email_order_guest_template");
-                if ($this->_helper->getConfigValue('group', 'guests')) {
-                    $data['group'] = $this->_helper->getConfigValue('group', 'guests');
+                $messageId = $this->helper->templateIdToConfig('sales_email_order_guest_template');
+                if ($this->helper->getConfigValue('group', 'guests')) {
+                    $data['group'] = $this->helper->getConfigValue('group', 'guests');
                 }
             }
 
@@ -125,14 +152,14 @@ class OrderPlugin
             }
 
             try {
-                if ($mc = $this->_helper->getMappConnectClient()) {
-                    $mc->event('transaction', $data);
-                    $this->storage->setData($transaction_key, true);
+                if ($mappConnectClient = $this->helper->getMappConnectClient()) {
+                    $mappConnectClient->event('transaction', $data);
+                    $this->storage->setData($transactionKey, true);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->logger->error('MappConnect: cannot sync transaction event', ['exception' => $e]);
             }
-        } elseif ($this->_helper->getConfigValue('export', 'customer_enable')) {
+        } elseif ($this->helper->getConfigValue('export', 'customer_enable')) {
             $data = $order->getData();
             if (isset($data['customer_is_guest']) && $data['customer_is_guest']) {
                 $data = [
@@ -145,17 +172,18 @@ class OrderPlugin
                     'note' => $order->getCustomerNote()
                 ];
 
-                $data['group'] = $this->_helper->getConfigValue('group', 'guests');
+                $data['group'] = $this->helper->getConfigValue('group', 'guests');
                 try {
-                    if ($mc = $this->_helper->getMappConnectClient()) {
+                    if ($mappConnectClient = $this->helper->getMappConnectClient()) {
                         $this->logger->debug('MappConnect: sending guest customer', ['data' => $data]);
-                        $mc->event('user', $data);
+                        $mappConnectClient->event('user', $data);
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->logger->error('MappConnect: cannot sync guest customer', ['exception' => $e]);
                 }
             }
         }
+
         return $order;
     }
 }

@@ -1,45 +1,70 @@
 <?php
 namespace MappDigital\Cloud\Observer;
 
+use GuzzleHttp\Exception\GuzzleException;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Exception\LocalizedException;
+use MappDigital\Cloud\Helper\Data;
+use MappDigital\Cloud\Model\Connect\Client;
+use Psr\Log\LoggerInterface;
 
 class CustomerUpdate implements ObserverInterface
 {
-
-  /**
-   * @var \Magento\Framework\App\Config\ScopeConfigInterface
-   */
-    protected $scopeConfig;
-
-    protected $_helper;
-
-    protected $logger;
+    protected ScopeConfigInterface $scopeConfig;
+    protected Data $helper;
+    protected LoggerInterface $logger;
 
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \MappDigital\Cloud\Helper\Data      $helper,
-        \Psr\Log\LoggerInterface $logger
+        ScopeConfigInterface $scopeConfig,
+        Data $helper,
+        LoggerInterface $logger
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->_helper = $helper;
+        $this->helper = $helper;
         $this->logger = $logger;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    /**
+     * @throws GuzzleException
+     * @throws LocalizedException
+     */
+    public function execute(Observer $observer)
     {
-        $this->logger->debug('MappConnect: Customer execute');
-        if (($mappconnect = $this->_helper->getMappConnectClient())
-        && $this->_helper->getConfigValue('export', 'customer_enable')) {
-            $customer = $observer->getCustomerDataObject();
-            $data = $customer->__toArray();
-            $data['group'] = $this->_helper->getConfigValue('group', 'customers');
-            $data['subscribe'] = true;
-            $this->logger->debug('MappConnect: sending Customer', ['data' => $data]);
+        $this->logger->debug('Mapp Connect: -- EVENT -- customer_save_after_data_object');
+        $this->logger->debug('Mapp Connect: -- OBSERVER -- mapp_connect_customer_update_observer');
+
+        if (($mappConnectClient = $this->getMappConnectClient()) && $this->isEnabled()) {
+            $customerData = $observer->getCustomerDataObject()->__toArray();
+            $customerData['group'] = $this->helper->getConfigValue('group', 'customers');
+            $customerData['subscribe'] = true;
+
+            $this->logger->debug('Mapp Connect: Updating Customer', ['data' => $customerData]);
             try {
-                $mappconnect->event('user', $data);
-            } catch (\Exception $e) {
-                $this->logger->error('MappConnect: cannot sync customer', ['exception' => $e]);
+                $mappConnectClient->event('user', $customerData);
+            } catch (\Exception $exception) {
+                $this->logger->error('Mapp Connect: cannot sync customer', ['exception' => $exception]);
+                $this->logger->error($exception);
             }
         }
+    }
+
+    /**
+     * @return bool
+     * @throws LocalizedException
+     */
+    private function isEnabled(): bool
+    {
+        return (bool) $this->helper->getConfigValue('export', 'customer_enable');
+    }
+
+    /**
+     * @return Client|null
+     * @throws LocalizedException
+     */
+    private function getMappConnectClient(): ?Client
+    {
+        return $this->helper->getMappConnectClient();
     }
 }

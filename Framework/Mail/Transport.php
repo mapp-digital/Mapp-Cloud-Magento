@@ -23,6 +23,7 @@ class Transport implements \Magento\Framework\Mail\TransportInterface
         if (!$this->messageId) {
             return 0;
         }
+
         foreach ($this->parameters['to'] as $to) {
             $data = $this->parameters['params'];
             $data['messageId'] = (string)$this->messageId;

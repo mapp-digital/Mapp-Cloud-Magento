@@ -1,20 +1,23 @@
 <?php
 namespace MappDigital\Cloud\Plugin;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Psr\Log\LoggerInterface;
+
 class SubscriberPlugin
 {
 
-    protected $scopeConfig;
+    protected ScopeConfigInterface $scopeConfig;
     protected $helper;
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        ScopeConfigInterface $scopeConfig,
         \MappDigital\Cloud\Helper\Data $helper,
-        \Psr\Log\LoggerInterface $logger
+        LoggerInterface $logger
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->_helper = $helper;
+        $this->helper = $helper;
         $this->logger = $logger;
     }
 
@@ -26,13 +29,13 @@ class SubscriberPlugin
         $email = $subject->getEmail();
         $this->logger->debug('MappConnect: Subscribe subscribe called');
         try {
-            if (($mappconnect = $this->_helper->getMappConnectClient())
-            && $this->_helper->getConfigValue('export', 'newsletter_enable')) {
+            if (($mappconnect = $this->helper->getMappConnectClient())
+            && $this->helper->getConfigValue('export', 'newsletter_enable')) {
                 $data = [
                  'email' => $email,
-                 'group' => $this->_helper->getConfigValue('group', 'subscribers')
+                 'group' => $this->helper->getConfigValue('group', 'subscribers')
                 ];
-                if ($this->_helper->getConfigValue('export', 'newsletter_doubleoptin')) {
+                if ($this->helper->getConfigValue('export', 'newsletter_doubleoptin')) {
                     $data['doubleOptIn'] = true;
                 }
                 $this->logger->debug('MappConnect: sending newsletter', ['data' => $data]);
@@ -52,11 +55,11 @@ class SubscriberPlugin
         $this->logger->debug('MappConnect: Subscribe unsubscribe called');
         $email = $subject->getEmail();
         try {
-            if (($mappconnect = $this->_helper->getMappConnectClient())
-            && $this->_helper->getConfigValue('export', 'newsletter_enable')) {
+            if (($mappconnect = $this->helper->getMappConnectClient())
+            && $this->helper->getConfigValue('export', 'newsletter_enable')) {
                 $data = [
                  'email' => $email,
-                 'group' => $this->_helper->getConfigValue('group', 'subscribers'),
+                 'group' => $this->helper->getConfigValue('group', 'subscribers'),
                  'unsubscribe' => true
                 ];
                 $this->logger->debug('MappConnect: sending newsletter', ['data' => $data]);
@@ -77,13 +80,13 @@ class SubscriberPlugin
         $this->logger->debug('MappConnect: Subscribe subscribe by customerid called');
         $email = $subject->getEmail();
         try {
-            if (($mappconnect = $this->_helper->getMappConnectClient())
-            && $this->_helper->getConfigValue('export', 'newsletter_enable')) {
+            if (($mappconnect = $this->helper->getMappConnectClient())
+            && $this->helper->getConfigValue('export', 'newsletter_enable')) {
                 $data = [
                  'email' => $email,
-                 'group' => $this->_helper->getConfigValue('group', 'subscribers')
+                 'group' => $this->helper->getConfigValue('group', 'subscribers')
                 ];
-                if ($this->_helper->getConfigValue('export', 'newsletter_doubleoptin')) {
+                if ($this->helper->getConfigValue('export', 'newsletter_doubleoptin')) {
                     $data['doubleOptIn'] = true;
                 }
                 $this->logger->debug('MappConnect: sending newsletter', ['data' => $data]);
@@ -105,11 +108,11 @@ class SubscriberPlugin
         $this->logger->debug('MappConnect: Subscribe unsubscribe by customerid called');
         $email = $subject->getEmail();
         try {
-            if (($mappconnect = $this->_helper->getMappConnectClient())
-            && $this->_helper->getConfigValue('export', 'newsletter_enable')) {
+            if (($mappconnect = $this->helper->getMappConnectClient())
+            && $this->helper->getConfigValue('export', 'newsletter_enable')) {
                 $data = [
                  'email' => $email,
-                 'group' => $this->_helper->getConfigValue('group', 'subscribers'),
+                 'group' => $this->helper->getConfigValue('group', 'subscribers'),
                  'unsubscribe' => true
                 ];
                 $this->logger->debug('MappConnect: sending newsletter', ['data' => $data]);
