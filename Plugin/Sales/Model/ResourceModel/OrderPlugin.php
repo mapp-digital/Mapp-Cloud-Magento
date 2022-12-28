@@ -14,12 +14,12 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\ResourceModel\Order;
 use Magento\Sales\Model\ResourceModel\Order\Interceptor;
 use Psr\Log\LoggerInterface;
-use MappDigital\Cloud\Helper\Data as MappConnectHelper;
+use MappDigital\Cloud\Helper\ConnectHelper;
 
 class OrderPlugin
 {
     protected ScopeConfigInterface $scopeConfig;
-    protected MappConnectHelper $helper;
+    protected ConnectHelper $connectHelper;
     protected Product $productHelper;
     protected Config $addressConfig;
     protected Data $paymentHelper;
@@ -28,7 +28,7 @@ class OrderPlugin
 
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        MappConnectHelper $helper,
+        ConnectHelper $connectHelper,
         Product $productHelper,
         Config $addressConfig,
         Data $paymentHelper,
@@ -36,7 +36,7 @@ class OrderPlugin
         LoggerInterface $logger
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->helper = $helper;
+        $this->connectHelper = $connectHelper;
         $this->productHelper = $productHelper;
         $this->addressConfig = $addressConfig;
         $this->paymentHelper = $paymentHelper;
@@ -44,7 +44,11 @@ class OrderPlugin
         $this->logger = $logger;
     }
 
-    protected function getSelectedOptions($item)
+    /**
+     * @param $item
+     * @return string
+     */
+    protected function getSelectedOptions($item): string
     {
         $options = $item->getProductOptions();
         $options = array_merge(
@@ -54,6 +58,7 @@ class OrderPlugin
         );
 
         $formattedOptions = [];
+
         foreach ($options as $option) {
             $formattedOptions[] = $option['label'] . ': ' . $option['value'];
         }
@@ -87,9 +92,9 @@ class OrderPlugin
      */
     public function afterSave(Order $subject, Interceptor $interceptor, OrderInterface $order): OrderInterface
     {
-        $transactionKey = 'mappconnect_transaction_' . $order->getId();
+        $transactionKey = 'mapp_connect_transaction_' . $order->getId();
 
-        if ($requireOrderStatusForExport = $this->helper->getConfigValue('export', 'transaction_send_on_status')) {
+        if ($requireOrderStatusForExport = $this->connectHelper->getConfigValue('export', 'transaction_send_on_status')) {
             if (!$order->dataHasChangedFor(OrderInterface::STATUS) || $order->getStatus() != $requireOrderStatusForExport) {
                 return $order;
             }
@@ -102,7 +107,7 @@ class OrderPlugin
 
         $this->logger->debug('Mapp Connect: Order plugin called');
 
-        if ($this->helper->getConfigValue('export', 'transaction_enable') && $this->storage->getData($transactionKey) != true) {
+        if ($this->connectHelper->getConfigValue('export', 'transaction_enable') && $this->storage->getData($transactionKey) != true) {
             $data = $order->getData();
             $data['items'] = [];
             unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
@@ -138,12 +143,12 @@ class OrderPlugin
                 $data['store_id']
             );
 
-            $messageId = $this->helper->templateIdToConfig('sales_email_order_template');
+            $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_template');
 
             if (isset($data['customer_is_guest']) && $data['customer_is_guest']) {
-                $messageId = $this->helper->templateIdToConfig('sales_email_order_guest_template');
-                if ($this->helper->getConfigValue('group', 'guests')) {
-                    $data['group'] = $this->helper->getConfigValue('group', 'guests');
+                $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_guest_template');
+                if ($this->connectHelper->getConfigValue('group', 'guests')) {
+                    $data['group'] = $this->connectHelper->getConfigValue('group', 'guests');
                 }
             }
 
@@ -152,34 +157,41 @@ class OrderPlugin
             }
 
             try {
-                if ($mappConnectClient = $this->helper->getMappConnectClient()) {
-                    $mappConnectClient->event('transaction', $data);
-                    $this->storage->setData($transactionKey, true);
-                }
-            } catch (Exception $e) {
-                $this->logger->error('MappConnect: cannot sync transaction event', ['exception' => $e]);
+                $this->connectHelper->getMappConnectClient()->event('transaction', $data);
+                $this->storage->setData($transactionKey, true);
+            } catch (GuzzleException $exception) {
+                $this->logger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', ['exception' => $exception]);
+                $this->logger->error($exception);
+            } catch (Exception $exception) {
+                $this->logger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', ['exception' => $exception]);
+                $this->logger->error($exception);
             }
-        } elseif ($this->helper->getConfigValue('export', 'customer_enable')) {
+
+        } elseif ($this->connectHelper->getConfigValue('export', 'customer_enable')) {
             $data = $order->getData();
             if (isset($data['customer_is_guest']) && $data['customer_is_guest']) {
-                $data = [
-                    'dob' => $order->getCustomerDob(),
-                    'email' => $order->getCustomerEmail(),
-                    'firstname' => $order->getCustomerFirstname(),
-                    'gender' => $order->getCustomerGender(),
-                    'lastname' => $order->getCustomerLastname(),
-                    'middlename' => $order->getCustomerMiddlename(),
-                    'note' => $order->getCustomerNote()
-                ];
 
-                $data['group'] = $this->helper->getConfigValue('group', 'guests');
                 try {
-                    if ($mappConnectClient = $this->helper->getMappConnectClient()) {
-                        $this->logger->debug('MappConnect: sending guest customer', ['data' => $data]);
-                        $mappConnectClient->event('user', $data);
-                    }
-                } catch (Exception $e) {
-                    $this->logger->error('MappConnect: cannot sync guest customer', ['exception' => $e]);
+                    $data = [
+                        'dob' => $order->getCustomerDob(),
+                        'email' => $order->getCustomerEmail(),
+                        'firstname' => $order->getCustomerFirstname(),
+                        'gender' => $order->getCustomerGender(),
+                        'lastname' => $order->getCustomerLastname(),
+                        'middlename' => $order->getCustomerMiddlename(),
+                        'note' => $order->getCustomerNote()
+                    ];
+
+                    $data['group'] = $this->connectHelper->getConfigValue('group', 'guests');
+
+                    $this->logger->debug('MappConnect: sending guest customer', ['data' => $data]);
+                    $this->connectHelper->getMappConnectClient()->event('user', $data);
+                } catch (GuzzleException $exception) {
+                    $this->logger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', ['exception' => $exception]);
+                    $this->logger->error($exception);
+                } catch (Exception $exception) {
+                    $this->logger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', ['exception' => $exception]);
+                    $this->logger->error($exception);
                 }
             }
         }

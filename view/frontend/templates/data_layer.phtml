@@ -18,6 +18,6 @@ if (class_exists('Magento\Framework\View\Helper\SecureHtmlRenderer')) {
         ['type' => 'text/javascript'],
         'window._ti=' . $this->getDataLayer() . ';' . $this->getScript(),
         false);
-} else {  
+} else {
     echo '<script type="text/javascript">' .  'window._ti=' . $this->getDataLayer() .';' . $this->getScript() . '</script>';
 }

@@ -15,7 +15,7 @@ use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Exception\ValidatorException;
 use MappDigital\Cloud\Model\Connect\ClientFactory as MappConnectClientFactory;
-use MappDigital\Cloud\Helper\Data as MappConnectHelper;
+use MappDigital\Cloud\Helper\ConnectHelper;
 
 class Authentication extends Value
 {
@@ -26,7 +26,7 @@ class Authentication extends Value
     protected ConfigInterface $configResource;
     protected ?MappConnectClientFactory $mappConnectClientFactory;
     protected ProductMetadataInterface $productMetadata;
-    protected MappConnectHelper $mappConnectHelper;
+    protected ConnectHelper $connectHelper;
 
     public function __construct(
         Context $context,
@@ -36,14 +36,14 @@ class Authentication extends Value
         ConfigInterface $configResource,
         MappConnectClientFactory $mappConnectClientFactory,
         ProductMetadataInterface $productMetadata,
-        MappConnectHelper $mappConnectHelper,
+        ConnectHelper $connectHelper,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->configResource = $configResource;
         $this->productMetadata = $productMetadata;
-        $this->mappConnectHelper = $mappConnectHelper;
+        $this->connectHelper = $connectHelper;
         $this->mappConnectClientFactory = $mappConnectClientFactory;
 
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
@@ -54,7 +54,7 @@ class Authentication extends Value
      */
     public function beforeSave()
     {
-        if ($this->mappConnectHelper->getConfigValue('integration', 'integration_enable')) {
+        if ($this->connectHelper->getConfigValue('integration', 'integration_enable')) {
             $mappConnectClient = $this->mappConnectClientFactory->create();
 
             try {

@@ -2,9 +2,11 @@
     <type name="Magento\Framework\Mail\Template\TransportBuilder">
         <plugin sortOrder="1" name="MappConnectTransportBuilder" type="MappDigital\Cloud\Plugin\Mail\TransportBuilderPlugin"/>
     </type>
+
     <type name="Magento\Newsletter\Model\Subscriber">
         <plugin name="MappConnectNewsletterSubscriber" type="MappDigital\Cloud\Plugin\SubscriberPlugin"/>
     </type>
+
     <type name="Magento\Newsletter\Model\SubscriptionManager">
         <plugin name="MappConnectNewsletterSubscriptionManager" type="MappDigital\Cloud\Plugin\SubscriptionManagerPlugin"/>
     </type>

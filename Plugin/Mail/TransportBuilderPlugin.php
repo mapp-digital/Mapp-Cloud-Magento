@@ -3,7 +3,7 @@
 namespace MappDigital\Cloud\Plugin\Mail;
 
 use Magento\Framework\Exception\LocalizedException;
-use MappDigital\Cloud\Helper\Data as MappConnectHelper;
+use MappDigital\Cloud\Helper\ConnectHelper;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use MappDigital\Cloud\Framework\Mail\Transport;
 use Magento\Framework\Mail\Template\FactoryInterface;
@@ -12,11 +12,11 @@ class TransportBuilderPlugin
 {
     protected array $parameters = [];
 
-    protected MappConnectHelper $mappConnectHelper;
+    protected ConnectHelper $mappConnectHelper;
     protected FactoryInterface $templateFactory;
 
     public function __construct(
-        MappConnectHelper $mappConnectHelper,
+        ConnectHelper $mappConnectHelper,
         FactoryInterface  $templateFactory
     )
     {

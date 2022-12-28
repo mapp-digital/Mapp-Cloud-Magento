@@ -4,19 +4,19 @@ namespace MappDigital\Cloud\Model\Config\Backend;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Magento\Framework\Data\OptionSourceInterface;
-use \MappDigital\Cloud\Helper\Data;
-use \Magento\Framework\Message\ManagerInterface;
+use MappDigital\Cloud\Helper\ConnectHelper;
+use Magento\Framework\Message\ManagerInterface;
 
 
 class Template implements OptionSourceInterface
 {
     private static $cache = null;
 
-    protected $helper;
-    protected $messageManager;
+    protected ConnectHelper $helper;
+    protected ManagerInterface $messageManager;
 
     public function __construct(
-        Data $helper,
+        ConnectHelper $helper,
         ManagerInterface $messageManager
     ) {
         $this->helper = $helper;

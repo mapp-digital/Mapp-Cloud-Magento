@@ -7,7 +7,8 @@
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-	<referenceContainer name="head.additional">
-	  <block class="MappDigital\Cloud\Block\TIDatalayer" name="ti_datalayer" as="ti_datalayer" template="MappDigital_Cloud::data_layer.phtml"/>
-	</referenceContainer>
+    <referenceContainer name="head.additional">
+        <block class="MappDigital\Cloud\Block\TIDatalayer" name="ti_datalayer" as="ti_datalayer"
+               template="MappDigital_Cloud::data_layer.phtml"/>
+    </referenceContainer>
 </page>

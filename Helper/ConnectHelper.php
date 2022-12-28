@@ -13,7 +13,7 @@ use Magento\Store\Model\ScopeInterface;
 use MappDigital\Cloud\Model\Connect\Client as MappConnectClient;
 use MappDigital\Cloud\Model\Connect\ClientFactory as MappConnectClientFactory;
 
-class Data extends AbstractHelper
+class ConnectHelper extends AbstractHelper
 {
     protected ?MappConnectClient $client = null;
     protected Http $request;

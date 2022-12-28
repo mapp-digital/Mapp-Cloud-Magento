@@ -47,21 +47,25 @@ class Get implements HttpGetActionInterface
     {
         $params = $this->request->getParams();
         $isAddToCart = isset($params['add']);
-        if(!$isAddToCart) {
+
+        if (!$isAddToCart) {
             if (isset($params['product'])) {
                 $this->dataLayerModel->setProductDataLayer($params['product']);
             }
             $this->dataLayerModel->setCustomerDataLayer();
             $this->dataLayerModel->setOrderDataLayer();
         }
+
         $this->dataLayerModel->setCartDataLayer();
-        $dataLayer  = $this->dataLayerHelper->mappify($this->dataLayerModel->getVariables());
+        $dataLayer = $this->dataLayerHelper->mappify($this->dataLayerModel->getVariables());
         $dataLayer = $this->config->removeParameterByBlacklist($dataLayer);
+
         $data = [
-                "eventName" => $this->config->getAddToCartEventName(),
-                "dataLayer" => $dataLayer
+            "eventName" => $this->config->getAddToCartEventName(),
+            "dataLayer" => $dataLayer,
+            "config" => $this->config->getConfig(),
         ];
-        $data['config'] = $this->config->getConfig();
+
         return $this->resultJsonFactory->create()->setData($data);
     }
 }

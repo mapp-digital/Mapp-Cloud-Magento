@@ -8,6 +8,7 @@ namespace MappDigital\Cloud\Block;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\View\Page\Config as FrameworkPageConfig;
 use MappDigital\Cloud\Helper\Config;
 use MappDigital\Cloud\Helper\TrackingScript;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
@@ -18,12 +19,14 @@ class TIDatalayer extends Template
     protected Config $config;
     protected DataLayerHelper $dataLayerHelper;
     protected DataLayer $dataLayerModel;
+    protected $pageConfig;
 
     public function __construct(
         Context $context,
         Config $config,
         DataLayerHelper $dataLayerHelper,
         DataLayer $dataLayer,
+        FrameworkPageConfig $pageConfig,
         array $data = []
     ){
         parent::__construct($context, $data);
@@ -31,6 +34,7 @@ class TIDatalayer extends Template
         $this->config = $config;
         $this->dataLayerHelper = $dataLayerHelper;
         $this->dataLayerModel = $dataLayer;
+        $this->pageConfig = $pageConfig;
     }
 
     /**

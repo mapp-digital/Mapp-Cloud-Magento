@@ -8,24 +8,24 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use MappDigital\Cloud\Model\Connect\Client;
 use Psr\Log\LoggerInterface;
-use \MappDigital\Cloud\Helper\Data as MappConnectHelper;
+use MappDigital\Cloud\Helper\ConnectHelper;
 
 class SubscriptionManagerPlugin
 {
     protected ScopeConfigInterface $scopeConfig;
     protected CustomerRepositoryInterface $customerRepository;
-    protected MappConnectHelper $helper;
+    protected ConnectHelper $connectHelper;
     protected LoggerInterface $logger;
 
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         CustomerRepositoryInterface $customerRepository,
-        MappConnectHelper $helper,
+        ConnectHelper $connectHelper,
         LoggerInterface $logger
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->customerRepository= $customerRepository;
-        $this->helper = $helper;
+        $this->connectHelper = $connectHelper;
         $this->logger = $logger;
     }
 
@@ -39,13 +39,13 @@ class SubscriptionManagerPlugin
         $this->logger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Base Method: subscribe');
 
         try {
-            if ($this->helper->getConfigValue('export', 'newsletter_enable')) {
+            if ($this->connectHelper->getConfigValue('export', 'newsletter_enable')) {
                 $data = [
                  'email' => $email,
-                 'group' => $this->helper->getConfigValue('group', 'subscribers')
+                 'group' => $this->connectHelper->getConfigValue('group', 'subscribers')
                 ];
 
-                if ($this->helper->getConfigValue('export', 'newsletter_doubleoptin')) {
+                if ($this->connectHelper->getConfigValue('export', 'newsletter_doubleoptin')) {
                     $this->logger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- Double Opt In Added');
                     $data['doubleOptIn'] = true;
                 }
@@ -76,15 +76,15 @@ class SubscriptionManagerPlugin
             return $result;
         }
 
-        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Customer Newsletter Subscribe');
-        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: subscribeCustomer');
-
         try {
-            if ($this->helper->getConfigValue('export', 'newsletter_enable')) {
+            if ($this->connectHelper->getConfigValue('export', 'newsletter_enable')) {
+                $this->logger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Guest Newsletter Unsubscribe');
+                $this->logger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Base Method: unsubscribe');
+
                 $data = [
-                 'email' => $subject->getEmail() ?? '',
-                 'group' => $this->helper->getConfigValue('group', 'subscribers'),
-                 'unsubscribe' => true
+                    'email' => $subject->getEmail() ?? '',
+                    'group' => $this->connectHelper->getConfigValue('group', 'subscribers'),
+                    'unsubscribe' => true
                 ];
 
                 $this->logger->debug('MappConnect: sending newsletter', ['data' => $data]);
@@ -113,20 +113,20 @@ class SubscriptionManagerPlugin
             return $result;
         }
 
-        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Newsletter Subscribe Existing Customer');
-        $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: subscribeCustomer');
-
         try {
-            if ($this->helper->getConfigValue('export', 'newsletter_enable')) {
+            if ($this->connectHelper->getConfigValue('export', 'newsletter_enable')) {
+                $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Newsletter Subscribe Existing Customer');
+                $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: subscribeCustomer');
+
                 $customer = $this->customerRepository->getById($customerId);
                 $email = $customer->getEmail();
 
                 $data = [
                     'email' => $email,
-                    'group' => $this->helper->getConfigValue('group', 'subscribers')
+                    'group' => $this->connectHelper->getConfigValue('group', 'subscribers')
                 ];
 
-                if ($this->helper->getConfigValue('export', 'newsletter_doubleoptin')) {
+                if ($this->connectHelper->getConfigValue('export', 'newsletter_doubleoptin')) {
                     $data['doubleOptIn'] = true;
                 }
 
@@ -167,12 +167,12 @@ class SubscriptionManagerPlugin
         $this->logger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: unsubscribeCustomer');
 
         try {
-            if ($this->helper->getConfigValue('export', 'newsletter_enable')) {
+            if ($this->connectHelper->getConfigValue('export', 'newsletter_enable')) {
                 $customer = $this->customerRepository->getById($customerId);
 
                 $data = [
                     'email' => $customer->getEmail(),
-                    'group' => $this->helper->getConfigValue('group', 'subscribers'),
+                    'group' => $this->connectHelper->getConfigValue('group', 'subscribers'),
                     'unsubscribe' => true
                 ];
 
@@ -204,6 +204,6 @@ class SubscriptionManagerPlugin
      */
     private function getMappClient(): ?Client
     {
-        return $this->helper->getMappConnectClient();
+        return $this->connectHelper->getMappConnectClient();
     }
 }

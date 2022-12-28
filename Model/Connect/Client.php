@@ -8,9 +8,9 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Utils;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use Magento\Framework\Exception\LocalizedException;
-use MappDigital\Cloud\Helper\Data as ConnectHelper;
-use \Firebase\JWT\JWT;
-use \Psr\Http\Message\RequestInterface;
+use MappDigital\Cloud\Helper\ConnectHelper;
+use Firebase\JWT\JWT;
+use Psr\Http\Message\RequestInterface;
 
 class Client
 {

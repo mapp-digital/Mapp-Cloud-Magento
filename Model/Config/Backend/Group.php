@@ -4,18 +4,18 @@ namespace MappDigital\Cloud\Model\Config\Backend;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Magento\Framework\Data\OptionSourceInterface;
-use MappDigital\Cloud\Helper\Data;
+use MappDigital\Cloud\Helper\ConnectHelper;
 use Magento\Framework\Message\ManagerInterface;
 
 class Group implements OptionSourceInterface
 {
     private static array $cache = [];
 
-    protected Data $helper;
+    protected ConnectHelper $helper;
     protected ManagerInterface $messageManager;
 
     public function __construct(
-        Data $helper,
+        ConnectHelper $helper,
         ManagerInterface $messageManager
     ) {
         $this->helper = $helper;
@@ -53,8 +53,8 @@ class Group implements OptionSourceInterface
     public function toOptionArray()
     {
         $default = [[
-        'value' => 0,
-        'label' => __('Integration Default')
+            'value' => 0,
+            'label' => __('Integration Default')
         ]];
 
         foreach ($this->getGroups() as $value => $label) {
