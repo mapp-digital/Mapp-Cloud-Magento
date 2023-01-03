@@ -100,7 +100,7 @@ class Client
      */
     public function ping(): bool
     {
-        $pong = $this->get('integration/'.$this->getIntegrationId().'/ping');
+        $pong = $this->get('integration/' . $this->getIntegrationId() . '/ping');
 
         if (!$pong || !$pong['pong']) {
             return false;
@@ -237,7 +237,7 @@ class Client
     {
         return function (callable $handler) {
             return function (RequestInterface $request, array $options) use ($handler) {
-                if ($this->secret) {
+                if ($this->getSecret()) {
                     $request = $request->withHeader('auth-token', $this->getToken($request));
                 }
                 return $handler($request, $options);

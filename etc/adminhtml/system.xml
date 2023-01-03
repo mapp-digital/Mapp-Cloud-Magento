@@ -194,22 +194,33 @@
                 <field id="integration_secret" translate="label" type="password" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Integration Secret</label>
                     <comment>Integration Secret generated in Mapp Engage.</comment>
-                    <backend_model>MappDigital\Cloud\Model\Config\Backend\Authentication</backend_model>
+                </field>
+                <field id="integration_connection" translate="label" type="password" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Connection Status</label>
+                    <comment>Integration Connection Status with Mapp Connect. You may need to clean the config cache to see the up to date status</comment>
+                    <frontend_model>MappDigital\Cloud\Block\Adminhtml\Config\Connect\ConnectionStatus</frontend_model>
                 </field>
             </group>
             <group id="export" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Synchronization configuration</label>
+                <label>Export Connection Configuration</label>
+                <field id="sync_method" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Synchronisation method</label>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\SyncMethod</source_model>
+                    <backend_model>MappDigital\Cloud\Model\Adminhtml\System\Config\Backend\Connect\TriggerManagement</backend_model>
+                </field>
                 <field id="customer_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Customer Synchronization</label>
+                    <label>Enable Customer Synchronisation</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="transaction_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Transaction Synchronization</label>
+                    <label>Enable Sales Transaction Synchronisation</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="transaction_send_on_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="transaction_send_on_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Transaction send on status</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <backend_model>MappDigital\Cloud\Model\Adminhtml\System\Config\Backend\Connect\OrderSubscriptionTriggerOnSave</backend_model>
+                    <comment>IMPORTANT: Changing this will update DB triggers.</comment>
                     <depends>
                         <field id="transaction_enable">1</field>
                     </depends>

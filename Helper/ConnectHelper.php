@@ -10,18 +10,21 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
+use MappDigital\Cloud\Model\Config\Source\SyncMethod;
 use MappDigital\Cloud\Model\Connect\Client as MappConnectClient;
 use MappDigital\Cloud\Model\Connect\ClientFactory as MappConnectClientFactory;
 
 class ConnectHelper extends AbstractHelper
 {
+    const CONFIG_PREFIX = 'mapp_connect';
+    const XML_PATH_SYNC_METHOD = 'mapp_connect/export/sync_method';
+    const XML_PATH_ORDER_STATUS_EXPORT = 'mapp_connect/export/transaction_send_on_status';
+
     protected ?MappConnectClient $client = null;
     protected Http $request;
     protected ScopeConfigInterface $config;
     private State $state;
     protected MappConnectClientFactory $mappConnectClientFactory;
-
-    const CONFIG_PREFIX = 'mapp_connect';
 
     public function __construct(
         Http $request,
@@ -29,8 +32,7 @@ class ConnectHelper extends AbstractHelper
         State $state,
         MappConnectClientFactory $mappConnectClientFactory,
         Context $context
-    )
-    {
+    ) {
         $this->request = $request;
         $this->config = $config;
         $this->state = $state;
@@ -97,6 +99,15 @@ class ConnectHelper extends AbstractHelper
             self::CONFIG_PREFIX . '/' . $group . '/' . $field,
             ScopeInterface::SCOPE_STORE
         );
+    }
+
+    /**
+     * @return string
+     * @throws LocalizedException
+     */
+    public function isLegacySyncEnabled(): string
+    {
+        return $this->getConfigValue('export', 'transaction_send_on_status') == SyncMethod::SYNC_METHOD_LEGACY;
     }
 
     /**

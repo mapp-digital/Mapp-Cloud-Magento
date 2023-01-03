@@ -17,5 +17,10 @@
                 <value id="mapp-gtm" type="host">https://www.googletagmanager.com</value>
             </values>
         </policy>
+        <policy id="connect-src">
+            <values>
+                <value id="mapp-acquire" type="host">https://*.flx1.com/</value>
+            </values>
+        </policy>
     </policies>
 </csp_whitelist>

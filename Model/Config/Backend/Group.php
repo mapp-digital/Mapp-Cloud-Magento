@@ -9,7 +9,7 @@ use Magento\Framework\Message\ManagerInterface;
 
 class Group implements OptionSourceInterface
 {
-    private static array $cache = [];
+    private static ?array $cache = null;
 
     protected ConnectHelper $helper;
     protected ManagerInterface $messageManager;
@@ -33,13 +33,12 @@ class Group implements OptionSourceInterface
         }
 
         try {
-            if ($mappConnectClient = $this->helper->getMappConnectClient()) {
-                self::$cache = $mappConnectClient->getGroups();
+            if ($this->helper->getMappConnectClient()->ping()) {
+                self::$cache = $this->helper->getMappConnectClient()->getGroups() ?? [];
             } else {
                 return [];
             }
         } catch (\Exception $e) {
-            $this->messageManager->addExceptionMessage($e);
             self::$cache = [];
         }
 
@@ -52,13 +51,18 @@ class Group implements OptionSourceInterface
      */
     public function toOptionArray()
     {
-        $default = [[
-            'value' => 0,
-            'label' => __('Integration Default')
-        ]];
+        $default = [
+            [
+                'value' => 0,
+                'label' => __('Magento Default')
+            ]
+        ];
 
         foreach ($this->getGroups() as $value => $label) {
-            $default[] = ['value' => $value, 'label' => $label];
+            $default[] = [
+                'value' => $value,
+                'label' => $label
+            ];
         }
 
         return $default;

@@ -10,7 +10,7 @@ use Magento\Framework\Message\ManagerInterface;
 
 class Template implements OptionSourceInterface
 {
-    private static $cache = null;
+    private static ?array $cache = null;
 
     protected ConnectHelper $helper;
     protected ManagerInterface $messageManager;
@@ -34,13 +34,12 @@ class Template implements OptionSourceInterface
         }
 
         try {
-            if ($mappConnectClient = $this->helper->getMappConnectClient()) {
-                self::$cache = $mappConnectClient->getMessages();
+            if ($this->helper->getMappConnectClient()->ping()) {
+                self::$cache = $this->helper->getMappConnectClient()->getMessages() ?? [];
             } else {
                 return [];
             }
         } catch (\Exception $e) {
-            $this->messageManager->addExceptionMessage($e);
             self::$cache = [];
         }
 
@@ -53,13 +52,18 @@ class Template implements OptionSourceInterface
      */
     public function toOptionArray()
     {
-        $default = [[
-        'value' => 0,
-        'label' => __('Magento Default')
-        ]];
+        $default = [
+            [
+                'value' => 0,
+                'label' => __('Magento Default')
+            ]
+        ];
 
         foreach ($this->getMessages() as $value => $label) {
-            $default[] = ['value' => $value, 'label' => $label];
+            $default[] = [
+                'value' => $value,
+                'label' => $label
+            ];
         }
         return $default;
     }

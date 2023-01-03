@@ -30,9 +30,11 @@ customerRpTokenCreatedAt</attribute_blacklist>
                 <enable>1</enable>
             </general>
             <export>
+                <sync_method>0</sync_method>
                 <customer_enable>1</customer_enable>
                 <transaction_enable>1</transaction_enable>
                 <newsletter_enable>1</newsletter_enable>
+                <transaction_send_on_status>new</transaction_send_on_status>
             </export>
         </mapp_connect>
     </default>

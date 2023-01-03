@@ -1,9 +1,11 @@
 <?php
 namespace MappDigital\Cloud\Plugin;
 
+use Closure;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Exception\LocalizedException;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use Psr\Log\LoggerInterface;
 
@@ -27,10 +29,11 @@ class SubscriberPlugin
      * @param $subject
      * @param $result
      * @return mixed
+     * @throws LocalizedException
      */
     public function afterSubscribe($subject, $result)
     {
-        if (!$result) {
+        if (!$result || !$this->connectHelper->isLegacySyncEnabled()) {
             return $result;
         }
 
@@ -70,10 +73,11 @@ class SubscriberPlugin
      * @param $subject
      * @param $result
      * @return mixed
+     * @throws LocalizedException
      */
     public function afterUnsubscribe($subject, $result)
     {
-        if (!($result->isStatusChanged())) {
+        if (!$result->isStatusChanged() || !$this->connectHelper->isLegacySyncEnabled()) {
             return $result;
         }
 
@@ -110,10 +114,11 @@ class SubscriberPlugin
      * @param $subject
      * @param $result
      * @return mixed
+     * @throws LocalizedException
      */
     public function afterSubscribeCustomerById($subject, $result)
     {
-        if (!$result->isStatusChanged()) {
+        if (!$result->isStatusChanged() || !$this->connectHelper->isLegacySyncEnabled()) {
             return $result;
         }
 
@@ -151,15 +156,16 @@ class SubscriberPlugin
 
     /**
      * @param $subject
-     * @param \Closure $proceed
+     * @param Closure $proceed
      * @param $customerId
      * @return mixed
+     * @throws LocalizedException
      */
-    public function aroundUnsubscribeCustomerById($subject, \Closure $proceed, $customerId)
+    public function aroundUnsubscribeCustomerById($subject, Closure $proceed, $customerId)
     {
         $result = $proceed($customerId);
 
-        if (!($subject->isStatusChanged())) {
+        if (!$subject->isStatusChanged() || !$this->connectHelper->isLegacySyncEnabled()) {
             return $result;
         }
 
