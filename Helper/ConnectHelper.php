@@ -19,6 +19,7 @@ class ConnectHelper extends AbstractHelper
     const CONFIG_PREFIX = 'mapp_connect';
     const XML_PATH_SYNC_METHOD = 'mapp_connect/export/sync_method';
     const XML_PATH_ORDER_STATUS_EXPORT = 'mapp_connect/export/transaction_send_on_status';
+    const XML_PATH_EMAILS_ENABLED = 'mapp_connect_messages/general/enable';
 
     protected ?MappConnectClient $client = null;
     protected Http $request;
@@ -102,12 +103,20 @@ class ConnectHelper extends AbstractHelper
     }
 
     /**
-     * @return string
+     * @return bool
      * @throws LocalizedException
      */
-    public function isLegacySyncEnabled(): string
+    public function isLegacySyncEnabled(): bool
     {
-        return $this->getConfigValue('export', 'transaction_send_on_status') == SyncMethod::SYNC_METHOD_LEGACY;
+        return (bool) $this->getConfigValue('export', 'sync_method') == SyncMethod::SYNC_METHOD_LEGACY;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMappEmailEnabled(): bool
+    {
+        return (bool)$this->config->getValue(self::XML_PATH_EMAILS_ENABLED);
     }
 
     /**

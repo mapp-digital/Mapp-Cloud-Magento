@@ -33,6 +33,10 @@ class OrderPlugin
      */
     public function afterSave(Order $subject, Interceptor $interceptor, OrderInterface $order): OrderInterface
     {
+        if (!$this->connectHelper->isLegacySyncEnabled()) {
+            return $order;
+        }
+
         if ($this->connectHelper->getConfigValue('export', 'transaction_enable')) {
             $this->subscriptionManager->sendNewOrderTransaction($order);
         } elseif ($this->connectHelper->getConfigValue('export', 'customer_enable')) {

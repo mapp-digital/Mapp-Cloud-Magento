@@ -30,6 +30,10 @@ class TransportBuilderPlugin
      */
     public function aroundGetTransport(TransportBuilder $subject, \Closure $proceed)
     {
+        if (!$this->mappConnectHelper->isMappEmailEnabled()) {
+            return $proceed();
+        }
+
         $mappConnectClient = $this->mappConnectHelper->getMappConnectClient();
 
         if ($this->mappConnectHelper->getConfigValue('export', 'newsletter_enable')
@@ -82,36 +86,60 @@ class TransportBuilderPlugin
 
     public function beforeAddTo(TransportBuilder $subject, $address, $name = '')
     {
+        if (!$this->mappConnectHelper->isMappEmailEnabled()) {
+            return;
+        }
+
         $this->parameters['to'][] = $address;
         return null;
     }
 
     public function beforeSetTemplateOptions(TransportBuilder $subject, $templateOptions)
     {
+        if (!$this->mappConnectHelper->isMappEmailEnabled()) {
+            return;
+        }
+
         $this->parameters['options'] = $templateOptions;
         return null;
     }
 
     public function beforeSetTemplateIdentifier(TransportBuilder $subject, $templateIdentifier)
     {
+        if (!$this->mappConnectHelper->isMappEmailEnabled()) {
+            return;
+        }
+
         $this->parameters['identifier'] = $templateIdentifier;
         return null;
     }
 
     public function beforeSetTemplateModel(TransportBuilder $subject, $templateModel)
     {
+        if (!$this->mappConnectHelper->isMappEmailEnabled()) {
+            return;
+        }
+
         $this->parameters['model'] = $templateModel;
         return null;
     }
 
     public function beforeSetTemplateVars(TransportBuilder $subject, $templateVars)
     {
+        if (!$this->mappConnectHelper->isMappEmailEnabled()) {
+            return;
+        }
+
         $this->parameters['vars'] = $templateVars;
         return null;
     }
 
     protected function reset()
     {
+        if (!$this->mappConnectHelper->isMappEmailEnabled()) {
+            return;
+        }
+
         $this->parameters = [
             'options' => null,
             'identifier' => null,

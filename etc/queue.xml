@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/queue.xsd">
+    <broker topic="mappdigital.cloud.triggers.consume_db" exchange="magento-db" type="db">
+        <queue name="mappdigital.cloud.triggers.consume_db"
+               consumer="mappdigital.cloud.triggers.consume_db"
+               consumerInstance="Magento\Framework\MessageQueue\Consumer"
+               handler="MappDigital\Cloud\Model\QueueMessage\Trigger\ConsumeQueue::processAll"
+        />
+    </broker>
+</config>

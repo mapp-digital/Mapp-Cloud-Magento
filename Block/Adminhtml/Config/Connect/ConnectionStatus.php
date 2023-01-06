@@ -15,27 +15,16 @@ use Magento\Backend\Block\Template\Context;
 
 class ConnectionStatus extends Field
 {
-    protected string $magentoUrlForRequest = '';
-
-    protected ConfigInterface $configResource;
     protected ?MappConnectClientFactory $mappConnectClientFactory;
-    protected ProductMetadataInterface $productMetadata;
     protected ConnectHelper $connectHelper;
 
     public function __construct(
         Context $context,
-        ConfigInterface $configResource,
         MappConnectClientFactory $mappConnectClientFactory,
-        ProductMetadataInterface $productMetadata,
-        ConnectHelper $connectHelper,
         array $data = [],
         ?SecureHtmlRenderer $secureRenderer = null
     ) {
-        $this->configResource = $configResource;
-        $this->productMetadata = $productMetadata;
-        $this->connectHelper = $connectHelper;
         $this->mappConnectClientFactory = $mappConnectClientFactory;
-
         parent::__construct($context, $data, $secureRenderer);
     }
 
@@ -49,7 +38,6 @@ class ConnectionStatus extends Field
 
     /**
      * Returns element html
-     * TODO: Add this functionality as a button that can be triggered and doesn't depend on page load and submission
      *
      * @param AbstractElement $element
      * @return string

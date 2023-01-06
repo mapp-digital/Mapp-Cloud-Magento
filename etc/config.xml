@@ -37,5 +37,10 @@ customerRpTokenCreatedAt</attribute_blacklist>
                 <transaction_send_on_status>new</transaction_send_on_status>
             </export>
         </mapp_connect>
+        <mapp_connect_messages>
+            <general>
+                <enable>1</enable>
+            </general>
+        </mapp_connect_messages>
     </default>
 </config>

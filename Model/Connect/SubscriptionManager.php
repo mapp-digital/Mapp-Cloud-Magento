@@ -22,7 +22,6 @@ use Zend_Db_Exception;
 
 class SubscriptionManager
 {
-
     const NEWSLETTER_CHANGELOG_TABLE_NAME = 'mapp_connect_newsletter_cl';
     const ORDER_CHANGELOG_TABLE_NAME = 'mapp_connect_order_cl';
 
@@ -168,6 +167,10 @@ class SubscriptionManager
         }
     }
 
+    // -----------------------------------------------
+    // ORDER TRANSACTION UPDATES
+    // -----------------------------------------------
+
     /**
      * @param OrderInterface $order
      * @return void
@@ -185,7 +188,7 @@ class SubscriptionManager
 
         if ($this->connectHelper->getConfigValue('export', 'transaction_enable')
             && $this->storage->getData($transactionKey) != true) {
-            $this->logger->debug('Mapp Connect: Order plugin called');
+            $this->logger->debug('MappConnect: -- SubscriptionManager -- Gathering Order Transaction Data');
             $data = $order->getData();
             $data['items'] = [];
             unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
@@ -248,7 +251,6 @@ class SubscriptionManager
         }
     }
 
-
     // -----------------------------------------------
     // CHANGELOG TABLES
     // -----------------------------------------------
@@ -275,6 +277,18 @@ class SubscriptionManager
                 null,
                 ['unsigned' => true, 'nullable' => false, 'default' => '0', 'unique' => true],
                 'Entity ID'
+            )->addColumn(
+                'created_at',
+                Table::TYPE_TIMESTAMP,
+                null,
+                ['nullable' => false, 'default' => Table::TIMESTAMP_INIT],
+                'Created At'
+            )->addColumn(
+                'updated_at',
+                Table::TYPE_TIMESTAMP,
+                null,
+                ['nullable' => false, 'default' => Table::TIMESTAMP_INIT_UPDATE],
+                'Updated At'
             )->addIndex(
                 $this->resource->getIdxName(
                     $changelogTableName,
@@ -283,7 +297,7 @@ class SubscriptionManager
                 ),
                 ['subscriber_id'],
                 ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
-            );;
+            );
 
             $this->connection->createTable($table);
         }
@@ -311,6 +325,18 @@ class SubscriptionManager
                 null,
                 ['unsigned' => true, 'nullable' => false],
                 'Order Entity ID'
+            )->addColumn(
+                'created_at',
+                Table::TYPE_TIMESTAMP,
+                null,
+                ['nullable' => false, 'default' => Table::TIMESTAMP_INIT],
+                'Created At'
+            )->addColumn(
+                'updated_at',
+                Table::TYPE_TIMESTAMP,
+                null,
+                ['nullable' => false, 'default' => Table::TIMESTAMP_INIT_UPDATE],
+                'Updated At'
             )->addIndex(
                 $this->resource->getIdxName(
                     $changelogTableName,
