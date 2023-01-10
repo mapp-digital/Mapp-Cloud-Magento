@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Magento\Catalog\Helper\Product as CatalogProductHelper;
 use Magento\Customer\Model\Address\Config as CustomerAddressModelConfig;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
@@ -14,6 +15,7 @@ use Magento\Framework\DB\Ddl\Trigger;
 use Magento\Framework\DB\Ddl\TriggerFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Session\StorageInterface;
+use Magento\Framework\Validation\ValidationException;
 use Magento\Payment\Helper\Data as PaymentDataHelper;
 use Magento\Sales\Api\Data\OrderInterface;
 use MappDigital\Cloud\Helper\ConnectHelper;
@@ -28,13 +30,14 @@ class SubscriptionManager
     private ResourceConnection $resource;
     private AdapterInterface $connection;
     private TriggerFactory $triggerFactory;
-    protected ScopeConfigInterface $coreConfig;
-    protected LoggerInterface $logger;
-    protected ConnectHelper $connectHelper;
-    protected StorageInterface $storage;
-    protected CustomerAddressModelConfig $customerAddressModelConfig;
-    protected PaymentDataHelper $paymentHelper;
-    protected CatalogProductHelper $productHelper;
+    private ScopeConfigInterface $coreConfig;
+    private LoggerInterface $logger;
+    private ConnectHelper $connectHelper;
+    private StorageInterface $storage;
+    private CustomerAddressModelConfig $customerAddressModelConfig;
+    private PaymentDataHelper $paymentHelper;
+    private CatalogProductHelper $productHelper;
+    private DeploymentConfig $deploymentConfig;
 
     public function __construct(
         ResourceConnection $resource,
@@ -45,7 +48,8 @@ class SubscriptionManager
         StorageInterface $storage,
         CustomerAddressModelConfig $customerAddressModelConfig,
         PaymentDataHelper $paymentHelper,
-        CatalogProductHelper $productHelper
+        CatalogProductHelper $productHelper,
+        DeploymentConfig $deploymentConfig
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -57,6 +61,7 @@ class SubscriptionManager
         $this->customerAddressModelConfig = $customerAddressModelConfig;
         $this->paymentHelper = $paymentHelper;
         $this->productHelper = $productHelper;
+        $this->deploymentConfig = $deploymentConfig;
     }
 
     // -----------------------------------------------
@@ -117,18 +122,23 @@ class SubscriptionManager
     /**
      * @param string $email
      * @param bool $isSubscribed
+     * @param int|null $storeId
      * @return void
-     * @throws LocalizedException
      * @throws GuzzleException
+     * @throws LocalizedException
      */
-    public function sendNewsletterSubscriptionUpdate(string $email, bool $isSubscribed)
+    public function sendNewsletterSubscriptionUpdate(string $email, bool $isSubscribed, ?int $storeId = null)
     {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new ValidationException(__("Cannot Send Subscription Update to Mapp, Email format is invalid"));
+        }
+
         $data = [
             'email' => $email,
-            'group' => $this->connectHelper->getConfigValue('group', 'subscribers')
+            'group' => $this->connectHelper->getConfigValue('group', 'subscribers', $storeId)
         ];
 
-        if ($isSubscribed && $this->connectHelper->getConfigValue('export', 'newsletter_doubleoptin')) {
+        if ($isSubscribed && $this->connectHelper->getConfigValue('export', 'newsletter_doubleoptin', $storeId)) {
             $data['doubleOptIn'] = true;
         }
 
@@ -147,7 +157,7 @@ class SubscriptionManager
      */
     public function sendNewGuestUserToGroupFromOrder(OrderInterface $order)
     {
-        if ($this->connectHelper->getConfigValue('export', 'customer_enable')
+        if ($this->connectHelper->getConfigValue('export', 'customer_enable', $order->getStoreId())
             && $order->getData('customer_is_guest')) {
 
             $data = [
@@ -160,7 +170,7 @@ class SubscriptionManager
                 'note' => $order->getCustomerNote()
             ];
 
-            $data['group'] = $this->connectHelper->getConfigValue('group', 'guests');
+            $data['group'] = $this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId());
 
             $this->logger->debug('MappConnect: -- SubscriptionManager -- Sending Guest User To Connect', ['data' => $data]);
             $this->connectHelper->getMappConnectClient()->event('user', $data);
@@ -178,15 +188,15 @@ class SubscriptionManager
      */
     public function sendNewOrderTransaction(OrderInterface $order)
     {
-        if ($requireOrderStatusForExport = $this->connectHelper->getConfigValue('export', 'transaction_send_on_status')) {
-            if (!$order->dataHasChangedFor(OrderInterface::STATUS) || $order->getStatus() != $requireOrderStatusForExport) {
+        if ($requireOrderStatusForExport = $this->connectHelper->getConfigValue('export', 'transaction_send_on_status', $order->getStoreId())) {
+            if ($order->getStatus() != $requireOrderStatusForExport) {
                 return;
             }
         }
 
         $transactionKey = 'mapp_connect_transaction_' . $order->getId();
 
-        if ($this->connectHelper->getConfigValue('export', 'transaction_enable')
+        if ($this->connectHelper->getConfigValue('export', 'transaction_enable', $order->getStoreId())
             && $this->storage->getData($transactionKey) != true) {
             $this->logger->debug('MappConnect: -- SubscriptionManager -- Gathering Order Transaction Data');
             $data = $order->getData();
@@ -228,8 +238,8 @@ class SubscriptionManager
 
             if ($order->getData('customer_is_guest')) {
                 $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_guest_template');
-                if ($this->connectHelper->getConfigValue('group', 'guests')) {
-                    $data['group'] = $this->connectHelper->getConfigValue('group', 'guests');
+                if ($this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId())) {
+                    $data['group'] = $this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId());
                 }
             }
 
@@ -572,5 +582,28 @@ class SubscriptionManager
         }
 
         return implode(', ', $categories ?? []);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublisherName(): string
+    {
+        $queueType = $this->isAmqp() ? 'amqp' : 'db';
+        return 'mappdigital.cloud.triggers.consume_' . $queueType;
+    }
+
+    /**
+     * Check if Amqp is used
+     *
+     * @return bool
+     */
+    protected function isAmqp(): bool
+    {
+        try {
+            return (bool)$this->deploymentConfig->get('queue/amqp');
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 }

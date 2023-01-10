@@ -33,7 +33,9 @@ customerRpTokenCreatedAt</attribute_blacklist>
                 <sync_method>0</sync_method>
                 <customer_enable>1</customer_enable>
                 <transaction_enable>1</transaction_enable>
+                <transaction_retry_max>10</transaction_retry_max>
                 <newsletter_enable>1</newsletter_enable>
+                <newsletter_retry_max>10</newsletter_retry_max>
                 <transaction_send_on_status>new</transaction_send_on_status>
             </export>
         </mapp_connect>

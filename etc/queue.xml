@@ -5,6 +5,7 @@
                consumer="mappdigital.cloud.triggers.consume_db"
                consumerInstance="Magento\Framework\MessageQueue\Consumer"
                handler="MappDigital\Cloud\Model\QueueMessage\Trigger\ConsumeQueue::processAll"
+               maxMessages="1"
         />
     </broker>
 </config>

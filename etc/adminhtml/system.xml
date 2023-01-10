@@ -225,6 +225,13 @@
                         <field id="transaction_enable">1</field>
                     </depends>
                 </field>
+                <field id="transaction_retry_max" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Max Order Request Retry Count</label>
+                    <validate>validate-number</validate>
+                    <depends>
+                        <field id="transaction_enable">1</field>
+                    </depends>
+                </field>
                 <field id="newsletter_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Newsletter Synchronization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -232,6 +239,13 @@
                 <field id="newsletter_doubleoptin" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Newsletter double opt in</label>
                     <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <depends>
+                        <field id="newsletter_enable">1</field>
+                    </depends>
+                </field>
+                <field id="newsletter_retry_max" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Max Newsletter Request Retry Count</label>
+                    <validate>validate-number</validate>
                     <depends>
                         <field id="newsletter_enable">1</field>
                     </depends>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/topology.xsd" >
     <exchange name="magento-amqp" type="topic" connection="amqp">
-        <binding id="mappDigitalCloudTriggersConsumeAmqp" topic="mappdigital.cloud.triggers.consume_amqp" destinationType="queue" destination="mappdigital_cloud_triggers_consume_amqp"/>
+        <binding id="mappDigitalCloudTriggersConsumeAmqp" topic="mappdigital.cloud.triggers.consume_amqp" destinationType="queue" destination="mappdigital.cloud.triggers.consume_amqp"/>
     </exchange>
 </config>

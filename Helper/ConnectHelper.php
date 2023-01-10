@@ -19,6 +19,8 @@ class ConnectHelper extends AbstractHelper
     const CONFIG_PREFIX = 'mapp_connect';
     const XML_PATH_SYNC_METHOD = 'mapp_connect/export/sync_method';
     const XML_PATH_ORDER_STATUS_EXPORT = 'mapp_connect/export/transaction_send_on_status';
+    const XML_PATH_NEWSLETTER_RETRY_LIMIT = 'mapp_connect/export/newsletter_retry_max';
+    const XML_PATH_ORDER_RETRY_LIMIT = 'mapp_connect/export/transaction_retry_max';
     const XML_PATH_EMAILS_ENABLED = 'mapp_connect_messages/general/enable';
 
     protected ?MappConnectClient $client = null;
@@ -76,29 +78,30 @@ class ConnectHelper extends AbstractHelper
      * @return string
      * @throws LocalizedException
      */
-    public function getConfigValue(string $group, string $field): string
+    public function getConfigValue(string $group, string $field, ?int $storeId = null): string
     {
         if ($this->state->getAreaCode() === Area::AREA_ADMINHTML) {
-            if ($storeId = $this->request->getParam('store')) {
+            if ($storeIdParam = $this->request->getParam('store')) {
                 return (string)$this->config->getValue(
                     self::CONFIG_PREFIX . '/' . $group . '/' . $field,
                     ScopeInterface::SCOPE_STORE,
-                    $storeId
+                    $storeIdParam
                 );
             }
 
-            if ($websiteId = $this->request->getParam('website')) {
+            if ($websiteIdParam = $this->request->getParam('website')) {
                 return (string)$this->config->getValue(
                     self::CONFIG_PREFIX . '/' . $group . '/' . $field,
                     ScopeInterface::SCOPE_WEBSITE,
-                    $websiteId
+                    $websiteIdParam
                 );
             }
         }
 
         return (string)$this->config->getValue(
             self::CONFIG_PREFIX . '/' . $group . '/' . $field,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_STORE,
+            $storeId
         );
     }
 

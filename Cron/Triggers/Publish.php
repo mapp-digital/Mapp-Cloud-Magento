@@ -19,23 +19,23 @@ class Publish
     private ResourceConnection $resource;
     private AdapterInterface $connection;
     private PublisherInterface $publisher;
-    private DeploymentConfig $deploymentConfig;
     private Json $jsonSerializer;
+    private SubscriptionManager $subscriptionManager;
     private LoggerInterface $logger;
 
     public function __construct(
         ResourceConnection $resource,
         PublisherInterface $publisher,
-        DeploymentConfig $deploymentConfig,
         Json $jsonSerializer,
+        SubscriptionManager $subscriptionManager,
         LoggerInterface $logger
     )
     {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
         $this->publisher = $publisher;
-        $this->deploymentConfig = $deploymentConfig;
         $this->jsonSerializer = $jsonSerializer;
+        $this->subscriptionManager = $subscriptionManager;
         $this->logger = $logger;
 
         $currentTime = new \DateTime();
@@ -68,12 +68,15 @@ class Publish
 
             foreach (array_chunk($newslettersToQueue, self::CHUNK_SIZE) as $newsletterChunk) {
                 foreach ($newsletterChunk as $newsletter) {
-                    $data['newsletter'][$newsletter['subscriber_id']] = $newsletter['subscriber_id'];
+                    $data['newsletter'][$newsletter['subscriber_id']] = [
+                        'subscriber_id' => $newsletter['subscriber_id'],
+                        'attempt' => 1
+                    ];
                 }
 
                 if (count($data)) {
                     $this->publisher->publish(
-                        $this->getPublisherName(),
+                        $this->subscriptionManager->getPublisherName(),
                         $this->jsonSerializer->serialize($data)
                     );
                 }
@@ -89,6 +92,7 @@ class Publish
             $this->connection->commit();
         } catch (\Exception $exception) {
             $this->connection->rollBack();
+            $this->logger->error($exception);
         }
     }
 
@@ -105,12 +109,15 @@ class Publish
 
             foreach (array_chunk($ordersToQueue, self::CHUNK_SIZE) as $orderChunk) {
                 foreach ($orderChunk as $order) {
-                    $data['order'][$order['order_id']] = $order['order_id'];
+                    $data['order'][$order['order_id']] = [
+                        'order_id' => $order['order_id'],
+                        'attempt' => 1
+                    ];
                 }
 
                 if (count($data)) {
                     $this->publisher->publish(
-                        $this->getPublisherName(),
+                        $this->subscriptionManager->getPublisherName(),
                         $this->jsonSerializer->serialize($data)
                     );
                 }
@@ -126,8 +133,8 @@ class Publish
             $this->connection->commit();
         } catch (\Exception $exception) {
             $this->connection->rollBack();
+            $this->logger->error($exception);
         }
-
     }
 
     // -----------------------------------------------
@@ -150,32 +157,5 @@ class Publish
     {
         return $this->connection->fetchAll($this->connection->select()->from($this->resource->getTableName(SubscriptionManager::ORDER_CHANGELOG_TABLE_NAME))
                 ->where('updated_at < (?)', $this->currentTime)) ?? [];
-    }
-
-    /**
-     * @return string
-     */
-    private function getPublisherName(): string
-    {
-        $queueType = $this->isAmqp() ? 'amqp' : 'db';
-        return 'mappdigital.cloud.triggers.consume_' . $queueType;
-    }
-
-    // -----------------------------------------------
-    // UTILITY
-    // -----------------------------------------------
-
-    /**
-     * Check if Amqp is used
-     *
-     * @return bool
-     */
-    protected function isAmqp(): bool
-    {
-        try {
-            return (bool)$this->deploymentConfig->get('queue/amqp');
-        } catch (\Exception $exception) {
-            return false;
-        }
     }
 }

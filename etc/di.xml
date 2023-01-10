@@ -1,17 +1,41 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- /////////////////////////////////
+    PLUGINS
+    ////////////////////////////////// -->
     <type name="Magento\Framework\Mail\Template\TransportBuilder">
         <plugin sortOrder="1" name="MappConnectTransportBuilder" type="MappDigital\Cloud\Plugin\Mail\TransportBuilderPlugin"/>
     </type>
-
     <type name="Magento\Newsletter\Model\Subscriber">
         <plugin name="MappConnectNewsletterSubscriber" type="MappDigital\Cloud\Plugin\SubscriberPlugin"/>
     </type>
-
     <type name="Magento\Newsletter\Model\SubscriptionManager">
         <plugin name="MappConnectNewsletterSubscriptionManager" type="MappDigital\Cloud\Plugin\SubscriptionManagerPlugin"/>
     </type>
-
     <type name="Magento\Sales\Model\ResourceModel\Order">
         <plugin name="MappConnectOrder" type="MappDigital\Cloud\Plugin\Sales\Model\ResourceModel\OrderPlugin"/>
+    </type>
+
+    <!-- /////////////////////////////////
+    PLUGINS - Retry Logic Added For Queues
+    ////////////////////////////////// -->
+
+    <type name="Magento\Framework\Amqp\Queue">
+        <plugin name="MappConnectAmqpRetryFailedMessage" type="MappDigital\Cloud\Plugin\Framework\Amqp\QueuePlugin"/>
+    </type>
+
+    <type name="Magento\MysqlMq\Model\Driver\Queue">
+        <plugin name="MappConnectMysqlRetryFailedMessage" type="MappDigital\Cloud\Plugin\Framework\Mysql\QueuePlugin"/>
+    </type>
+
+    <!-- /////////////////////////////////
+    COMMANDS
+    ////////////////////////////////// -->
+
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="MappDigital::consume_first_message" xsi:type="object">MappDigital\Cloud\Console\Command\ConsumeFirstMessage</item>
+            </argument>
+        </arguments>
     </type>
 </config>

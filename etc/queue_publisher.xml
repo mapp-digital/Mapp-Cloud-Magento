@@ -4,6 +4,6 @@
         <connection name="db" exchange="magento-db" />
     </publisher>
     <publisher topic="mappdigital.cloud.triggers.consume_amqp">
-        <connection name="amqp" exchange="magento-db" />
+        <connection name="amqp" exchange="magento-amqp" />
     </publisher>
 </config>
