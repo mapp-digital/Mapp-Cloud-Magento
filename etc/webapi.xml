@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/newsletter/subscriber/:email" method="GET">
+        <service class="MappDigital\Cloud\Api\NewsletterSubscriberInterface" method="isEmailSubscribed" />
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route url="/V1/newsletter/subscribe/:email" method="POST">
+        <service class="MappDigital\Cloud\Api\NewsletterSubscriberInterface" method="subscribe" />
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route url="/V1/newsletter/unsubscribe/:email" method="POST">
+        <service class="MappDigital\Cloud\Api\NewsletterSubscriberInterface" method="unSubscribe" />
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+</routes>

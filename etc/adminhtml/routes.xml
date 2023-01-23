@@ -8,11 +8,11 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="admin">
-        <route id="MappDigital_Cloud" frontName="MappDigital_Cloud">
-            <module name="MappDigital_Cloud" />
+        <route id="mappdigital_cloud" frontName="mappdigital_cloud">
+            <module before="Magento_Backend" name="MappDigital_Cloud" />
         </route>
         <route id="mapp_connect" frontName="mapp_connect">
-            <module name="MappDigital_Cloud"/>
+            <module before="Magento_Backend"  name="MappDigital_Cloud"/>
         </route>
     </router>
 </config>

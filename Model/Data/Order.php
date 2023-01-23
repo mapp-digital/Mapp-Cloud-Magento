@@ -13,6 +13,7 @@ use Magento\Sales\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
 use Magento\Sales\Model\Order as MagentoOrderModel;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
+use MappDigital\Cloud\Logger\CombinedLogger;
 use Psr\Log\LoggerInterface;
 
 class Order extends AbstractData
@@ -21,20 +22,20 @@ class Order extends AbstractData
     protected CollectionFactory $salesOrderCollection;
     protected Product $product;
     protected ProductAttributeRepositoryInterface $productAttributeRepositoryInterface;
-    protected LoggerInterface $logger;
+    protected CombinedLogger $mappCombinedLogger;
 
     public function __construct(
         Session $checkoutSession,
         CollectionFactory $salesOrderCollection,
         Product $product,
         ProductAttributeRepositoryInterface $productAttributeRepositoryInterface,
-        LoggerInterface $logger
+        CombinedLogger $mappCombinedLogger
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->salesOrderCollection = $salesOrderCollection;
         $this->product = $product;
         $this->productAttributeRepositoryInterface = $productAttributeRepositoryInterface;
-        $this->logger = $logger;
+        $this->mappCombinedLogger = $mappCombinedLogger;
     }
 
     /**
@@ -92,7 +93,8 @@ class Order extends AbstractData
                 $tmp = DataLayerHelper::merge($existingProductData, $productData);
                 $existingProductData = $tmp;
             } catch (NoSuchEntityException $exception) {
-                $this->logger->error($exception);
+                $this->mappCombinedLogger->error(sprintf('Mapp Connect: -- ERROR -- Sending setting datalayer products: %s', $exception->getMessage()), __CLASS__, __FUNCTION__, ['exception' => $exception]);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
             }
         }
 

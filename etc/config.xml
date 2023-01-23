@@ -44,5 +44,14 @@ customerRpTokenCreatedAt</attribute_blacklist>
                 <enable>1</enable>
             </general>
         </mapp_connect_messages>
+        <mapp_logging>
+            <general>
+                <enable_logging>1</enable_logging>
+                <enable_db_logging>1</enable_db_logging>
+                <enable_file_logging>1</enable_file_logging>
+                <severity>5</severity>
+                <log_lifetime>7</log_lifetime>
+            </general>
+        </mapp_logging>
     </default>
 </config>

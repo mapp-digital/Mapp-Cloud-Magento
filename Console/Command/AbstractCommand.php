@@ -84,7 +84,7 @@ abstract class AbstractCommand extends Command
     /**
      * @return void
      */
-    abstract protected function doExecute();
+    abstract public function doExecute();
 
     // -----------------------------------------------
     // GETTERS AND SETTERS

@@ -5,13 +5,14 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Mail\TransportInterface;
+use MappDigital\Cloud\Logger\CombinedLogger;
 use MappDigital\Cloud\Model\Connect\Client as MappConnectClient;
 use Psr\Log\LoggerInterface;
 
 class Transport implements TransportInterface
 {
     protected MappConnectClient $mappConnectClient;
-    protected LoggerInterface $logger;
+    private CombinedLogger $mappCombinedLogger;
     protected array $parameters = [];
     protected string $messageId = '';
 
@@ -25,7 +26,7 @@ class Transport implements TransportInterface
         $this->parameters = $parameters;
 
         // Use OM to be backwards compatible
-        $this->logger = ObjectManager::getInstance()->create(LoggerInterface::class);
+        $this->mappCombinedLogger = ObjectManager::getInstance()->create(CombinedLogger::class);
     }
 
     /**
@@ -44,13 +45,14 @@ class Transport implements TransportInterface
                 $data['email'] = $to;
 
                 try {
+                    $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', __CLASS__, __FUNCTION__);
                     $this->mappConnectClient->event('email', $data);
                 } catch (GuzzleException $exception) {
-                    $this->logger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', ['exception' => $exception]);
-                    $this->logger->error($exception);
+                    $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', __CLASS__, __FUNCTION__, ['exception' => $exception]);
+                    $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
                 } catch (Exception $exception) {
-                    $this->logger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', ['exception' => $exception]);
-                    $this->logger->error($exception);
+                    $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred',__CLASS__, __FUNCTION__, ['exception' => $exception]);
+                    $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
                 }
             }
         }

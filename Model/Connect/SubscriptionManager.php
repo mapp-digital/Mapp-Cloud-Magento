@@ -19,6 +19,7 @@ use Magento\Framework\Validation\ValidationException;
 use Magento\Payment\Helper\Data as PaymentDataHelper;
 use Magento\Sales\Api\Data\OrderInterface;
 use MappDigital\Cloud\Helper\ConnectHelper;
+use MappDigital\Cloud\Logger\CombinedLogger;
 use Psr\Log\LoggerInterface;
 use Zend_Db_Exception;
 
@@ -31,7 +32,7 @@ class SubscriptionManager
     private AdapterInterface $connection;
     private TriggerFactory $triggerFactory;
     private ScopeConfigInterface $coreConfig;
-    private LoggerInterface $logger;
+    private CombinedLogger $mappCombinedLogger;
     private ConnectHelper $connectHelper;
     private StorageInterface $storage;
     private CustomerAddressModelConfig $customerAddressModelConfig;
@@ -43,7 +44,7 @@ class SubscriptionManager
         ResourceConnection $resource,
         TriggerFactory $triggerFactory,
         ScopeConfigInterface $coreConfig,
-        LoggerInterface $logger,
+        CombinedLogger $mappCombinedLogger,
         ConnectHelper $connectHelper,
         StorageInterface $storage,
         CustomerAddressModelConfig $customerAddressModelConfig,
@@ -55,7 +56,7 @@ class SubscriptionManager
         $this->connection = $resource->getConnection();
         $this->triggerFactory = $triggerFactory;
         $this->coreConfig = $coreConfig;
-        $this->logger = $logger;
+        $this->mappCombinedLogger = $mappCombinedLogger;
         $this->connectHelper = $connectHelper;
         $this->storage = $storage;
         $this->customerAddressModelConfig = $customerAddressModelConfig;
@@ -92,7 +93,7 @@ class SubscriptionManager
             $this->connection->commit();
         } catch (\Exception $exception) {
             $this->connection->rollBack();
-            $this->logger->error($exception);
+            $this->mappCombinedLogger->error($exception->getTraceAsString(), __CLASS__, __FUNCTION__, ['Error' => $exception]);
         }
     }
 
@@ -111,7 +112,7 @@ class SubscriptionManager
             $this->connection->commit();
         } catch (\Exception $exception) {
             $this->connection->rollBack();
-            $this->logger->error($exception);
+            $this->mappCombinedLogger->error($exception->getTraceAsString(), __CLASS__, __FUNCTION__, ['Error' => $exception]);
         }
     }
 
@@ -146,6 +147,7 @@ class SubscriptionManager
             $data['unsubscribe'] = true;
         }
 
+        $this->mappCombinedLogger->info(\json_encode(['Type' => 'Newsletter Subscribe', $data], JSON_PRETTY_PRINT), __CLASS__,__FUNCTION__);
         $this->connectHelper->getMappConnectClient()->event('newsletter', $data);
     }
 
@@ -172,7 +174,8 @@ class SubscriptionManager
 
             $data['group'] = $this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId());
 
-            $this->logger->debug('MappConnect: -- SubscriptionManager -- Sending Guest User To Connect', ['data' => $data]);
+            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Sending Guest User To Connect', __CLASS__,__FUNCTION__);
+            $this->mappCombinedLogger->info(\json_encode(['Type' => 'Guest User Group Add', $data], JSON_PRETTY_PRINT), __CLASS__,__FUNCTION__);
             $this->connectHelper->getMappConnectClient()->event('user', $data);
         }
     }
@@ -198,7 +201,7 @@ class SubscriptionManager
 
         if ($this->connectHelper->getConfigValue('export', 'transaction_enable', $order->getStoreId())
             && $this->storage->getData($transactionKey) != true) {
-            $this->logger->debug('MappConnect: -- SubscriptionManager -- Gathering Order Transaction Data');
+            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Gathering Order Transaction Data', __CLASS__,__FUNCTION__);
             $data = $order->getData();
             $data['items'] = [];
             unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
@@ -248,15 +251,15 @@ class SubscriptionManager
             }
 
             try {
-                $this->logger->debug('MappConnect: -- SubscriptionManager -- Sending Order Transaction Request To Connect', ['data' => $data]);
+                $this->mappCombinedLogger->info(\json_encode(['Type' => 'MappConnect: -- SubscriptionManager -- Sending Order Transaction Request To Connect', 'data' => $data], JSON_PRETTY_PRINT), __CLASS__,__FUNCTION__);
                 $this->connectHelper->getMappConnectClient()->event('transaction', $data);
                 $this->storage->setData($transactionKey, true);
             } catch (GuzzleException $exception) {
-                $this->logger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', ['exception' => $exception]);
-                $this->logger->error($exception);
+                $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To MAPP Connect', __CLASS__, __FUNCTION__, ['Error' => $exception]);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
             } catch (Exception $exception) {
-                $this->logger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', ['exception' => $exception]);
-                $this->logger->error($exception);
+                $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', __CLASS__, __FUNCTION__, ['Error' => $exception]);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
             }
         }
     }
@@ -309,6 +312,8 @@ class SubscriptionManager
                 ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
             );
 
+            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Table: ' . self::NEWSLETTER_CHANGELOG_TABLE_NAME, __CLASS__,__FUNCTION__);
+
             $this->connection->createTable($table);
         }
     }
@@ -357,6 +362,7 @@ class SubscriptionManager
                 ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
             );
 
+            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Table: ' . self::ORDER_CHANGELOG_TABLE_NAME, __CLASS__,__FUNCTION__);
             $this->connection->createTable($table);
         }
     }
@@ -397,6 +403,7 @@ class SubscriptionManager
             'NEW.`subscriber_id`'
         );
 
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__,__FUNCTION__);
         $triggerObject->addStatement($trigger);
         $this->connection->dropTrigger($triggerObject->getName());
         $this->connection->createTrigger($triggerObject);
@@ -424,6 +431,7 @@ class SubscriptionManager
                 ($event == Trigger::EVENT_INSERT) ? 'NEW.`subscriber_id`' : 'OLD.`subscriber_id`'
             );
 
+            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__,__FUNCTION__);
             $triggerObject->addStatement($trigger);
             $this->connection->dropTrigger($triggerObject->getName());
             $this->connection->createTrigger($triggerObject);
@@ -456,6 +464,7 @@ class SubscriptionManager
                 ($event === Trigger::EVENT_INSERT) ? 'NEW.`entity_id`' : 'OLD.`entity_id`'
             );
 
+            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__,__FUNCTION__);
             $triggerObject->addStatement($trigger);
             $this->connection->dropTrigger($triggerObject->getName());
             $this->connection->createTrigger($triggerObject);
@@ -500,6 +509,7 @@ class SubscriptionManager
             'NEW.`entity_id`'
         );
 
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__,__FUNCTION__);
         $triggerObject->addStatement($trigger);
         $this->connection->dropTrigger($triggerObject->getName());
         $this->connection->createTrigger($triggerObject);
@@ -514,7 +524,8 @@ class SubscriptionManager
     {
         foreach ([Trigger::EVENT_DELETE, Trigger::EVENT_INSERT, Trigger::EVENT_UPDATE] as $event) {
             foreach ([$this->resource->getTableName('sales_order'), $this->resource->getTableName('newsletter_subscriber')] as $table) {
-               $this->connection->dropTrigger($this->getTriggerName($table, $event));
+                $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Dropping DB Trigger: ' . $this->getTriggerName($table, $event), __CLASS__,__FUNCTION__);
+                $this->connection->dropTrigger($this->getTriggerName($table, $event));
             }
         }
     }
@@ -590,6 +601,7 @@ class SubscriptionManager
     public function getPublisherName(): string
     {
         $queueType = $this->isAmqp() ? 'amqp' : 'db';
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType, __CLASS__,__FUNCTION__);
         return 'mappdigital.cloud.triggers.consume_' . $queueType;
     }
 

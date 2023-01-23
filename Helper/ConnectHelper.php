@@ -51,9 +51,11 @@ class ConnectHelper extends AbstractHelper
     public function getBaseURL(): string
     {
         $url = $this->getConfigValue('general', 'base_url');
+
         if ($url == 'custom') {
             $url = $this->getConfigValue('general', 'base_url_custom');
         }
+
         return $url;
     }
 
@@ -75,6 +77,7 @@ class ConnectHelper extends AbstractHelper
     /**
      * @param string $group
      * @param string $field
+     * @param int|null $storeId
      * @return string
      * @throws LocalizedException
      */

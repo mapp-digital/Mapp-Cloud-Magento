@@ -4,5 +4,8 @@
         <job name="mappdigital_cloud_triggers_publish" instance="MappDigital\Cloud\Cron\Triggers\Publish" method="publishAll">
             <schedule>* * * * *</schedule>
         </job>
+        <job name="mappdigital_cloud_logs_clean" instance="MappDigital\Cloud\Cron\Log\Clean" method="execute">
+            <schedule>* * * * *</schedule>
+        </job>
     </group>
 </config>

@@ -12,6 +12,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Sales\Model\OrderRepository;
 use MappDigital\Cloud\Helper\ConnectHelper;
+use MappDigital\Cloud\Logger\CombinedLogger;
 use MappDigital\Cloud\Model\Connect\SubscriptionManager;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -26,7 +27,7 @@ class ConsumeQueue
     private AdapterInterface $connection;
     private Json $jsonSerializer;
     private OrderRepository $orderRepository;
-    private LoggerInterface $logger;
+    private CombinedLogger $mappCombinedLogger;
     private SubscriptionManager $subscriptionManager;
     private PublisherInterface $publisher;
     private ScopeConfigInterface $coreConfig;
@@ -35,7 +36,7 @@ class ConsumeQueue
         ResourceConnection $resource,
         Json $jsonSerializer,
         OrderRepository $orderRepository,
-        LoggerInterface $logger,
+        CombinedLogger $mappCombinedLogger,
         SubscriptionManager $subscriptionManager,
         PublisherInterface $publisher,
         ScopeConfigInterface $coreConfig
@@ -45,7 +46,7 @@ class ConsumeQueue
         $this->connection = $resource->getConnection();
         $this->jsonSerializer = $jsonSerializer;
         $this->orderRepository = $orderRepository;
-        $this->logger = $logger;
+        $this->mappCombinedLogger = $mappCombinedLogger;
         $this->subscriptionManager = $subscriptionManager;
         $this->publisher = $publisher;
         $this->coreConfig = $coreConfig;
@@ -82,9 +83,9 @@ class ConsumeQueue
                     $this->orderRepository->get($order['order_id'])
                 );
             } catch (NoSuchEntityException $exception) {
-                $this->logger->error($exception->getMessage());
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
             } catch (Exception | Throwable $exception) {
-                $this->logger->error($exception);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
                 $attempt = $order['attempt'] ?? 0;
 
                 if ($attempt < $this->getMaxOrderRetryCount()) {
@@ -92,7 +93,8 @@ class ConsumeQueue
                         'order_id' => $orderId,
                         'attempt' => $attempt + 1
                     ];
-                    $this->logger->error('Adding Retry For Order');
+
+                    $this->mappCombinedLogger->info('Adding Retry For Order ID: ' . $orderId, __CLASS__,__FUNCTION__);
                 }
             }
         }
@@ -124,15 +126,16 @@ class ConsumeQueue
                     $subscriber['store_id'],
                 );
             } catch (NoSuchEntityException $exception) {
-                $this->logger->error($exception->getMessage());
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
             } catch (Exception | Throwable $exception) {
-                $this->logger->error($exception);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
                 $attempt = $newsletterSubscriberIdsToUpdate['newsletter'][$subscriber['subscriber_id']]['attempt'] ?? 0;
                 if ($attempt <= $this->getMaxNewsletterRetryCount()) {
                     $idsToRepublish['newsletter'][$subscriber['subscriber_id']] = [
                         'subscriber_id' => $subscriber['subscriber_id'],
                         'attempt' => $attempt + 1
                     ];
+                    $this->mappCombinedLogger->info('Adding Retry For Subscriber ID: ' . $subscriber['subscriber_id'], __CLASS__,__FUNCTION__);
                 }
             }
         }
@@ -144,6 +147,10 @@ class ConsumeQueue
             );
         }
     }
+
+    // -----------------------------------------------
+    // UTILITY
+    // -----------------------------------------------
 
     /**
      * @return int

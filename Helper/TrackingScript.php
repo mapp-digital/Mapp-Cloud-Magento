@@ -9,6 +9,10 @@ namespace MappDigital\Cloud\Helper;
 
 class TrackingScript
 {
+    /**
+     * @param $config
+     * @return string
+     */
     public static function generateJS($config)
     {
         $_psVersion = self::getVersion();
@@ -247,6 +251,9 @@ class TrackingScript
             });";
     }
 
+    /**
+     * @return mixed
+     */
     public static function getVersion()
     {
         $path = dirname(__FILE__) . '/../composer.json';

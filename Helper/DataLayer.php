@@ -46,21 +46,27 @@ class DataLayer
     public static function mappify($data)
     {
         $data = self::makeRemapping($data, self::REMAPP_TABLE);
+
         if(isset($data['productQuantityAndStockStatusIsInStock']) && $data['productQuantityAndStockStatusIsInStock'] !== '1') {
             $data['productSoldOut'] = '1';
         }
+
         if(isset($data['productAvailableInCategory'][0])){
             $data['productCategory'] = $data['productAvailableInCategory'][0];
         }
+
         if(isset($data['productAvailableInCategory'][1])){
             $data['productSubCategory'] = $data['productAvailableInCategory'][1];
         }
+
         if(isset($data['orderDiscountAmount']) && $data['orderDiscountAmount'] !== '0.0000') {
             $data['couponValue'] = substr($data['orderDiscountAmount'], 1);
         }
+
         if(isset($data['orderShoppingCartStatus'])) {
             $data['shoppingCartStatus'] = $data['orderShoppingCartStatus'];
         }
+
         return $data;
     }
 
@@ -85,6 +91,7 @@ class DataLayer
                 $data[$mappKey] = $data[$oldKey];
             }
         }
+
         return $data;
     }
 
@@ -101,10 +108,13 @@ class DataLayer
             count(explode(self::DATA_DELIMITER, $existingProducts['entity_id'])) + 1 : 1;
 
         $allDataLayerAttributes = array_keys($existingProducts); // get all  existing keys
+
         foreach ($productToBeAdded as $key => $_) { // add all keys of new product
             $allDataLayerAttributes[] = $key;
         }
+
         $allDataLayerAttributes = array_unique($allDataLayerAttributes); // get rid of duplicates
+
         foreach ($allDataLayerAttributes as $dataLayerAttribute) {
             // if it's not in the new product, it has to be in the existing data, so we just need to add 1 delimiter
             if(!array_key_exists($dataLayerAttribute, $productToBeAdded)) {
@@ -193,6 +203,10 @@ class DataLayer
         return $existingProducts;
     }
 
+    /**
+     * @param $product
+     * @return mixed
+     */
     public static function getUrlFragment($product)
     {
         $url = $product->getProductUrl();

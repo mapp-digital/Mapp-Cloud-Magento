@@ -7,6 +7,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\MessageQueue\PublisherInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use MappDigital\Cloud\Logger\CombinedLogger;
 use MappDigital\Cloud\Model\Connect\SubscriptionManager;
 use Psr\Log\LoggerInterface;
 
@@ -21,14 +22,14 @@ class Publish
     private PublisherInterface $publisher;
     private Json $jsonSerializer;
     private SubscriptionManager $subscriptionManager;
-    private LoggerInterface $logger;
+    private CombinedLogger $mappCombinedLogger;
 
     public function __construct(
         ResourceConnection $resource,
         PublisherInterface $publisher,
         Json $jsonSerializer,
         SubscriptionManager $subscriptionManager,
-        LoggerInterface $logger
+        CombinedLogger $mappCombinedLogger
     )
     {
         $this->resource = $resource;
@@ -36,7 +37,7 @@ class Publish
         $this->publisher = $publisher;
         $this->jsonSerializer = $jsonSerializer;
         $this->subscriptionManager = $subscriptionManager;
-        $this->logger = $logger;
+        $this->mappCombinedLogger = $mappCombinedLogger;
 
         $currentTime = new \DateTime();
         $this->currentTime = $currentTime->format('Y-m-d H:i:s');
@@ -92,7 +93,7 @@ class Publish
             $this->connection->commit();
         } catch (\Exception $exception) {
             $this->connection->rollBack();
-            $this->logger->error($exception);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         }
     }
 
@@ -133,7 +134,7 @@ class Publish
             $this->connection->commit();
         } catch (\Exception $exception) {
             $this->connection->rollBack();
-            $this->logger->error($exception);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         }
     }
 

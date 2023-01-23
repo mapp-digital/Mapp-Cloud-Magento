@@ -7,23 +7,23 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use MappDigital\Cloud\Helper\ConnectHelper;
+use MappDigital\Cloud\Logger\CombinedLogger;
 use MappDigital\Cloud\Model\Connect\Client;
-use Psr\Log\LoggerInterface;
 
 class MappConnectCustomerGroupUpdate implements ObserverInterface
 {
     protected ScopeConfigInterface $scopeConfig;
     protected ConnectHelper $connectHelper;
-    protected LoggerInterface $logger;
+    protected CombinedLogger $mappCombinedLogger;
 
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         ConnectHelper $connectHelper,
-        LoggerInterface $logger
+        CombinedLogger $mappCombinedLogger
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->connectHelper = $connectHelper;
-        $this->logger = $logger;
+        $this->mappCombinedLogger = $mappCombinedLogger;
     }
 
     /**
@@ -32,8 +32,7 @@ class MappConnectCustomerGroupUpdate implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $this->logger->debug('Mapp Connect: -- EVENT -- customer_save_after_data_object');
-        $this->logger->debug('Mapp Connect: -- OBSERVER -- mapp_connect_customer_update_observer');
+        $this->mappCombinedLogger->debug('Mapp Connect: -- EVENT -- customer_save_after_data_object, Mapp Connect: -- OBSERVER -- mapp_connect_customer_update_observer ', __CLASS__, __FUNCTION__);
 
         if ($this->isEnabled()) {
             try {
@@ -42,11 +41,22 @@ class MappConnectCustomerGroupUpdate implements ObserverInterface
                 $customerData['group'] = $this->connectHelper->getConfigValue('group', 'customers');
                 $customerData['subscribe'] = true;
 
-                $this->logger->debug(sprintf('Mapp Connect: -- GROUP -- Sending Customer to group %s', $this->connectHelper->getConfigValue('group', 'customers')), ['data' => $customerData]);
+                $this->mappCombinedLogger->debug(
+                    sprintf('Mapp Connect: -- GROUP -- Sending Customer data to group %s', $this->connectHelper->getConfigValue('group', 'customers')),
+                    __CLASS__, __FUNCTION__,
+                    ['data' => $customerData]
+                );
+
+                $this->mappCombinedLogger->info(
+                    \json_encode($customerData, JSON_PRETTY_PRINT),
+                    __CLASS__, __FUNCTION__,
+                    ['data' => $customerData]
+                );
+
                 $mappConnectClient->event('user', $customerData);
             } catch (\Exception $exception) {
-                $this->logger->error(sprintf('Mapp Connect: -- ERROR -- Sending Customer to group: %s', $exception->getMessage()), ['exception' => $exception]);
-                $this->logger->error($exception);
+                $this->mappCombinedLogger->error(sprintf('Mapp Connect: -- ERROR -- Sending Customer to group: %s', $exception->getMessage()), __CLASS__, __FUNCTION__, ['exception' => $exception]);
+                $this->mappCombinedLogger->error($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
             }
         }
     }

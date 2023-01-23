@@ -14,6 +14,7 @@ use Magento\Catalog\Model\ProductRepository;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Catalog\Model\Product as CatalogProductModel;
 use Magento\Framework\Exception\NoSuchEntityException;
+use MappDigital\Cloud\Logger\CombinedLogger;
 use Psr\Log\LoggerInterface;
 
 class Product extends AbstractData
@@ -28,7 +29,7 @@ class Product extends AbstractData
     protected Session $catalogSession;
     protected ProductRepository $productRepository;
     protected ProductUrlRewriteResource $productUrlRewriteResource;
-    protected LoggerInterface $logger;
+    protected CombinedLogger $mappCombinedLogger;
     protected ?CatalogProductModel $product = null;
 
     public function __construct(
@@ -37,7 +38,7 @@ class Product extends AbstractData
         Session $session,
         ProductRepository $productRepository,
         ProductUrlRewriteResource $productUrlRewriteResource,
-        LoggerInterface $logger
+        CombinedLogger $mappCombinedLogger
     )
     {
         $this->catalogData = $catalogData;
@@ -45,7 +46,7 @@ class Product extends AbstractData
         $this->catalogSession = $session;
         $this->productRepository = $productRepository;
         $this->productUrlRewriteResource = $productUrlRewriteResource;
-        $this->logger = $logger;
+        $this->mappCombinedLogger = $mappCombinedLogger;
     }
 
     private function generate($productUrlFragment)
@@ -84,7 +85,8 @@ class Product extends AbstractData
             try {
                 $productAvailableInCategory[] = $this->categoryRepository->get($categoryId)->getName();
             } catch (NoSuchEntityException $exception) {
-                $this->logger->error($exception);
+                $this->mappCombinedLogger->error(sprintf('Mapp Connect: -- ERROR -- Category Not Available: %s', $exception->getMessage()), __CLASS__, __FUNCTION__, ['exception' => $exception]);
+                $this->mappCombinedLogger->error($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
             }
 
         }
