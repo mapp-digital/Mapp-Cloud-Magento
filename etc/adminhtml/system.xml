@@ -672,6 +672,158 @@
                     </tooltip>
                 </field>
             </group>
+            <group id="firebase" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Firebase Service Worker (sw)</label>
+                <field id="integration_connection" translate="label" type="password" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Functionality Disabled</label>
+                    <frontend_model>MappDigital\Cloud\Block\Adminhtml\Config\WebPush\WebPushStatus</frontend_model>
+                    <depends>
+                        <field id="*/general/enable">0</field>
+                    </depends>
+                </field>
+                <field id="firebase_version" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Auth Domain</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">firebaseVersion</b> at the top of the firebase-messaging-sw.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="api_key" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Api Key</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">apiKey</b> in the firebase-messaging-sw.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="auth_domain" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Auth Domain</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">authDomain</b> in the firebase-messaging-sw.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="project_id" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Project ID</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">projectId</b> in the firebase-messaging-sw.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="storage_bucket" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Storage Bucket</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">storageBucket</b> in the firebase-messaging-sw.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="message_sender_id" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Messaging Sender ID</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">messagingSenderId</b> in the firebase-messaging-sw.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="app_id" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>App ID</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">appId</b> in the firebase-messaging-sw.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="measurement_id" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Measurement ID</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">measurementId</b> in the firebase-messaging-sw.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="pixel" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Pixel Webpush</label>
+                <field id="integration_connection" translate="label" type="password" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Functionality Disabled</label>
+                    <frontend_model>MappDigital\Cloud\Block\Adminhtml\Config\WebPush\WebPushStatus</frontend_model>
+                    <depends>
+                        <field id="*/general/enable">0</field>
+                    </depends>
+                </field>
+                <field id="service_url" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Service URL</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">serviceURL</b> in the pixel-webpush.min.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="webpush_script_included" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Webpush Script Included</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">webpushScriptIncluded</b> in the pixel-webpush.min.js file provided to you by MAPP. <br>
+                    <em><b style="color:red">There should be no need to change this so only do so if explicitly told to do so.</b><em>
+                 ]]></comment>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\TrueFalseString</source_model>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="use_user_matching" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Use User Matching</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">useUserMatching</b> in the pixel-webpush.min.js file provided to you by MAPP. <br>
+                    <em><b style="color:red">There should be no need to change this so only do so if explicitly told to do so.</b><em>
+                 ]]></comment>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\TrueFalseString</source_model>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="x_key" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>X Key</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">xKey</b> in the pixel-webpush.min.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="service_worker_script" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Service Worker Script</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">serviceWorkerScript</b> in the pixel-webpush.min.js file provided to you by MAPP.
+                 ]]></comment>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="include_firebase_scripts" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include Firebase Scripts</label>
+                    <comment><![CDATA[
+                    This should be shown as <b style="color:green">useUserMatching</b> in the pixel-webpush.min.js file provided to you by MAPP. <br>
+                    <em><b style="color:red">There should be no need to change this so only do so if explicitly told to do so.</b><em>
+                 ]]></comment>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\TrueFalseString</source_model>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+            </group>
         </section>
         <section id="mapp_logging" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Mapp Intelligence - Logging</label>

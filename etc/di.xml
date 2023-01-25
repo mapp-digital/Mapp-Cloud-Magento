@@ -4,9 +4,9 @@
     <preference for="MappDigital\Cloud\Api\Data\LogInterface" type="MappDigital\Cloud\Model\Log"/>
     <preference for="MappDigital\Cloud\Api\Data\LogSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
 
-    <!-- /////////////////////////////////
-        PLUGINS
-    ////////////////////////////////// -->
+    <!-- ///////////////////////////////////////////
+        PLUGINS - LEGACY IMPLEMENTATION OF CONNECT
+    //////////////////////////////////////////// -->
 
     <type name="Magento\Framework\Mail\Template\TransportBuilder">
         <plugin sortOrder="1" name="MappConnectTransportBuilder" type="MappDigital\Cloud\Plugin\Mail\TransportBuilderPlugin"/>
@@ -24,9 +24,9 @@
         <plugin name="MappConnectOrder" type="MappDigital\Cloud\Plugin\Sales\Model\ResourceModel\OrderPlugin"/>
     </type>
 
-    <!-- /////////////////////////////////
+    <!-- /////////////////////////////////////
         PLUGINS - Retry Logic Added For Queues
-    ////////////////////////////////// -->
+    ////////////////////////////////////// -->
 
     <type name="Magento\Framework\Amqp\Queue">
         <plugin name="MappConnectAmqpRetryFailedMessage" type="MappDigital\Cloud\Plugin\Framework\Amqp\QueuePlugin"/>
@@ -81,6 +81,46 @@
             <argument name="handlers"  xsi:type="array">
                 <item name="system" xsi:type="object">MappDigital\Cloud\Logger\Handler</item>
             </argument>
+        </arguments>
+    </type>
+
+    <!-- /////////////////////////////////
+        FIREBASE JS OUTPUT
+    ////////////////////////////////// -->
+
+    <virtualType name="firebaseResultPage" type="Magento\Framework\View\Result\Page">
+        <arguments>
+            <argument name="template" xsi:type="string">MappDigital_Cloud::js_output.phtml</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="firebaseResultPageFactory" type="Magento\Framework\View\Result\PageFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">firebaseResultPage</argument>
+        </arguments>
+    </virtualType>
+    <type name="MappDigital\Cloud\Controller\Index\Firebase">
+        <arguments>
+            <argument name="resultPageFactory" xsi:type="object">firebaseResultPageFactory</argument>
+        </arguments>
+    </type>
+
+    <!-- /////////////////////////////////
+        PIXEL JS OUTPUT
+    ////////////////////////////////// -->
+
+    <virtualType name="pixelResultPage" type="Magento\Framework\View\Result\Page">
+        <arguments>
+            <argument name="template" xsi:type="string">MappDigital_Cloud::js_output.phtml</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="pixelResultPageFactory" type="Magento\Framework\View\Result\PageFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">pixelResultPage</argument>
+        </arguments>
+    </virtualType>
+    <type name="MappDigital\Cloud\Controller\Index\Pixel">
+        <arguments>
+            <argument name="resultPageFactory" xsi:type="object">pixelResultPageFactory</argument>
         </arguments>
     </type>
 </config>

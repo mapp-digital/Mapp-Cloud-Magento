@@ -5,8 +5,6 @@ namespace MappDigital\Cloud\Block\Adminhtml\Config\Connect;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Magento\Config\Block\System\Config\Form\Field;
-use Magento\Framework\App\Config\ConfigResource\ConfigInterface;
-use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use MappDigital\Cloud\Helper\ConnectHelper;

@@ -35,6 +35,10 @@ class SubscriptionManagerPlugin
         $this->mappCombinedLogger = $mappCombinedLogger;
     }
 
+    // -----------------------------------------------
+    // LEGACY METHODS VIA PLUGIN INTERCEPTORS
+    // -----------------------------------------------
+
     /**
      * @param $subject
      * @param $result
