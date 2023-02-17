@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
 namespace MappDigital\Cloud\Model\Connect;
 
 use Exception;
@@ -18,6 +22,7 @@ use Magento\Framework\Session\StorageInterface;
 use Magento\Framework\Validation\ValidationException;
 use Magento\Payment\Helper\Data as PaymentDataHelper;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Store\Model\StoreManager;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Logger\CombinedLogger;
 use Psr\Log\LoggerInterface;
@@ -39,6 +44,7 @@ class SubscriptionManager
     private PaymentDataHelper $paymentHelper;
     private CatalogProductHelper $productHelper;
     private DeploymentConfig $deploymentConfig;
+    private StoreManager $storeManager;
 
     public function __construct(
         ResourceConnection $resource,
@@ -50,7 +56,8 @@ class SubscriptionManager
         CustomerAddressModelConfig $customerAddressModelConfig,
         PaymentDataHelper $paymentHelper,
         CatalogProductHelper $productHelper,
-        DeploymentConfig $deploymentConfig
+        DeploymentConfig $deploymentConfig,
+        StoreManager $storeManager
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -63,6 +70,7 @@ class SubscriptionManager
         $this->paymentHelper = $paymentHelper;
         $this->productHelper = $productHelper;
         $this->deploymentConfig = $deploymentConfig;
+        $this->storeManager = $storeManager;
     }
 
     // -----------------------------------------------
@@ -134,9 +142,18 @@ class SubscriptionManager
             throw new ValidationException(__("Cannot Send Subscription Update to Mapp, Email format is invalid"));
         }
 
+        if (is_null($storeId)) {
+            $store = $this->storeManager->getStore();
+        } else {
+            $store = $this->storeManager->getStore($storeId);
+        }
+
         $data = [
             'email' => $email,
-            'group' => $this->connectHelper->getConfigValue('group', 'subscribers', $storeId)
+            'group' => $this->connectHelper->getConfigValue('group', 'subscribers', $storeId),
+            'store_code' => $store->getCode(),
+            'store_id' => $store->getId(),
+            'store_website_id' => $store->getWebsiteId()
         ];
 
         if ($isSubscribed && $this->connectHelper->getConfigValue('export', 'newsletter_doubleoptin', $storeId)) {
@@ -487,12 +504,12 @@ class SubscriptionManager
 
         $columnChecks[] = sprintf(
             'NOT(NEW.%1$s <=> OLD.%1$s)',
-            $this->connection->quoteIdentifier('status')
+            $this->connection->quoteIdentifier('state')
         );
 
         $columnChecks[] = sprintf(
             '(NEW.%1$s = "%2$s")',
-            $this->connection->quoteIdentifier('status'),
+            $this->connection->quoteIdentifier('state'),
             $status ?? $this->coreConfig->getValue(ConnectHelper::XML_PATH_ORDER_STATUS_EXPORT)
         );
 

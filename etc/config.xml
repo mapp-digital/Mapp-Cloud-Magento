@@ -2,7 +2,7 @@
 <!--
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2021 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 -->
@@ -54,7 +54,7 @@ customerRpTokenCreatedAt</attribute_blacklist>
             <pixel>
                 <webpush_script_included>false</webpush_script_included>
                 <use_user_matching>true</use_user_matching>
-                <include_firebase_scripts>true</include_firebase_scripts>
+                <include_firebase_scripts>false</include_firebase_scripts>
             </pixel>
         </mapp_web_push>
         <mapp_logging>

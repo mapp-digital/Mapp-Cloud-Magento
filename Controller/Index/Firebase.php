@@ -33,7 +33,7 @@ class Firebase extends Action implements HttpGetActionInterface
     {
         $resultPage = $this->resultPageFactory->create(true);
         $resultPage->addHandle('mappintelligence_index_firebase');
-        $resultPage->setHeader('Content-Type', 'text/plain');
+        $resultPage->setHeader('Content-Type', 'application/javascript');
 
         return $resultPage;
     }

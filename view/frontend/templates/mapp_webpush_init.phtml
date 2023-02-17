@@ -1,0 +1,17 @@
+<?php
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+
+use MappDigital\Cloud\Block\Webpush\Initialise;
+
+/** @var $block Initialise */
+if ($block->canInitJsFiles() && $alias = $block->getAlias()) {
+    foreach ($block->getPageAssets() as $url) {
+        echo '<script type="text/javascript" async defer src="' . $url . '"> </script>' . PHP_EOL;
+    }
+
+    echo '<script>' . $block->getUserConfirmJs() . '</script>';
+}

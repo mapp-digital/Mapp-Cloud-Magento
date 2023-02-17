@@ -1,4 +1,11 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/queue.xsd">
     <broker topic="mappdigital.cloud.triggers.consume_db" exchange="magento-db" type="db">
         <queue name="mappdigital.cloud.triggers.consume_db"

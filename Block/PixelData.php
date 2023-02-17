@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
 namespace MappDigital\Cloud\Block;
 
 use Exception;
@@ -9,7 +14,6 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use MappDigital\Cloud\Logger\CombinedLogger;
-use MappDigital\Cloud\Model\Firebase;
 use MappDigital\Cloud\Model\Pixel;
 
 /**
@@ -67,11 +71,13 @@ class PixelData extends AbstractBlock implements IdentityInterface
         $firebaseData = $this->pixelData->getFirebaseData();
 
         $pixelJsFilePartsPath = $this->magentoModuleDirectory->getDir('MappDigital_Cloud','view') . '/public/js/';
-        $pixelMinPartOne = \file_get_contents($pixelJsFilePartsPath . 'pixel-part-1.js');
-        $pixelMinPartTwo = \file_get_contents($pixelJsFilePartsPath . 'pixel-part-2.js');
+        $pixelMinJs = \file_get_contents($pixelJsFilePartsPath . 'pixel-part-2.js');
 
         return <<<JS
 (function (window) {
+
+    setTimeout(function(){
+                console.log("WEBPUSH");
     var wt_webpushConfig = window.wt_webpushConfig || {
         serviceURL: '{$pixelData['serviceURL']}',
         webpushScriptIncluded: {$pixelData['webpushScriptIncluded']},
@@ -90,33 +96,10 @@ class PixelData extends AbstractBlock implements IdentityInterface
         }
     };
 
-    {$pixelMinPartOne}
-
-    if (!wt_webpushConfig.webpushScriptIncluded) {
-        (function() {
-    var wt_webpushConfig = window.wt_webpushConfig || {
-        serviceURL: '{$pixelData['serviceURL']}',
-        webpushScriptIncluded: {$pixelData['webpushScriptIncluded']},
-        useUserMatching: {$pixelData['useUserMatching']},
-        xKey: '{$pixelData['xKey']}',
-        serviceWorkerScript: '{$pixelData['serviceWorkerScript']}',
-        includeFirebaseScripts: {$pixelData['includeFirebaseScripts']},
-        firebaseConfig: {
-            apiKey: '{$firebaseData['apiKey']}',
-            authDomain: '{$firebaseData['authDomain']}',
-            projectId: '{$firebaseData['projectId']}',
-            storageBucket: '{$firebaseData['storageBucket']}',
-            messagingSenderId: '{$firebaseData['messagingSenderId']}',
-            appId: '{$firebaseData['appId']}}',
-            measurementId: '{$firebaseData['measurementId']}'
-        }
-    };
-
-        {$pixelMinPartTwo}
-})();
-
-    }
-})(window);
+        {$pixelMinJs}
+}, 2000);
+})
+(window);
 
 JS;
     }

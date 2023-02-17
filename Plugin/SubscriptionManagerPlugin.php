@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
 namespace MappDigital\Cloud\Plugin;
 
 use GuzzleHttp\Exception\GuzzleException;
@@ -59,7 +64,8 @@ class SubscriptionManagerPlugin
 
                 $this->subscriptionManager->sendNewsletterSubscriptionUpdate(
                     $email,
-                    true
+                    true,
+                    $result->getStoreId()
                 );
 
                 $this->mappCombinedLogger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- Sent Event Via LEGACY Connect Client', __CLASS__, __FUNCTION__);
@@ -90,8 +96,9 @@ class SubscriptionManagerPlugin
                 $this->mappCombinedLogger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Base Method: unsubscribe',__CLASS__, __FUNCTION__);
 
                 $this->subscriptionManager->sendNewsletterSubscriptionUpdate(
-                    $subject->getEmail(),
-                    false
+                    $result->getEmail(),
+                    false,
+                    $result->getStoreId()
                 );
 
                 $this->mappCombinedLogger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- Sent Event Via LEGACY Connect Client', __CLASS__, __FUNCTION__);
@@ -114,7 +121,7 @@ class SubscriptionManagerPlugin
      * @return mixed
      * @throws LocalizedException
      */
-    public function afterSubscribeCustomer($subject, $result, $customerId)
+    public function afterSubscribeCustomer($subject, $result, $customerId, ?int $storeId = null)
     {
         if (!$result || !$this->connectHelper->isLegacySyncEnabled()) {
             return $result;
@@ -125,9 +132,15 @@ class SubscriptionManagerPlugin
                 $this->mappCombinedLogger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Newsletter Subscribe Existing Customer', __CLASS__, __FUNCTION__);
                 $this->mappCombinedLogger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: subscribeCustomer', __CLASS__, __FUNCTION__);
 
+                if ($customerId) {
+                    $customer = $this->customerRepository->getById($customerId);
+                    $email = $customer->getEmail();
+                }
+
                 $this->subscriptionManager->sendNewsletterSubscriptionUpdate(
-                    $result->getSubscriberEmail(),
-                    Subscriber::STATUS_SUBSCRIBED == $result->getSubscriberStatus()
+                    $email ?? $result->getSubscriberEmail(),
+                    Subscriber::STATUS_SUBSCRIBED == $result->getSubscriberStatus(),
+                    $storeId ?? $result->getStoreId()
                 );
 
                 $this->mappCombinedLogger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- Sent Event Via LEGACY Connect Client', __CLASS__, __FUNCTION__);
@@ -153,20 +166,26 @@ class SubscriptionManagerPlugin
      * @return mixed
      * @throws LocalizedException
      */
-    public function afterUnsubscribeCustomer($subject, $result, $customerId)
+    public function afterUnsubscribeCustomer($subject, $result, $customerId, ?int $storeId = null)
     {
         if (!$result || !$this->connectHelper->isLegacySyncEnabled()) {
             return $result;
         }
 
-        $this->mappCombinedLogger->info('MappConnect: -- PLUGIN INTERCEPTOR -- After Newsletter Unsubscribe Existing Customer', __CLASS__, __FUNCTION__);
-        $this->mappCombinedLogger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: unsubscribeCustomer', __CLASS__, __FUNCTION__);
-
         try {
             if ($this->connectHelper->getConfigValue('export', 'newsletter_enable')) {
+                $this->mappCombinedLogger->info('MappConnect: -- PLUGIN INTERCEPTOR -- After Newsletter Unsubscribe Existing Customer', __CLASS__, __FUNCTION__);
+                $this->mappCombinedLogger->debug('MappConnect: -- PLUGIN INTERCEPTOR -- After Base Method: unsubscribeCustomer', __CLASS__, __FUNCTION__);
+
+                if ($customerId) {
+                    $customer = $this->customerRepository->getById($customerId);
+                    $email = $customer->getEmail();
+                }
+
                 $this->subscriptionManager->sendNewsletterSubscriptionUpdate(
-                    $result->getSubscriberEmail(),
-                    Subscriber::STATUS_SUBSCRIBED == $result->getSubscriberStatus()
+                    $email ?? $result->getSubscriberEmail(),
+                    Subscriber::STATUS_SUBSCRIBED == $result->getSubscriberStatus(),
+                    $storeId ?? $result->getStoreId()
                 );
 
                 $this->mappCombinedLogger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- Sent Event Via LEGACY Connect Client', __CLASS__, __FUNCTION__);

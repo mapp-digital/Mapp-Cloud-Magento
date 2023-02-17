@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -17,5 +18,10 @@
                 </item>
             </argument>
         </arguments>
+    </type>
+
+    <type name="Magento\Framework\View\Result\Layout">
+        <plugin name="add_webpush_firebase_layout_handle"
+                type="MappDigital\Cloud\Plugin\AddWebpushFirebaseLayoutHandlePlugin" />
     </type>
 </config>

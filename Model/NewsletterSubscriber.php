@@ -116,9 +116,9 @@ class NewsletterSubscriber implements NewsletterSubscriberInterface
 
             if ($subscriber->getStatus() == Subscriber::STATUS_UNSUBSCRIBED) {
                 $success = true;
-                $message = "Newsletter Subscriber has been unsubscribed";
+                $message = "Subscriber with email of {$email} has been unsubscribed";
             } else {
-                $message = "Newsletter Subscriber was not unsubscribed. Confirm if they were subscribed to begin with.";
+                $message = "Newsletter Subscriber was not unsubscribed. Confirm if they were subscribed to begin with. Subscriber Status is {$subscriber->getStatus()}";
             }
         } catch (LocalizedException $e) {
             $message = __('There was a problem with the subscription: %1', $e->getMessage());

@@ -2,7 +2,7 @@
 <!--
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2021 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 -->
@@ -10,5 +10,9 @@
     <referenceContainer name="head.additional">
         <block class="MappDigital\Cloud\Block\TIDatalayer" name="ti_datalayer" as="ti_datalayer"
                template="MappDigital_Cloud::data_layer.phtml"/>
+        <block class="MappDigital\Cloud\Block\Webpush\Initialise"
+               name="mapp_webpush_init"
+               as="mapp_webpush_init"
+               template="MappDigital_Cloud::mapp_webpush_init.phtml"/>
     </referenceContainer>
 </page>

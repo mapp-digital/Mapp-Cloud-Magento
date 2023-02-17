@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
 namespace MappDigital\Cloud\Framework\Mail;
 
 use Exception;
@@ -45,7 +50,7 @@ class Transport implements TransportInterface
                 $data['email'] = $to;
 
                 try {
-                    $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', __CLASS__, __FUNCTION__);
+                    $this->mappCombinedLogger->info(\json_encode(['message' => 'Mapp Connect -- INFO -- Email Being Sent Via Mapp', 'data' => $data]), __CLASS__, __FUNCTION__);
                     $this->mappConnectClient->event('email', $data);
                 } catch (GuzzleException $exception) {
                     $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', __CLASS__, __FUNCTION__, ['exception' => $exception]);

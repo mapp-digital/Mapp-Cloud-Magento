@@ -1,3 +1,11 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="MappDigital\Cloud\Api\NewsletterSubscriberInterface" type="MappDigital\Cloud\Model\NewsletterSubscriber" />
     <preference for="MappDigital\Cloud\Api\LogRepositoryInterface" type="MappDigital\Cloud\Model\LogRepository"/>
@@ -44,6 +52,8 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="MappDigital::clean_log_messages" xsi:type="object">MappDigital\Cloud\Console\Command\CleanLogs</item>
+                <item name="MappDigital::test_customer_subscription_by_id" xsi:type="object">MappDigital\Cloud\Console\Command\SubscribeCustomerTestTool</item>
+                <item name="MappDigital::test_subscription_by_email" xsi:type="object">MappDigital\Cloud\Console\Command\SubscribeEmailTestTool</item>
             </argument>
         </arguments>
     </type>

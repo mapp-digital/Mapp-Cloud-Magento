@@ -1,7 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
  */
 
 namespace MappDigital\Cloud\Setup;
@@ -32,7 +33,6 @@ class Recurring implements InstallSchemaInterface
      * @param SchemaSetupInterface $setup
      * @param ModuleContextInterface $context
      * @return void
-     * @throws Zend_Db_Exception
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
