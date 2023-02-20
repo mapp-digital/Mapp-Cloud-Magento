@@ -21,6 +21,6 @@ if ! id -un "${USER_ID}" > /dev/null 2>&1; then
   useradd "${USER_NAME}" -m -l -u "${USER_ID}" -g "${GROUP_ID}"
 fi
 
-export ELECTRON_ENABLE_LOGGING=1 && cypress run
+cypress run --browser chrome
 
 chown -R "${USER_ID}:${GROUP_ID}" /results
