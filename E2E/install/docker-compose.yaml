@@ -19,8 +19,8 @@ services:
           - XDEBUG_REMOTE_CONNECT_BACK=1
           ## IMPORTANT: please change this ip address to your docker host ip. Get your docker host ip:
           ## docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' local.domain.com
-          ##- XDEBUG_REMOTE_HOST=172.27.0.7
-          ##- XDEBUG_REMOTE_PORT=9000
+          - XDEBUG_REMOTE_HOST=172.27.0.7
+          - XDEBUG_REMOTE_PORT=9000
         volumes:
           - ./runner.sh:/runner.sh
           - ./testdata.php:/testdata.php
@@ -28,10 +28,10 @@ services:
           - ./db.php:/db.php
           - ./app:/app:cached
           - "./../../src:/plugincode"
-        ports:
-          - "80:80"
-          - "443:443"
-          - "32823:22"
+        # ports:
+        #   - "80:80"
+        #   - "443:443"
+        #   - "32823:22"
         links:
           - mysql
         networks:
@@ -39,8 +39,8 @@ services:
     mysql:
         image: mariadb:10.4
         container_name: mysql
-        ports:
-          - "3306:3306"
+        # ports:
+        #   - "3306:3306"
         environment:
           - MYSQL_ROOT_PASSWORD=root
           - MYSQL_DATABASE=magento
@@ -51,7 +51,7 @@ services:
     e2e-electron:
         container_name: cypress
         entrypoint: ["/bin/bash", "./cypress_entrypoint.sh"]
-        image: "cypress/included:10.8.0"
+        image: "cypress/included:10.7.0"
         volumes:
           - ./../cypress:/cypress
           - ./../cypress.config.js:/cypress.config.js
@@ -77,8 +77,8 @@ services:
                 hard: -1
         volumes:
             - data01:/usr/share/elasticsearch/data
-        ports:
-            - 9200:9200
+        # ports:
+        #     - 9200:9200
         networks:
             - mapp
     es02:
@@ -128,4 +128,5 @@ volumes:
         external: false
 networks:
     mapp:
+        name: mapp_e2e_magento
 

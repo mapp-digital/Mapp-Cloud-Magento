@@ -18,7 +18,7 @@ fi
 
 if ! id -un "${USER_ID}" > /dev/null 2>&1; then
   echo "create new user: ${NEW_USER_GROUP_NAME} with id *${USER_ID}* for group id *${GROUP_ID}*"
-  adduser --disabled-password --gecos '' --uid "${USER_ID}" --gid "${GROUP_ID}" "${NEW_USER_GROUP_NAME}"
+  useradd "${USER_NAME}" -m -l -u "${USER_ID}" -g "${GROUP_ID}"
 fi
 
 export ELECTRON_ENABLE_LOGGING=1 && cypress run
