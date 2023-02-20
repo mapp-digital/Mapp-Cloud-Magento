@@ -48,10 +48,9 @@ services:
           - db-data:/var/lib/mysql
         networks:
           - mapp
-    e2e-electron:
-        container_name: cypress
+    cypress:
         entrypoint: ["/bin/bash", "./cypress_entrypoint.sh"]
-        image: "cypress/included:12.6.0"
+        image: "cypress/included:11.2.0"
         volumes:
           - ./../cypress:/cypress
           - ./../cypress.config.js:/cypress.config.js
