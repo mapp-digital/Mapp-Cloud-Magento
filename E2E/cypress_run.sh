@@ -23,4 +23,8 @@ fi
 
 cypress run --browser chrome
 
+RESULT=$?
+
 chown -R "${USER_ID}:${GROUP_ID}" /results
+
+exit RESULT
