@@ -49,6 +49,7 @@ services:
         networks:
           - mapp
     cypress:
+        container_name: cypress
         entrypoint: ["/bin/bash", "./cypress_entrypoint.sh"]
         image: "cypress/included:11.2.0"
         volumes:
