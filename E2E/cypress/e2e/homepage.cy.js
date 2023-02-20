@@ -12,7 +12,7 @@ describe('MappIntelligencePluginTests: Homepage', () => {
             cy.get('@get').should('have.property', 'status', 200);
             cy.get('@get').its('response').then((res) => {
                 expect(res.body.config.tiId).to.equal('136699033798929');
-                expect(res.body.config.tiDomain).to.equal('responder.wt-safetag.com');
+                expect(res.body.config.tiDomain).to.equal('responder.wt-safetag.comm');
                 expect(res.body.config.customDomain).to.equal(null);
                 expect(res.body.config.customPath).to.equal(null);
                 expect(res.body.config.option).to.be.empty;
