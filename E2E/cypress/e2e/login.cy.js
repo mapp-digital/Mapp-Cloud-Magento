@@ -64,7 +64,7 @@ describe('MappIntelligencePluginTests: Login', () => {
 
         cy.get('#email').type('test@mapp.com');
         cy.get('#pass').type('Test1234!', {force: true});
-        cy.get('#send2').click();
+        cy.get('#send2').click({force: true});
         cy.testTrackRequest('@trackRequest').then(trackRequest => {
             expectationsForAfterLogin[trackRequest.version](trackRequest.params);
         });
