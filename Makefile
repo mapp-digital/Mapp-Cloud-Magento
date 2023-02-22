@@ -92,6 +92,9 @@ empty-carts:
 	
 flush: 
 	docker exec -t local.domain.com bash -c "/runner.sh flush"
+
+reindex:
+	docker exec -t local.domain.com bash -c "/runner.sh reindex"
 	
 upgrade: 
 	docker exec -t local.domain.com bash -c "/runner.sh upgrade"

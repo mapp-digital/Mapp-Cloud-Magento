@@ -11,11 +11,22 @@ describe("Order Products", () => {
     cy.wait("@trackRequest");
     cy.wait("@trackRequest");
 
-    cy.get("#email").type("test@mapp.com");
-    cy.get("#pass").type("Test1234!", {force: true});
-    cy.get("#send2").click({force: true});
-    cy.wait("@trackRequest");
-    cy.wait("@trackRequest");
+    cy.get('input[name="form_key"]').then(form => {
+      const form_key = form.attr("value");
+      cy.visit({
+        url: '/customer/account/loginPost/',
+        method: 'POST',
+        body: {
+          form_key,
+          'login[username]': 'test@mapp.com',
+          'login[password]': 'Test1234!'
+        },
+      }).then(()=>{
+        cy.wait("@trackRequest");
+        cy.wait("@trackRequest");
+      })
+    })
+
 
     cy.visit("/mapp-simple-product.html");
     cy.wait("@trackRequest");

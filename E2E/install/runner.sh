@@ -219,6 +219,10 @@ function flush {
         /app/bin/magento cache:flush
 }
 
+function reindex {
+	    /app/bin/magento indexer:reindex
+}
+
 function wait_for_db {
 	log "Waiting for database..."
 	bash -c "/wait-for-it.sh -t 0 mysql:3306"
