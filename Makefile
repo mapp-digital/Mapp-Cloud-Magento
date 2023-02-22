@@ -123,6 +123,6 @@ set-version:
 	sed -i 's/psVersion\s=\s"[0-9]\+.[0-9]\+.[0-9]\+";/psVersion = "$(version)";/' ./src/MappDigital/Cloud/Helper/TrackingScript.php
 
 zip:
-	cd src && zip -r ../Mapp_Cloud_Magento_$$(jq -r '.version' ./MappDigital/Cloud/composer.json).zip ./MappDigital
+	rm -f *.zip && cd src && zip -r ../Mapp_Cloud_Magento_$$(jq -r '.version' ./MappDigital/Cloud/composer.json).zip ./MappDigital
 	cd ./src/MappDigital/Cloud && zip -r ../../../Mapp_Cloud_Magento_For_Marketplace_$$(jq -r '.version' ./composer.json).zip ./*
 	
