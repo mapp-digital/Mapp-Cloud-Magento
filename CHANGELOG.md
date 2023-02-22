@@ -28,3 +28,6 @@
 
 # 1.1.5
 - add fallback to add-to-cart and order events
+
+# 1.1.6
+- use product block view class and catalog helper to retrieve product id

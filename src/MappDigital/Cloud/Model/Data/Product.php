@@ -6,12 +6,12 @@
  */
 namespace MappDigital\Cloud\Model\Data;
 
-use Magento\CatalogUrlRewrite\Model\ResourceModel\Category\Product as ProductUrlRewriteResource;
 use Magento\Catalog\Helper\Data;
 use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Model\Session;
 use Magento\Catalog\Model\ProductRepository;
-use MappDigital\Cloud\Helper\DataLayer;
+use Magento\Framework\Exception\NoSuchEntityException;
+
 
 class Product extends AbstractData
 {
@@ -47,30 +47,22 @@ class Product extends AbstractData
     protected $_productRepository;
 
     /**
-     * @var ProductUrlRewriteResource
-     */
-    protected $_productUrlRewriteResource;
-
-    /**
      * @param Data $catalogData
      * @param CategoryRepository $categoryRepository
      * @param Session $session
      * @param ProductRepository $productRepository
-     * @param ProductUrlRewriteResource $productUrlRewriteResource
      */
     public function __construct(
         Data $catalogData,
         CategoryRepository $categoryRepository,
         Session $session,
-        ProductRepository $productRepository,
-        ProductUrlRewriteResource $productUrlRewriteResource
+        ProductRepository $productRepository
     )
     {
         $this->_catalogData = $catalogData;
         $this->_categoryRepository = $categoryRepository;
         $this->_catalogSession = $session;
         $this->_productRepository = $productRepository;
-        $this->_productUrlRewriteResource = $productUrlRewriteResource;
     }
 
     private function setAvailableCategories()
@@ -158,33 +150,16 @@ class Product extends AbstractData
         }
     }
 
-    private function fallback_product_id_getter($productUrlFragment)
-    {
-        $connection = $this->_productUrlRewriteResource->getConnection();
-        $table      = $this->_productUrlRewriteResource->getTable('url_rewrite');
-        $select     = $connection->select();
-        $select->from($table, ['entity_id'])
-            ->where('entity_type = :entity_type')
-            ->where('request_path LIKE :request_path');
-
-        $result = $connection->fetchCol(
-            $select,
-            ['entity_type' => 'product', 'request_path' => $productUrlFragment]
-        );
-        return $result[0] ?? null;
-    }
-
-    private function generate($productUrlFragment)
+    private function generate($productId)
     {
         $this->setBreadcrumb();
 
         if (!$this->_product) {
-            $productId = $this->_catalogSession->getData('last_viewed_product_id');
-            if(is_null($productId)) {
-                $productId = $this->fallback_product_id_getter($productUrlFragment);
-            }
             if(!is_null($productId)) {
-                $this->_product = $this->_productRepository->getById($productId);
+                try {
+                    $this->_product = $this->_productRepository->getById($productId);
+                } catch (NoSuchEntityException $e) {
+                }
             }
         }
 
@@ -207,9 +182,9 @@ class Product extends AbstractData
     /**
      * @return array
      */
-    public function getDataLayer($productUrlFragment)
+    public function getDataLayer($productId)
     {
-        $this->generate($productUrlFragment);
+        $this->generate($productId);
 
         return $this->_data;
     }

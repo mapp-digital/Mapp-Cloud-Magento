@@ -9,9 +9,9 @@ namespace MappDigital\Cloud\Helper;
 
 class TrackingScript
 {
-    public static function generateJS($config) {
+    public static function generateJS($config, $productId) {
 
-        $_psVersion = self::getVersion();
+        $_psVersion = "1.1.6";
 
         $requireArray = "'jquery'";
         $requireArgument = "$";
@@ -171,7 +171,7 @@ class TrackingScript
                 window.wts = window.wts || [];
                 window.wts.push(['_mappAddToCartHelper']);
                 $.ajax({
-                    url: mappEndpoint + (isProductView ? '?product='+location.href.split('/').pop() : ''),
+                    url: mappEndpoint + (isProductView ? '?product={$productId}' : ''),
                     type: 'GET',
                     dataType: 'json',
                     complete: function(response) {
@@ -242,12 +242,5 @@ class TrackingScript
                     });
                 });
             });";
-    }
-
-    public static function getVersion()
-    {
-        $path = dirname(__FILE__) . '/../composer.json';
-        $packages = json_decode(file_get_contents($path), true);
-        return $packages["version"];
     }
 }

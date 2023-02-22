@@ -122,9 +122,9 @@ class DataLayer extends DataObject
         $this->_addArray('page', $this->_page->getDataLayer());
     }
 
-    public function setProductDataLayer($productUrlFragment)
+    public function setProductDataLayer($productId)
     {
-        $productDataLayer = $this->_product->getDataLayer($productUrlFragment);
+        $productDataLayer = $this->_product->getDataLayer($productId);
 
         if ($this->fullActionName === 'catalog_product_view') {
             $productDataLayer['quantity'] = '1';
