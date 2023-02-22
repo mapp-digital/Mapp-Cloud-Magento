@@ -1,4 +1,4 @@
-.PHONY: prepare-host cleanup-host install-23 install-24 old-server-start server7-start server8-start dev-server8-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp empty-carts flush upgrade log-debug plugin-backup plugin-restore plugin-copy-app-to-volume plugin-install check
+.PHONY: set-version prepare-host cleanup-host install-23 install-24 old-server-start server7-start server8-start dev-server8-start stop-server tests run-tests jenkins-test exec cypress uninstall uninstall-mapp empty-carts flush upgrade log-debug plugin-backup plugin-restore plugin-copy-app-to-volume plugin-install check
 
 PHP7=webdevops/php-apache:7.4
 PHP8=webdevops/php-apache:8.1
@@ -113,3 +113,16 @@ plugin-copy-app-to-volume:
 
 plugin-install:
 	docker exec -t local.domain.com bash -c "/runner.sh copy_plugin_volume_to_app"
+
+set-version:
+	@if [ -z "$(version)" ]; then \
+        echo "Error: version parameter is not set. Set like: make set-version version=1.2.3"; \
+        exit 1; \
+    fi
+	sed -i 's/"version":\s*"[^"]*"/"version": "$(version)"/' ./src/MappDigital/Cloud/composer.json
+	sed -i 's/psVersion\s=\s"[0-9]\+.[0-9]\+.[0-9]\+";/psVersion = "$(version)";/' ./src/MappDigital/Cloud/Helper/TrackingScript.php
+
+zip:
+	cd src && zip -r ../Mapp_Cloud_Magento_$$(jq -r '.version' ./MappDigital/Cloud/composer.json).zip ./MappDigital
+	cd ./src/MappDigital/Cloud && zip -r ../../../Mapp_Cloud_Magento_For_Marketplace_$$(jq -r '.version' ./composer.json).zip ./*
+	
