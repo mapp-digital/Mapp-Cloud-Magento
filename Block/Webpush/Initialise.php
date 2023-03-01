@@ -72,7 +72,7 @@ class Initialise extends Template
     protected function _afterToHtml($html)
     {
         try {
-            if (!$this->cookieManager->getCookie(AddWebpushFirebaseLayoutHandlePlugin::COOKIE_NAME_WEBPUSH_SET)) {
+            if ($this->canInitJsFiles() && !$this->cookieManager->getCookie(AddWebpushFirebaseLayoutHandlePlugin::COOKIE_NAME_WEBPUSH_SET)) {
                 $sensitiveCookMetadata = $this->cookieMetadataFactory->createSensitiveCookieMetadata(
                     [
                         CookieMetadata::KEY_DURATION => $this->sessionConfig->getCookieLifetime()
@@ -111,10 +111,6 @@ JS;
      */
     public function canInitJsFiles(): bool
     {
-        if ($this->cookieManager->getCookie(AddWebpushFirebaseLayoutHandlePlugin::COOKIE_NAME_WEBPUSH_SET)) {
-            return false;
-        }
-
         if ($this->customerSession->isLoggedIn() || $this->checkoutSession->getLastRealOrder()) {
             return true;
         }

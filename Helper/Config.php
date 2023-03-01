@@ -20,6 +20,7 @@ class Config extends AbstractHelper
     const XML_PATH_CUSTOM_PATH = 'tagintegration/general/custom_path';
     const XML_PATH_ATTRIBUTE_BLACKLIST = 'tagintegration/general/attribute_blacklist';
     const XML_PATH_ADD_TO_CART_EVENT_NAME = 'tagintegration/general/add_to_cart_event_name';
+    const XML_PATH_REMOVE_FROM_CART_EVENT_NAME = 'tagintegration/general/remove_from_cart_event_name';
     const XML_PATH_ACQUIRE = 'mapp_acquire/general/acquire';
     const XML_PATH_GTM_ENABLE = 'mapp_gtm/general/gtm_enable';
     const XML_PATH_GTM_LOAD = 'mapp_gtm/general/gtm_load';
@@ -107,8 +108,15 @@ class Config extends AbstractHelper
      */
     public function getAddToCartEventName(): string
     {
-        $configValue = $this->scopeConfig->getValue(self::XML_PATH_ADD_TO_CART_EVENT_NAME, ScopeInterface::SCOPE_STORE);
-        return is_null($configValue) ? 'add-to-cart': $configValue;
+        return $this->scopeConfig->getValue(self::XML_PATH_ADD_TO_CART_EVENT_NAME, ScopeInterface::SCOPE_STORE) ?? 'add-to-cart';
+    }
+
+    /**
+     * @return string
+     */
+    public function getRemoveFromCartEventName(): string
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_REMOVE_FROM_CART_EVENT_NAME, ScopeInterface::SCOPE_STORE) ?? 'remove-from-cart';
     }
 
     /**

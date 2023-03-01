@@ -36,6 +36,8 @@ class Order extends AbstractData
         $this->product = $product;
         $this->productAttributeRepositoryInterface = $productAttributeRepositoryInterface;
         $this->mappCombinedLogger = $mappCombinedLogger;
+
+        parent::__construct();
     }
 
     /**
@@ -89,7 +91,6 @@ class Order extends AbstractData
                     }
                 }
                 $productData['attributes'] = $allAttributesForProduct;
-
                 $tmp = DataLayerHelper::merge($existingProductData, $productData);
                 $existingProductData = $tmp;
             } catch (NoSuchEntityException $exception) {

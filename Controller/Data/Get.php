@@ -47,13 +47,15 @@ class Get implements HttpGetActionInterface
     {
         $params = $this->request->getParams();
         $isAddToCart = isset($params['add']);
+        $isRemoveFromCart = isset($params['remove']);
 
-        if (!$isAddToCart) {
+        if (!$isAddToCart && !$isRemoveFromCart) {
             if (isset($params['product'])) {
                 $this->dataLayerModel->setProductDataLayer($params['product']);
             }
             $this->dataLayerModel->setCustomerDataLayer();
             $this->dataLayerModel->setOrderDataLayer();
+            $this->dataLayerModel->setWishlistData();
         }
 
         $this->dataLayerModel->setCartDataLayer();
@@ -62,10 +64,83 @@ class Get implements HttpGetActionInterface
 
         $data = [
             "eventName" => $this->config->getAddToCartEventName(),
+            "eventNameRemove" => $this->config->getRemoveFromCartEventName(),
             "dataLayer" => $dataLayer,
-            "config" => $this->config->getConfig(),
+            "config" => $this->config->getConfig()
         ];
 
+        if ($isAddToCart || $isRemoveFromCart) {
+            $data = $this->addCartActionData($data, $dataLayer);
+        }
+
+        if (isset($dataLayer['addWishlistProductId'])) {
+            $data = $this->addWishlistData($data, $dataLayer);
+        }
+
         return $this->resultJsonFactory->create()->setData($data);
+    }
+
+    /**
+     * @return string
+     */
+    private function getCartAction(): string
+    {
+        $params = $this->request->getParams();
+
+        if (isset($params['add'])) {
+            return 'addToCartMapp';
+        }
+
+        if (isset($params['remove'])) {
+            return 'removeFromCartMapp';
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $data
+     * @param array $dataLayer
+     * @return array
+     */
+    private function addCartActionData(array $data, array $dataLayer): array
+    {
+        $data[$this->getCartAction()] = [
+            "product" => [
+                "id" => $dataLayer['addProductId'] ?? "",
+                "name" => $dataLayer['addProductName'] ?? "",
+                "sku" => $dataLayer['addProductSku'] ?? "",
+                "price" => $dataLayer['addProductPrice'] ?? "",
+                "specialPrice" => $dataLayer['addProductSpecialPrice'] ?? "",
+                "qty" => $dataLayer['addProductQty'] ?? "",
+                "category" => implode(' ; ',$dataLayer['addProductCategories'] ?? []),
+                "url" => $dataLayer['addProductUrlKey'] ?? "",
+                "img" => $dataLayer['addProductImage'] ?? "",
+                "currency" => $dataLayer['addProductCurrency'] ?? ""
+            ]
+        ];
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @param array $dataLayer
+     * @return array
+     */
+    private function addWishlistData(array $data, array $dataLayer): array
+    {
+        $data['addToWishlistMapp'] = [
+            "product" => [
+                "id" => $dataLayer['addWishlistProductId'] ?? "",
+                "name" => $dataLayer['addWishlistProductName'] ?? "",
+                "sku" => $dataLayer['addWishlistProductSku'] ?? "",
+                "price" => $dataLayer['addWishlistProductPrice'] ?? "",
+                "qty" => $dataLayer['addWishlistQty'] ?? "",
+                "currency" => $dataLayer['addWishlistCurrency'] ?? "",
+            ]
+        ];
+
+        return $data;
     }
 }

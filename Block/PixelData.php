@@ -7,11 +7,13 @@
 namespace MappDigital\Cloud\Block;
 
 use Exception;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Module\Dir;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Context;
+use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use MappDigital\Cloud\Logger\CombinedLogger;
 use MappDigital\Cloud\Model\Pixel;
@@ -52,7 +54,9 @@ class PixelData extends AbstractBlock implements IdentityInterface
     protected function _toHtml()
     {
         try {
-            return $this->configToHtml() . PHP_EOL;
+            if ($this->_scopeConfig->getValue('mapp_web_push/general/enable', ScopeInterface::SCOPE_STORE, $this->storeManager->getStore()->getId())) {
+                return $this->configToHtml() . PHP_EOL;
+            }
         } catch (Exception $exception) {
             $this->mappCombinedLogger->error('Error when trying to generate Pixel JS file: ' . $exception->getMessage(), __CLASS__, __FUNCTION__, ['error' => $exception->getMessage()]);
             $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);

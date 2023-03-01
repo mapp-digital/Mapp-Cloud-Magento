@@ -46,7 +46,7 @@ customerRpTokenCreatedAt</attribute_blacklist>
         </mapp_connect_messages>
         <mapp_web_push>
             <general>
-                <enable>0</enable>
+                <enable>1</enable>
             </general>
             <firebase>
                 <firebase_version>8.9.1</firebase_version>

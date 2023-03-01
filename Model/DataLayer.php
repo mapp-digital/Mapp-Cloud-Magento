@@ -13,15 +13,17 @@ use MappDigital\Cloud\Model\Data\Customer;
 use MappDigital\Cloud\Model\Data\Order;
 use MappDigital\Cloud\Model\Data\Page;
 use MappDigital\Cloud\Model\Data\Product;
+use MappDigital\Cloud\Model\Data\Wishlist;
 
 class DataLayer extends DataObject
 {
-    protected Context $_context;
-    protected Product $_product;
-    protected Page $_page;
-    protected Customer $_customer;
-    protected Cart $_cart;
-    protected Order $_order;
+    protected Context $context;
+    protected Product $product;
+    protected Page $page;
+    protected Customer $customer;
+    protected Cart $cart;
+    protected Order $order;
+    protected Wishlist $wishlist;
     protected array $_variables = [];
     protected string $fullActionName = '';
 
@@ -31,16 +33,18 @@ class DataLayer extends DataObject
         Page $page,
         Customer $customer,
         Cart $cart,
-        Order $order
+        Order $order,
+        Wishlist $wishlist
     ) {
-        $this->_context = $context;
-        $this->_product = $product;
-        $this->_page = $page;
-        $this->_customer = $customer;
-        $this->_cart = $cart;
-        $this->_order = $order;
+        $this->context = $context;
+        $this->product = $product;
+        $this->page = $page;
+        $this->customer = $customer;
+        $this->cart = $cart;
+        $this->order = $order;
+        $this->wishlist = $wishlist;
 
-        $this->fullActionName = $this->_context->getRequest()->getFullActionName() ?? '';
+        $this->fullActionName = $this->context->getRequest()->getFullActionName() ?? '';
     }
 
     /**
@@ -64,12 +68,12 @@ class DataLayer extends DataObject
 
     public function setPageDataLayer()
     {
-        $this->_addArray('page', $this->_page->getDataLayer());
+        $this->_addArray('page', $this->page->getDataLayer());
     }
 
     public function setProductDataLayer($productUrlFragment)
     {
-        $productDataLayer = $this->_product->getDataLayer($productUrlFragment);
+        $productDataLayer = $this->product->getDataLayer($productUrlFragment);
 
         if ($this->fullActionName === 'catalog_product_view') {
             $productDataLayer['quantity'] = '1';
@@ -81,17 +85,22 @@ class DataLayer extends DataObject
 
     public function setCustomerDataLayer()
     {
-        $this->_addArray('customer', $this->_customer->getDataLayer());
+        $this->_addArray('customer', $this->customer->getDataLayer());
     }
 
     public function setCartDataLayer()
     {
-        $this->_addArray('add', $this->_cart->getDataLayer());
+        $this->_addArray('add', $this->cart->getDataLayer());
+    }
+
+    public function setWishlistData()
+    {
+        $this->_addArray('add', $this->wishlist->getDataLayer());
     }
 
     public function setOrderDataLayer()
     {
-        $orderData = $this->_order->getDataLayer();
+        $orderData = $this->order->getDataLayer();
 
         if (!empty($orderData)) {
             $this->_addArray('product', $orderData['product']);

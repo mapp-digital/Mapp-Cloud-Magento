@@ -10,6 +10,12 @@
 	<event name="checkout_cart_product_add_after">
         <observer name="ti_datalayer_add_to_cart" instance="MappDigital\Cloud\Observer\TIDatalayerAddToCart" />
     </event>
+    <event name="sales_quote_remove_item">
+        <observer name="ti_datalayer_remove_from_cart" instance="MappDigital\Cloud\Observer\TIDatalayerRemoveFromCart" />
+    </event>
+    <event name="wishlist_add_product">
+        <observer name="ti_datalayer_add_to_wishlist" instance="MappDigital\Cloud\Observer\TIDatalayerAddToWishlist" />
+    </event>
 	<event name="checkout_onepage_controller_success_action">
         <observer name="ti_datalayer_order_success" instance="MappDigital\Cloud\Observer\TIDatalayerOrderSuccess" />
     </event>

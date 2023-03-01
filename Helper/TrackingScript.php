@@ -6,7 +6,6 @@
  */
 namespace MappDigital\Cloud\Helper;
 
-
 class TrackingScript
 {
     /**
@@ -71,6 +70,7 @@ class TrackingScript
                 }
             }";
         }
+
         if($config["gtm"]["enable"] === "1") {
             $requireArray = "'jquery','wtSmart'";
             $requireArgument = "$, wtSmart";
@@ -134,6 +134,7 @@ class TrackingScript
                 {$wtSmartLoader}
                 {$gtmLoader}
                 {$acquireLoader}
+
                 const mappEndpoint = location.protocol + '//' + location.host + '/mappintelligence/data/get/';
                 const isProductView = window._ti && window._ti.pageAction && window._ti.pageAction === 'catalog_product_view';
                 const calculatePrices = function() {
@@ -173,20 +174,36 @@ class TrackingScript
                 }
                 window._mappAddToCartHelper = {$addToCartHelper};
                 window.wts = window.wts || [];
+                window.acquireAdd = window.acquireAdd || [];
+                window.acquireRemove = window.acquireRemove || [];
+                window.acquireWishlist = window.acquireWishlist || [];
                 window.wts.push(['_mappAddToCartHelper']);
-                console.log(mappEndpoint);
-                console.log(isProductView);
-                console.log(window._ti);
+                window.dataLayer = window.dataLayer || [];
                 $.ajax({
                     url: mappEndpoint + (isProductView ? '?product='+location.href.split('/').pop() : ''),
                     type: 'GET',
                     dataType: 'json',
                     complete: function(response) {
-
                         if(window._ti) {
                             if(response.responseJSON && response.responseJSON.dataLayer) {
                                 $.extend(window._ti, response.responseJSON.dataLayer);
                             }
+
+                            if(response.responseJSON && response.responseJSON.addToWishlistMapp) {
+                                window.dataLayer.push({
+                                    event: 'addToWishlistMapp',
+                                    addToWishlistMapp: JSON.parse(JSON.stringify(response.responseJSON.addToWishlistMapp))
+                                });
+
+                                window.acquireWishlist.push({
+                                    event: 'add-to-wishlist-mapp'
+                                });
+
+                                if(document.cookie.indexOf('mapp_debug') !== -1) {
+                                     console.log('Mapp Intelligence Add-To-Wishlist datalayer:', JSON.parse(JSON.stringify(window.dataLayer)));
+                                }
+                            }
+
                             window._ti.pageName = location.host + location.pathname;
                             if(isProductView) {
                                 window._ti.shoppingCartStatus = 'view';
@@ -196,7 +213,6 @@ class TrackingScript
                                 calculatePrices();
                             }
                             window._ti.addToCartEventName = response.responseJSON.eventName;
-
                         }
                         const config = response.responseJSON.config;
                         {$tiLoader}
@@ -221,6 +237,7 @@ class TrackingScript
                         complete: function(response) {
                             const config = response.responseJSON.config;
                             const productAddDataLayer = response.responseJSON.dataLayer;
+                            const productAddToCartMapp = response.responseJSON.addToCartMapp;
                             const addToCartEventName = response.responseJSON.eventName;
                             if(productAddDataLayer && addToCartEventName) {
                                 const dataLayerBackup = JSON.stringify(window._ti);
@@ -233,11 +250,65 @@ class TrackingScript
                                     console.log('Mapp Intelligence Add-To-Cart datalayer:', JSON.parse(JSON.stringify(window._ti)));
                                 }
                                 if(config.tiEnable === '1') {
-                                window.wts.push(['linkId', addToCartEventName]);
-                                window.wts.push(['send', 'pageupdate', true]);
+                                    window.dataLayer.push({
+                                         event: addToCartEventName,
+                                         addToCartMapp: JSON.parse(JSON.stringify(productAddToCartMapp))
+                                    });
+                                    if(document.cookie.indexOf('mapp_debug') !== -1) {
+                                        console.log('Mapp Intelligence Add-To-Cart datalayer:', JSON.parse(JSON.stringify(window.dataLayer)));
+                                    }
+                                    window.wts.push(['linkId', addToCartEventName]);
+                                    window.wts.push(['send', 'pageupdate', true]);
+                                    window.acquireAdd.push({
+                                        event: addToCartEventName
+                                    });
                                 }
+
                                 {$gtmCreateProductArray}
                                 {$gtmAddToCartPush}
+                                setTimeout(function() {
+                                    restoreDataLayer(JSON.parse(dataLayerBackup));
+                                    window.wts.push(['linkId', 'false']);
+                                }, 500);
+                            }
+                        },
+                        error: function (xhr, status, errorThrown) {
+                        }
+                    });
+                });
+
+                $(document).on('ajax:removeFromCart', function() {
+                    $.ajax({
+                        url: mappEndpoint + '?remove=1',
+                        type: 'GET',
+                        dataType: 'json',
+                        complete: function(response) {
+                            const config = response.responseJSON.config;
+                            const productAddDataLayer = response.responseJSON.dataLayer;
+                            const productRemoveFromCartMapp = response.responseJSON.removeFromCartMapp;
+                            const removeFromCartEventName = response.responseJSON.eventNameRemove;
+                            if(productRemoveFromCartMapp && removeFromCartEventName) {
+                                const dataLayerBackup = JSON.stringify(window._ti);
+                                handleAddProductKeys(productAddDataLayer);
+                                calculatePrices();
+                                if(document.cookie.indexOf('mapp_debug') !== -1) {
+                                    console.log('Mapp Intelligence Remove-From-Cart eventname:', removeFromCartEventName);
+                                    console.log('Mapp Intelligence Remove-From-Cart datalayer:', JSON.parse(JSON.stringify(window._ti)));
+                                }
+                                if(config.tiEnable === '1') {
+                                    window.dataLayer.push({
+                                        event: removeFromCartEventName,
+                                        removeFromCartMapp: JSON.parse(JSON.stringify(productRemoveFromCartMapp))
+                                    });
+                                    if(document.cookie.indexOf('mapp_debug') !== -1) {
+                                        console.log('Mapp Intelligence Remove-From-Cart datalayer:', JSON.parse(JSON.stringify(window.dataLayer)));
+                                    }
+                                    window.wts.push(['linkId', removeFromCartEventName]);
+                                    window.wts.push(['send', 'pageupdate', true]);
+                                }
+                                window.acquireRemove.push({
+                                        event: removeFromCartEventName
+                                });
                                 setTimeout(function() {
                                     restoreDataLayer(JSON.parse(dataLayerBackup));
                                     window.wts.push(['linkId', 'false']);

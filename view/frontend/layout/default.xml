@@ -13,6 +13,7 @@
         <block class="MappDigital\Cloud\Block\Webpush\Initialise"
                name="mapp_webpush_init"
                as="mapp_webpush_init"
-               template="MappDigital_Cloud::mapp_webpush_init.phtml"/>
+               template="MappDigital_Cloud::mapp_webpush_init.phtml"
+               ifconfig="mapp_web_push/general/enable"/>
     </referenceContainer>
 </page>

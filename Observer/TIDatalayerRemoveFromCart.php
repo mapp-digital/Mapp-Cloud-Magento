@@ -6,12 +6,12 @@
  */
 namespace MappDigital\Cloud\Observer;
 
-use Magento\Catalog\Model\Product as MagentoProductModel;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Quote\Model\Quote\Item;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
 
-class TIDatalayerAddToCart extends TIDatalayerCartAbstract
+class TIDatalayerRemoveFromCart extends TIDatalayerCartAbstract
 {
     /**
      * @param Observer $observer
@@ -21,17 +21,16 @@ class TIDatalayerAddToCart extends TIDatalayerCartAbstract
     public function execute(Observer $observer)
     {
         if ($this->config->isEnabled()) {
+            /** @var Item $item */
             $item = $observer->getEvent()->getData('quote_item');
-            /** @var MagentoProductModel $product */
-            $product = $observer->getEvent()->getData('product');
 
-            if ($product->hasData()) {
-                $this->mappProductModel->setProduct($product);
+            if ($item->getProduct()->hasData()) {
+                $this->mappProductModel->setProduct($item->getProduct());
 
                 $this->checkoutSession->setData(
-                    'webtrekk_addproduct',
+                    'webtrekk_removeproduct',
                     DataLayerHelper::merge(
-                        $this->getSessionData('webtrekk_addproduct'),
+                        $this->getSessionData('webtrekk_removeproduct'),
                         $this->getProductData($item)
                     )
                 );

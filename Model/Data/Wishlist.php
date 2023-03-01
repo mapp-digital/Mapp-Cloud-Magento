@@ -8,7 +8,7 @@ namespace MappDigital\Cloud\Model\Data;
 
 use Magento\Checkout\Model\Session;
 
-class Cart extends AbstractData
+class Wishlist extends AbstractData
 {
     protected Session $checkoutSession;
     protected Product $product;
@@ -23,18 +23,11 @@ class Cart extends AbstractData
 
     private function generate()
     {
-        $productData = $this->checkoutSession->getData('webtrekk_addproduct')
-            ?? $this->checkoutSession->getData('webtrekk_removeproduct')
-            ?? '';
+        $wishlistData = $this->checkoutSession->getData('webtrekk_addtowishlist') ?? '';
 
-        if ($productData) {
-            $this->set('product', $productData);
-            if ($this->checkoutSession->getData('webtrekk_removeproduct')) {
-                $this->checkoutSession->setData('webtrekk_removeproduct', null);
-            }
-            if ($this->checkoutSession->getData('webtrekk_addproduct')) {
-                $this->checkoutSession->setData('webtrekk_addproduct', null);
-            }
+        if ($wishlistData) {
+            $this->set('wishlist', $wishlistData);
+            $this->checkoutSession->setData('webtrekk_addtowishlist', null);
         }
     }
 

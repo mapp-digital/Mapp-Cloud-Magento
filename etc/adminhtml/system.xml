@@ -79,6 +79,15 @@
                         <field id="*/*/enable">1</field>
                     </depends>
                 </field>
+                <field id="remove_from_cart_event_name" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Remove-from-cart Eventname</label>
+                    <tooltip>
+                        Enter the name for the Remove-from-cart event.
+                    </tooltip>
+                    <depends>
+                        <field id="*/*/enable">1</field>
+                    </depends>
+                </field>
             </group>
         </section>
         <section id="mapp_gtm" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
