@@ -152,6 +152,7 @@ function install {
 			--admin-use-security-key=1 \
 			--session-save=files
 
+
 		else
 			php /app/bin/magento setup:install \
 			--admin-firstname=John \
@@ -173,6 +174,7 @@ function install {
 			--use-secure-admin=1 \
 			--admin-use-security-key=1 \
 			--session-save=files \
+			--search-engine=elasticsearch7 \
 			--elasticsearch-host=es01
 
 		fi
