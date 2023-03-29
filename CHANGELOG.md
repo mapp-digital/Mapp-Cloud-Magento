@@ -40,3 +40,4 @@
 - Tests, PHP 8.1, email transports
 - Email Transport
 - Message Queue Integration
+- Custom Logging (DB and File based)

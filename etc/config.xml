@@ -64,9 +64,9 @@ customerRpTokenCreatedAt</attribute_blacklist>
         </mapp_web_push>
         <mapp_logging>
             <general>
-                <enable_logging>1</enable_logging>
-                <enable_db_logging>1</enable_db_logging>
-                <enable_file_logging>1</enable_file_logging>
+                <enable_logging>0</enable_logging>
+                <enable_db_logging>0</enable_db_logging>
+                <enable_file_logging>0</enable_file_logging>
                 <severity>2</severity>
                 <log_lifetime>31</log_lifetime>
             </general>
