@@ -15,4 +15,9 @@
             <schedule>* * * * *</schedule>
         </job>
     </group>
+    <group id="default">
+        <job name="mapp_export_customer" instance="MappDigital\Cloud\Model\Export\Entity\Customer" method="execute" />
+        <job name="mapp_export_order" instance="MappDigital\Cloud\Model\Export\Entity\Order" method="execute" />
+        <job name="mapp_export_product" instance="MappDigital\Cloud\Model\Export\Entity\Product" method="execute" />
+    </group>
 </config>

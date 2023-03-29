@@ -52,8 +52,9 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="MappDigital::clean_log_messages" xsi:type="object">MappDigital\Cloud\Console\Command\CleanLogs</item>
-                <item name="MappDigital::test_customer_subscription_by_id" xsi:type="object">MappDigital\Cloud\Console\Command\SubscribeCustomerTestTool</item>
-                <item name="MappDigital::test_subscription_by_email" xsi:type="object">MappDigital\Cloud\Console\Command\SubscribeEmailTestTool</item>
+                <item name="MappDigital::export_customers" xsi:type="object">MappDigital\Cloud\Console\Command\ExportCustomers</item>
+                <item name="MappDigital::export_orders" xsi:type="object">MappDigital\Cloud\Console\Command\ExportOrders</item>
+                <item name="MappDigital::export_products" xsi:type="object">MappDigital\Cloud\Console\Command\ExportProducts</item>
             </argument>
         </arguments>
     </type>
@@ -132,5 +133,13 @@
         <arguments>
             <argument name="resultPageFactory" xsi:type="object">pixelResultPageFactory</argument>
         </arguments>
+    </type>
+
+    <!-- /////////////////////////////////
+        WEBPUSH FUNCTIONALITY
+    ////////////////////////////////// -->
+
+    <type name="Magento\Framework\View\Result\Layout">
+        <plugin name="MappConnectAddWebPushWebHandle" type="MappDigital\Cloud\Plugin\AddWebpushFirebaseLayoutHandlePlugin"/>
     </type>
 </config>

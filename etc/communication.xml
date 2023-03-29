@@ -9,4 +9,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Communication/etc/communication.xsd">
     <topic name="mappdigital.cloud.triggers.consume_db" request="string"/>
     <topic name="mappdigital.cloud.triggers.consume_amqp" request="string"/>
+    <topic name="mappdigital.cloud.entities.export.db" request="string"/>
+    <topic name="mappdigital.cloud.entities.export.amqp" request="string"/>
 </config>

@@ -111,7 +111,7 @@ JS;
      */
     public function canInitJsFiles(): bool
     {
-        if ($this->customerSession->isLoggedIn() || $this->checkoutSession->getLastRealOrder()) {
+        if ($this->customerSession->isLoggedIn() || $this->checkoutSession->getLastRealOrder()->getId()) {
             return true;
         }
 

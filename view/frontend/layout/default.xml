@@ -10,10 +10,5 @@
     <referenceContainer name="head.additional">
         <block class="MappDigital\Cloud\Block\TIDatalayer" name="ti_datalayer" as="ti_datalayer"
                template="MappDigital_Cloud::data_layer.phtml"/>
-        <block class="MappDigital\Cloud\Block\Webpush\Initialise"
-               name="mapp_webpush_init"
-               as="mapp_webpush_init"
-               template="MappDigital_Cloud::mapp_webpush_init.phtml"
-               ifconfig="mapp_web_push/general/enable"/>
     </referenceContainer>
 </page>

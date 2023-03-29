@@ -81,7 +81,6 @@ class PixelData extends AbstractBlock implements IdentityInterface
 (function (window) {
 
     setTimeout(function(){
-                console.log("WEBPUSH");
     var wt_webpushConfig = window.wt_webpushConfig || {
         serviceURL: '{$pixelData['serviceURL']}',
         webpushScriptIncluded: {$pixelData['webpushScriptIncluded']},

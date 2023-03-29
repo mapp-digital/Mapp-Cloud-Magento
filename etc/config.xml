@@ -44,6 +44,11 @@ customerRpTokenCreatedAt</attribute_blacklist>
                 <enable>1</enable>
             </general>
         </mapp_connect_messages>
+        <mapp_acquire>
+            <general>
+                <enabled>1</enabled>
+            </general>
+        </mapp_acquire>
         <mapp_web_push>
             <general>
                 <enable>1</enable>
@@ -63,7 +68,7 @@ customerRpTokenCreatedAt</attribute_blacklist>
                 <enable_db_logging>1</enable_db_logging>
                 <enable_file_logging>1</enable_file_logging>
                 <severity>2</severity>
-                <log_lifetime>7</log_lifetime>
+                <log_lifetime>31</log_lifetime>
             </general>
         </mapp_logging>
     </default>

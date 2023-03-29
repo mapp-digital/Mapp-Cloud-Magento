@@ -23,6 +23,7 @@
                             <resource id="MappDigital_Cloud::mapp_connect" title="Mapp Connect" />
                             <resource id="MappDigital_Cloud::mapp_connect_messages" title="Mapp Connect Emails" />
                             <resource id="MappDigital_Cloud::mapp_web_push" title="Mapp Web Push Integration" />
+                            <resource id="MappDigital_Cloud::mapp_exports" title="Mapp File Exports" />
                         </resource>
                     </resource>
                 </resource>

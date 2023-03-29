@@ -15,4 +15,12 @@
                maxMessages="1"
         />
     </broker>
+    <broker topic="mappdigital.cloud.entities.export.db" exchange="magento-db" type="db">
+        <queue name="mappdigital.cloud.entities.export.db"
+               consumer="mappdigital.cloud.entities.export.db"
+               consumerInstance="Magento\Framework\MessageQueue\Consumer"
+               handler="MappDigital\Cloud\Model\QueueMessage\Exporter\ConsumeQueue::processAll"
+               maxMessages="1"
+        />
+    </broker>
 </config>

@@ -668,7 +668,7 @@
             </group>
         </section>
         <section id="mapp_web_push" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>Mapp Intelligence - Web Push</label>
+            <label>Mapp Web Push</label>
             <tab>mapp</tab>
             <resource>MappDigital_Cloud::mapp_web_push</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -835,7 +835,7 @@
             </group>
         </section>
         <section id="mapp_logging" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>Mapp Intelligence - Logging</label>
+            <label>Logging</label>
             <tab>mapp</tab>
             <resource>MappDigital_Cloud::logs</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -893,6 +893,169 @@
                 </field>
             </group>
         </section>
-
+        <section id="mapp_exports" translate="label" type="text" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>CSV Exports</label>
+            <tab>mapp</tab>
+            <resource>MappDigital_Cloud::mapp_exports</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="export_method" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Export Method</label>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\ExportMethod</source_model>
+                </field>
+                <field id="hostname" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Hostname</label>
+                    <tooltip>
+                        Hostname for External Connection Point
+                    </tooltip>
+                    <depends>
+                        <field id="mapp_exports/general/export_method">0</field>
+                    </depends>
+                </field>
+                <field id="port" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>SFTP Port</label>
+                    <tooltip>
+                        Port Number for External Connection Point
+                    </tooltip>
+                    <depends>
+                        <field id="mapp_exports/general/export_method">0</field>
+                    </depends>
+                </field>
+                <field id="username" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>SFTP Username</label>
+                    <tooltip>
+                        Username for External Connection Point
+                    </tooltip>
+                    <depends>
+                        <field id="mapp_exports/general/export_method">0</field>
+                    </depends>
+                </field>
+                <field id="password" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>SFTP Password</label>
+                    <tooltip>
+                        User Password for External Connection Point
+                    </tooltip>
+                    <depends>
+                        <field id="mapp_exports/general/export_method">0</field>
+                    </depends>
+                </field>
+                <field id="filepath" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>SFTP Filepath</label>
+                    <tooltip>
+                        Location to Upload The File
+                    </tooltip>
+                    <depends>
+                        <field id="mapp_exports/general/export_method">0</field>
+                    </depends>
+                </field>
+                <field id="local_filepath" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Filepath For Generated CSV Export Files</label>
+                    <comment>This is relative to the var directory in the root of your Magento files.
+                        If the directory doesn't exist, it will be created before the file is uploaded</comment>
+                </field>
+            </group>
+            <group id="customer_export" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Customer Export</label>
+                <field id="enable_export" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable Customer Export</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\CronFrequencyTypes::getCronFrequencyTypes</source_model>
+                    <backend_model>MappDigital\Cloud\Model\System\Config\Backend\CronCustomer</backend_model>
+                    <depends>
+                        <field id="mapp_exports/customer_export/enable_export">1</field>
+                    </depends>
+                </field>
+                <field id="minutes" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Minute of the Hour</label>
+                    <comment>Valid range: 0-59 (default 0).</comment>
+                    <depends>
+                        <field id="frequency">H</field>
+                        <field id="mapp_exports/customer_export/enable_export">1</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label" type="time" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Daily Run Time</label>
+                    <depends>
+                        <field id="frequency">D</field>
+                        <field id="mapp_exports/customer_export/enable_export">1</field>
+                    </depends>
+                </field>
+                <field id="manual_export" translate="label" type="password" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Manual Export</label>
+                    <frontend_model>MappDigital\Cloud\Block\Adminhtml\Config\Export\Customer</frontend_model>
+                </field>
+            </group>
+            <group id="order_export" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Order Export</label>
+                <field id="enable_export" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable Order Export</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\CronFrequencyTypes::getCronFrequencyTypes</source_model>
+                    <backend_model>MappDigital\Cloud\Model\System\Config\Backend\CronOrder</backend_model>
+                    <depends>
+                        <field id="mapp_exports/order_export/enable_export">1</field>
+                    </depends>
+                </field>
+                <field id="minutes" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Minute of the Hour</label>
+                    <comment>Valid range: 0-59 (default 0).</comment>
+                    <depends>
+                        <field id="frequency">H</field>
+                        <field id="mapp_exports/order_export/enable_export">1</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label" type="time" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Daily Run Time</label>
+                    <depends>
+                        <field id="frequency">D</field>
+                        <field id="mapp_exports/order_export/enable_export">1</field>
+                    </depends>
+                </field>
+                <field id="manual_export" translate="label" type="password" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Manual Export</label>
+                    <frontend_model>MappDigital\Cloud\Block\Adminhtml\Config\Export\Order</frontend_model>
+                </field>
+            </group>
+            <group id="product_export" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Product Export</label>
+                <field id="enable_export" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable Product Export</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="frequency" translate="label" type="select" sortOrder="20" showInDefault="20" showInWebsite="0" showInStore="0">
+                    <label>Frequency</label>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\CronFrequencyTypes::getCronFrequencyTypes</source_model>
+                    <backend_model>MappDigital\Cloud\Model\System\Config\Backend\CronProduct</backend_model>
+                    <depends>
+                        <field id="mapp_exports/product_export/enable_export">1</field>
+                    </depends>
+                </field>
+                <field id="minutes" translate="label comment" type="text" sortOrder="30" showInDefault="30" showInWebsite="0" showInStore="0">
+                    <label>Minute of the Hour</label>
+                    <comment>Valid range: 0-59 (default 0).</comment>
+                    <depends>
+                        <field id="frequency">H</field>
+                        <field id="mapp_exports/product_export/enable_export">1</field>
+                    </depends>
+                </field>
+                <field id="time" translate="label" type="time" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Daily Run Time</label>
+                    <depends>
+                        <field id="frequency">D</field>
+                        <field id="mapp_exports/product_export/enable_export">1</field>
+                    </depends>
+                </field>
+                <field id="manual_export" translate="label" type="password" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Manual Export</label>
+                    <frontend_model>MappDigital\Cloud\Block\Adminhtml\Config\Export\Product</frontend_model>
+                </field>
+            </group>
+        </section>
     </system>
 </config>

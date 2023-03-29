@@ -10,6 +10,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Newsletter\Model\Subscriber;
+use Magento\Newsletter\Model\SubscriberFactory;
 use Magento\Store\Model\StoreManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,18 +20,18 @@ class SubscribeEmailTestTool extends AbstractCommand
     const COMMAND_NAME = "mapp:newsletter:subscription-email";
     const AREA = 'frontend';
 
-    private Subscriber $subscriber;
+    private SubscriberFactory $subscriberFactory;
     private StoreManager $storeManager;
 
     public function __construct(
         ResourceConnection $resource,
         State $state,
-        Subscriber $subscriber,
+        SubscriberFactory $subscriberFactory,
         StoreManager $storeManager,
         $name = null
     ){
         parent::__construct($resource, $state, $name);
-        $this->subscriber = $subscriber;
+        $this->subscriberFactory = $subscriberFactory;
         $this->storeManager = $storeManager;
     }
 
@@ -67,13 +68,13 @@ class SubscribeEmailTestTool extends AbstractCommand
         $this->getOutput()->writeln('<info>Updating Subscription by Email...</info>');
 
         if (!$this->getInput()->getOption('unsubscribe')) {
-            $this->subscriber->subscribe(
+            $this->subscriberFactory->create()->subscribe(
                 $this->getInput()->getArgument('email')
             );
             return;
         }
 
-        $this->subscriber
+        $this->subscriberFactory->create()
             ->loadBySubscriberEmail(
                 $this->getInput()->getArgument('email'),
                 $this->storeManager->getStore($this->getInput()->getArgument('store_id'))->getWebsiteId()

@@ -25,7 +25,6 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\StoreManager;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Logger\CombinedLogger;
-use Psr\Log\LoggerInterface;
 use Zend_Db_Exception;
 
 class SubscriptionManager
@@ -138,6 +137,10 @@ class SubscriptionManager
      */
     public function sendNewsletterSubscriptionUpdate(string $email, bool $isSubscribed, ?int $storeId = null)
     {
+        if (!$this->connectHelper->getMappConnectClient()) {
+            return;
+        }
+
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new ValidationException(__("Cannot Send Subscription Update to Mapp, Email format is invalid"));
         }

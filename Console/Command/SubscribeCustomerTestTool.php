@@ -9,6 +9,7 @@ namespace MappDigital\Cloud\Console\Command;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\State;
 use Magento\Newsletter\Model\Subscriber;
+use Magento\Newsletter\Model\SubscriberFactory;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -16,16 +17,16 @@ class SubscribeCustomerTestTool extends AbstractCommand
 {
     const COMMAND_NAME = "mapp:newsletter:subscription";
 
-    private Subscriber $subscriber;
+    private SubscriberFactory $subscriberFactory;
 
     public function __construct(
         ResourceConnection $resource,
         State $state,
-        Subscriber $subscriber,
+        SubscriberFactory $subscriberFactory,
         $name = null
     ){
         parent::__construct($resource, $state, $name);
-        $this->subscriber = $subscriber;
+        $this->subscriberFactory = $subscriberFactory;
     }
 
     protected function configure()
@@ -53,13 +54,13 @@ class SubscribeCustomerTestTool extends AbstractCommand
     {
         $this->getOutput()->writeln('<info>Updating Customer Subscription...</info>');
         if (!$this->getInput()->getOption('unsubscribe')) {
-            $this->subscriber->subscribeCustomerById(
+            $this->subscriberFactory->create()->subscribeCustomerById(
                 $this->getInput()->getArgument('customer_id')
             );
             return;
         }
 
-        $this->subscriber->unsubscribeCustomerById(
+        $this->subscriberFactory->create()->unsubscribeCustomerById(
             $this->getInput()->getArgument('customer_id')
         );
 

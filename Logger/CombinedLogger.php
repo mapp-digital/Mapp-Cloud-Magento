@@ -10,6 +10,7 @@ use JsonException;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Store\Model\ScopeInterface;
 use MappDigital\Cloud\Model\LogRepository;
 use MappDigital\Cloud\Model\LogFactory;
 use Psr\Log\LogLevel;
@@ -157,12 +158,12 @@ class CombinedLogger
     private function addRecord(int $level, string $message, string $class, string $function, array $context = [])
     {
         try {
-            if ($this->config->getValue(LogInterface::CONFIG_XML_PATH_LOGGING_FILE_ENABLED) && isset($this->levelToMethodMap[$level])) {
+            if ($this->config->getValue(LogInterface::CONFIG_XML_PATH_LOGGING_FILE_ENABLED, ScopeInterface::SCOPE_STORE) && isset($this->levelToMethodMap[$level])) {
                 $method = $this->levelToMethodMap[$level];
                 $this->logger->$method($class . '::' . $function . ' ====== ' . $message, $context);
             }
 
-            if ($this->config->getValue(LogInterface::CONFIG_XML_PATH_LOGGING_DB_ENABLED)) {
+            if ($this->config->getValue(LogInterface::CONFIG_XML_PATH_LOGGING_DB_ENABLED, ScopeInterface::SCOPE_STORE)) {
                 if (!$this->isJson($message)) {
                     $message = $this->jsonSerializer->serialize($message);
                 }
@@ -194,7 +195,8 @@ class CombinedLogger
      */
     public function canLog(int $level): bool
     {
-        if ((int)$this->config->getValue(LogInterface::CONFIG_XML_PATH_LOGGING_ENABLED) && $level <= (int)$this->config->getValue(LogInterface::CONFIG_XML_PATH_SEVERITY)) {
+        if ((int)$this->config->getValue(LogInterface::CONFIG_XML_PATH_LOGGING_ENABLED, ScopeInterface::SCOPE_STORE)
+            && $level <= (int)$this->config->getValue(LogInterface::CONFIG_XML_PATH_SEVERITY, ScopeInterface::SCOPE_STORE)) {
             return true;
         }
 
