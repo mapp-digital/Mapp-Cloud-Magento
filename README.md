@@ -30,3 +30,4 @@ Mapp Cloud allows customers to gain in-depth customer insights and adjust market
 
 ## Compatibility
 - Magento 2.4.5 and Upwards
+- TEST
