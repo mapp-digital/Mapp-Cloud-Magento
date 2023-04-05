@@ -56,6 +56,8 @@ class Order extends ExportAbstract
         'small_image'
     ];
 
+    protected bool $shouldIncludeImages = true;
+
     protected OrderItemCollectionFactory $orderItemCollectionFactory;
     protected SearchCriteriaBuilder $searchCriteriaBuilder;
     protected AttributeRepositoryInterface $attributeRepository;
@@ -121,12 +123,14 @@ class Order extends ExportAbstract
             ['base_currency_code', 'increment_id']
         );
 
-        foreach ($this->getAdditionalAttributes() as $attribute) {
-            $orderItemCollection->join(
-                ['ca' . $attribute->getAttributeCode() => 'catalog_product_entity_' . $attribute->getBackendType()],
-                'main_table.product_id = ca' . $attribute->getAttributeCode() . '.row_id and ca' . $attribute->getAttributeCode() . '.attribute_id = ' . $attribute->getAttributeId(),
-                ['value as ' . $attribute->getAttributeCode()]
-            );
+        if ($this->shouldIncludeImages) {
+            foreach ($this->getAdditionalAttributes() as $attribute) {
+                $orderItemCollection->join(
+                    ['ca' . $attribute->getAttributeCode() => 'catalog_product_entity_' . $attribute->getBackendType()],
+                    'main_table.product_id = ca' . $attribute->getAttributeCode() . '.row_id and ca' . $attribute->getAttributeCode() . '.attribute_id = ' . $attribute->getAttributeId(),
+                    ['value as ' . $attribute->getAttributeCode()]
+                );
+            }
         }
 
         return $orderItemCollection;
@@ -147,5 +151,10 @@ class Order extends ExportAbstract
             ProductAttributeInterface::ENTITY_TYPE_CODE,
             $attributeSearchCriteria
         )->getItems() ?? [];
+    }
+
+    public function setShouldIncludeImages(bool $enabled)
+    {
+        $this->shouldIncludeImages = $enabled;
     }
 }
