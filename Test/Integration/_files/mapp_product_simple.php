@@ -101,6 +101,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setName('Simple Product')
     ->setSku('simple')
     ->setPrice(10)
+    ->setMsrp(15)
     ->setWeight(1)
     ->setShortDescription("Short description")
     ->setTaxClassId(2)
@@ -120,7 +121,9 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
             'is_in_stock'               => 1,
         ]
     )->setCanSaveCustomOptions(true)
-    ->setHasOptions(true);
+    ->setHasOptions(true)
+    ->setImage('image.png')
+    ->setSmallImage('small_image.png');
 
 $oldOptions = [
     [
