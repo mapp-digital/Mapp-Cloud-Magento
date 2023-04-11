@@ -14,15 +14,8 @@ use PHPUnit\Framework\TestCase;
  */
 class OrderTest extends TestCase
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
-     * @var Order
-     */
-    private $orderEntityExport;
+    private ?ObjectManagerInterface $objectManager;
+    private ?Order $orderEntityExport;
 
     /**
      * @inheritdoc

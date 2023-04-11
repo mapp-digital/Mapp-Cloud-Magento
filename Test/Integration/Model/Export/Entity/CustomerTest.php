@@ -11,20 +11,9 @@ use PHPUnit\Framework\TestCase;
 
 class CustomerTest extends TestCase
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
-     * @var Customer
-     */
-    private $customerEntityExport;
-
-    /**
-     * @var CustomerCollectionFactory
-     */
-    private $customerCollectionFactory;
+    private ?ObjectManagerInterface $objectManager;
+    private ?Customer $customerEntityExport;
+    private ?CustomerCollectionFactory $customerCollectionFactory;
 
     /**
      * @inheritdoc

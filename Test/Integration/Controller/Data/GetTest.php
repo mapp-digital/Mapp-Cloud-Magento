@@ -120,65 +120,18 @@ class GetTest extends AbstractController
         'customerWebsiteId'
     ];
 
-    /**
-     * @var Session
-     */
-    private $session;
-
-    /**
-     * @var Page
-     */
-    private $page;
-
-    /**
-     * @var Price
-     */
-    private $productPrice;
-
-    /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
-
-    /**
-     * @var CategoryRepositoryInterface
-     */
-    private $categoryRepository;
-
-    /**
-     * @var Session
-     */
-    private $customerSession;
-
-    /**
-     * @var ProductCatalogSession
-     */
-    protected $catalogSession;
-
-    /**
-     * @var Quote
-     */
-    private $quote;
-
-    /**
-     * @var CheckoutSession
-     */
-    private $checkoutSession;
-
-    /**
-     * @var QuoteIdMaskFactory
-     */
-    private $quoteIdMaskFactory;
-
-    /**
-     * @var GuestCartManagementInterface
-     */
-    private $guestCartManagement;
-
-    /**
-     * @var OrderRepository
-     */
-    private $orderRepository;
+    private ?Session $session;
+    private ?Page $page;
+    private ?Price $productPrice;
+    private ?ProductRepositoryInterface $productRepository;
+    private ?CategoryRepositoryInterface $categoryRepository;
+    private ?Session $customerSession;
+    private ?ProductCatalogSession $catalogSession;
+    private ?Quote $quote;
+    private ?CheckoutSession $checkoutSession;
+    private ?QuoteIdMaskFactory $quoteIdMaskFactory;
+    private ?GuestCartManagementInterface $guestCartManagement;
+    private ?OrderRepository $orderRepository;
 
     /**
      * @inheritdoc

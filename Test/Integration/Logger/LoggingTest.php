@@ -17,35 +17,12 @@ use PHPUnit\Framework\TestCase;
  */
 class LoggingTest extends TestCase
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
-     * @var CombinedLogger
-     */
-    private $combinedLogger;
-
-    /**
-     * @var ResourceConnection
-     */
-    private $resource;
-
-    /**
-     * @var LogRepository
-     */
-    private $logRepository;
-
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    private $searchCriteriaBuilder;
-
-    /**
-     * @var FilterBuilder
-     */
-    private $filterBuilder;
+    private ?ObjectManagerInterface $objectManager;
+    private ?CombinedLogger $combinedLogger;
+    private ?ResourceConnection $resource;
+    private ?LogRepository $logRepository;
+    private ?SearchCriteriaBuilder $searchCriteriaBuilder;
+    private ?FilterBuilder $filterBuilder;
 
     /**
      * @inheritdoc

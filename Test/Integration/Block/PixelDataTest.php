@@ -1,13 +1,10 @@
 <?php
 namespace MappDigital\Cloud\Test\Integration\Block;
 
-use Magento\Customer\Model\Session;
 use Magento\Framework\App\Http;
 use Magento\Framework\App\Request\Http as HttpRequest;
-use Magento\Framework\View\Result\Page;
 use Magento\TestFramework\Request;
 use Magento\TestFramework\TestCase\AbstractController;
-use MappDigital\Cloud\Plugin\AddWebpushFirebaseLayoutHandlePlugin;
 
 class PixelDataTest extends AbstractController
 {

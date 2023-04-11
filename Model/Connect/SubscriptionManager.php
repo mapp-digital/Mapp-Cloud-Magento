@@ -18,6 +18,7 @@ use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\DB\Ddl\Trigger;
 use Magento\Framework\DB\Ddl\TriggerFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Session\StorageInterface;
 use Magento\Framework\Validation\ValidationException;
 use Magento\Payment\Helper\Data as PaymentDataHelper;
@@ -145,27 +146,7 @@ class SubscriptionManager
             throw new ValidationException(__("Cannot Send Subscription Update to Mapp, Email format is invalid"));
         }
 
-        if (is_null($storeId)) {
-            $store = $this->storeManager->getStore();
-        } else {
-            $store = $this->storeManager->getStore($storeId);
-        }
-
-        $data = [
-            'email' => $email,
-            'group' => $this->connectHelper->getConfigValue('group', 'subscribers', $storeId),
-            'store_code' => $store->getCode(),
-            'store_id' => $store->getId(),
-            'store_website_id' => $store->getWebsiteId()
-        ];
-
-        if ($isSubscribed && $this->connectHelper->getConfigValue('export', 'newsletter_doubleoptin', $storeId)) {
-            $data['doubleOptIn'] = true;
-        }
-
-        if (!$isSubscribed) {
-            $data['unsubscribe'] = true;
-        }
+        $data = $this->getDataForNewsletterSubscriptionUpdateExport($email, $isSubscribed, $storeId);
 
         $this->mappCombinedLogger->info(\json_encode(['Type' => 'Newsletter Subscribe', $data], JSON_PRETTY_PRINT), __CLASS__,__FUNCTION__);
         $this->connectHelper->getMappConnectClient()->event('newsletter', $data);
@@ -181,20 +162,9 @@ class SubscriptionManager
     {
         if ($this->connectHelper->getConfigValue('export', 'customer_enable', $order->getStoreId())
             && $order->getData('customer_is_guest')) {
-
-            $data = [
-                'dob' => $order->getCustomerDob(),
-                'email' => $order->getCustomerEmail(),
-                'firstname' => $order->getCustomerFirstname(),
-                'gender' => $order->getCustomerGender(),
-                'lastname' => $order->getCustomerLastname(),
-                'middlename' => $order->getCustomerMiddlename(),
-                'note' => $order->getCustomerNote()
-            ];
-
-            $data['group'] = $this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId());
-
             $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Sending Guest User To Connect', __CLASS__,__FUNCTION__);
+
+            $data = $this->getGuestCustomerDataFromOrderObjectForExport($order);
             $this->mappCombinedLogger->info(\json_encode(['Type' => 'Guest User Group Add', $data], JSON_PRETTY_PRINT), __CLASS__,__FUNCTION__);
             $this->connectHelper->getMappConnectClient()->event('user', $data);
         }
@@ -222,54 +192,7 @@ class SubscriptionManager
         if ($this->connectHelper->getConfigValue('export', 'transaction_enable', $order->getStoreId())
             && $this->storage->getData($transactionKey) != true) {
             $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Gathering Order Transaction Data', __CLASS__,__FUNCTION__);
-            $data = $order->getData();
-            $data['items'] = [];
-            unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
-
-            foreach ($order->getAllVisibleItems() as $item) {
-                $itemData = $item->getData();
-                $itemData['base_image'] = $this->productHelper->getImageUrl($item->getProduct());
-                $itemData['url_path'] = $item->getProduct()->getProductUrl();
-                $itemData['categories'] = $this->getCategories($item);
-                $itemData['manufacturer'] = $item->getProduct()->getAttributeText('manufacturer');
-                $itemData['variant'] = $this->getSelectedOptions($item);
-
-                unset($itemData['product_options'], $itemData['extension_attributes'], $itemData['parent_item']);
-
-                $data['items'][] = $itemData;
-            }
-
-            if ($billingAddress = $order->getBillingAddress()) {
-                $data['billingAddress'] = $billingAddress->getData();
-            }
-
-            if ($shippingAddress = $order->getShippingAddress()) {
-                $data['shippingAddress'] = $shippingAddress->getData();
-            }
-
-            $renderer = $this->customerAddressModelConfig->getFormatByCode('html')->getRenderer();
-
-            $data['billingAddressFormatted'] = $renderer->renderArray($order->getBillingAddress());
-            $data['shippingAddressFormatted'] = $renderer->renderArray($order->getShippingAddress());
-
-            $data['payment_info'] = $this->paymentHelper->getInfoBlockHtml(
-                $order->getPayment(),
-                $data['store_id']
-            );
-
-            $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_template');
-
-            if ($order->getData('customer_is_guest')) {
-                $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_guest_template');
-                if ($this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId())) {
-                    $data['group'] = $this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId());
-                }
-            }
-
-            if ($messageId) {
-                $data['messageId'] = (string)$messageId;
-            }
-
+            $data = $this->getFullOrderDataFromOrderObjectForExport($order);
             try {
                 $this->mappCombinedLogger->info(\json_encode(['Type' => 'MappConnect: -- SubscriptionManager -- Sending Order Transaction Request To Connect', 'data' => $data], JSON_PRETTY_PRINT), __CLASS__,__FUNCTION__);
                 $this->connectHelper->getMappConnectClient()->event('transaction', $data);
@@ -333,7 +256,6 @@ class SubscriptionManager
             );
 
             $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Table: ' . self::NEWSLETTER_CHANGELOG_TABLE_NAME, __CLASS__,__FUNCTION__);
-
             $this->connection->createTable($table);
         }
     }
@@ -560,6 +482,123 @@ class SubscriptionManager
         $this->createNewsletterUpdateTrigger();
         $this->createOrderCreateDeleteTrigger();
         $this->createOrderUpdateTrigger();
+    }
+
+    // -----------------------------------------------
+    // DATA GETTERS
+    // -----------------------------------------------
+
+    /**
+     * @param OrderInterface $order
+     * @return array
+     * @throws LocalizedException
+     */
+    public function getGuestCustomerDataFromOrderObjectForExport(OrderInterface $order): array
+    {
+        return [
+            'customer_dob' => $order->getCustomerDob(),
+            'customer_email' => $order->getCustomerEmail(),
+            'customer_firstname' => $order->getCustomerFirstname(),
+            'customer_gender' => $order->getCustomerGender(),
+            'customer_lastname' => $order->getCustomerLastname(),
+            'customer_middlename' => $order->getCustomerMiddlename(),
+            'customer_note' => $order->getCustomerNote(),
+            'group' => $this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId())
+        ];
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return array
+     * @throws LocalizedException
+     * @throws Exception
+     */
+    public function getFullOrderDataFromOrderObjectForExport(OrderInterface $order): array
+    {
+        $data = $order->getData();
+        $data['items'] = [];
+        unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
+
+        foreach ($order->getAllVisibleItems() as $item) {
+            $itemData = $item->getData();
+            $itemData['base_image'] = $this->productHelper->getImageUrl($item->getProduct());
+            $itemData['url_path'] = $item->getProduct()->getProductUrl();
+            $itemData['categories'] = $this->getCategories($item);
+            $itemData['manufacturer'] = $item->getProduct()->getAttributeText('manufacturer');
+            $itemData['variant'] = $this->getSelectedOptions($item);
+
+            unset($itemData['product_options'], $itemData['extension_attributes'], $itemData['parent_item']);
+
+            $data['items'][] = $itemData;
+        }
+
+        if ($billingAddress = $order->getBillingAddress()) {
+            $data['billingAddress'] = $billingAddress->getData();
+        }
+
+        if ($shippingAddress = $order->getShippingAddress()) {
+            $data['shippingAddress'] = $shippingAddress->getData();
+        }
+
+        $renderer = $this->customerAddressModelConfig->getFormatByCode('html')->getRenderer();
+
+        $data['billingAddressFormatted'] = $renderer->renderArray($order->getBillingAddress());
+        $data['shippingAddressFormatted'] = $renderer->renderArray($order->getShippingAddress());
+
+        $data['payment_info'] = $this->paymentHelper->getInfoBlockHtml(
+            $order->getPayment(),
+            $data['store_id']
+        );
+
+        $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_template');
+
+        if ($order->getData('customer_is_guest')) {
+            $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_guest_template');
+            if ($this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId())) {
+                $data['group'] = $this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId());
+            }
+        }
+
+        if ($messageId) {
+            $data['messageId'] = (string)$messageId;
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param string $email
+     * @param bool $isSubscribed
+     * @param int|null $storeId
+     * @return array
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function getDataForNewsletterSubscriptionUpdateExport(string $email, bool $isSubscribed, ?int $storeId = null): array
+    {
+        if (is_null($storeId)) {
+            $store = $this->storeManager->getStore();
+        } else {
+            $store = $this->storeManager->getStore($storeId);
+        }
+
+        $data = [
+            'email' => $email,
+            'group' => $this->connectHelper->getConfigValue('group', 'subscribers', $storeId),
+            'store_code' => $store->getCode(),
+            'store_id' => $store->getId(),
+            'store_website_id' => $store->getWebsiteId()
+        ];
+
+        if ($isSubscribed && $this->connectHelper->getConfigValue('export', 'newsletter_doubleoptin', $storeId)) {
+            $data['doubleOptIn'] = true;
+        }
+
+        if (!$isSubscribed) {
+            $data['unsubscribe'] = true;
+        }
+
+        return $data;
     }
 
     // -----------------------------------------------
