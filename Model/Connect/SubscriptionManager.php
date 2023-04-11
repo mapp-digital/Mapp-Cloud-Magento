@@ -447,7 +447,7 @@ class SubscriptionManager
         $trigger = sprintf(
             $trigger,
             $this->connection->quoteIdentifier($this->resource->getTableName(self::ORDER_CHANGELOG_TABLE_NAME)),
-            'entity_id',
+            'order_id',
             'NEW.`entity_id`'
         );
 
