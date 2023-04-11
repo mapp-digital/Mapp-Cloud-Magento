@@ -13,15 +13,8 @@ use PHPUnit\Framework\TestCase;
  */
 class ProductTest extends TestCase
 {
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
-     * @var Product
-     */
-    private $productEntityExport;
+    private ?ObjectManagerInterface $objectManager;
+    private ?Product $productEntityExport;
 
     /**
      * @inheritdoc

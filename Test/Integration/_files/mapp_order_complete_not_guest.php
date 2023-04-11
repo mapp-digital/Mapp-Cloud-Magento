@@ -83,7 +83,7 @@ $orderItem->setProductId($product->getId())
 /** @var  OrderInterface $order */
 $order = $objectManager->get(OrderInterfaceFactory::class)->create();
 $order->setIncrementId('100000333')
-    ->setCustomerIsGuest(true)
+    ->setCustomerIsGuest(false)
     ->setBillingAddress($billingAddress)
     ->setShippingAddress($shippingAddress)
     ->addItem($orderItem)

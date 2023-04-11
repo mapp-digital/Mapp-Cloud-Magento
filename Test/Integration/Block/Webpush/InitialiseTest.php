@@ -12,15 +12,8 @@ use MappDigital\Cloud\Plugin\AddWebpushFirebaseLayoutHandlePlugin;
 
 class InitialiseTest extends AbstractController
 {
-    /**
-     * @var Session
-     */
-    private $session;
-
-    /**
-     * @var Page
-     */
-    private $page;
+    private ?Session $session;
+    private ?Page $page;
 
     /**
      * @inheritdoc

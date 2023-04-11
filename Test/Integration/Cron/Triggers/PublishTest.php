@@ -28,85 +28,23 @@ use MappDigital\Cloud\Cron\Triggers\Publish;
  */
 class PublishTest extends AbstractController
 {
-    /**
-     * @var string
-     */
-    private $subscriberToDelete = '';
+    private string $subscriberToDelete = '';
 
-    /**
-     * @var Session
-     */
-    private $session;
-
-    /**
-     * @var CustomerRepositoryInterface
-     */
-    private $customerRepository;
-
-    /**
-     * @var CustomerRegistry
-     */
-    private $customerRegistry;
-
-    /**
-     * @var Quote
-     */
-    private $quote;
-
-    /**
-     * @var CheckoutSession
-     */
-    private $checkoutSession;
-
-    /**
-     * @var QuoteIdMaskFactory
-     */
-    private $quoteIdMaskFactory;
-
-    /**
-     * @var CartManagementInterface
-     */
-    private $cartManagement;
-
-    /**
-     * @var GuestCartManagementInterface
-     */
-    private $guestCartManagement;
-
-    /**
-     * @var OrderRepository
-     */
-    private $orderRepository;
-
-    /**
-     * @var OrderResource
-     */
-    private $orderResource;
-
-    /**
-     * @var ResourceConnection
-     */
-    private $resource;
-
-    /**
-     * @var AdapterInterface
-     */
-    private $connection;
-
-    /**
-     * @var SubscriberCollectionFactory
-     */
-    private $subscriberCollectionFactory;
-
-    /**
-     * @var SubscriberResource
-     */
-    private $subscriberResource;
-
-    /**
-     * @var Publish
-     */
-    private $cronPubish;
+    private ?Session $session;
+    private ?CustomerRepositoryInterface $customerRepository;
+    private ?CustomerRegistry $customerRegistry;
+    private ?Quote $quote;
+    private ?CheckoutSession $checkoutSession;
+    private ?QuoteIdMaskFactory $quoteIdMaskFactory;
+    private ?CartManagementInterface $cartManagement;
+    private ?GuestCartManagementInterface $guestCartManagement;
+    private ?OrderRepository $orderRepository;
+    private ?OrderResource $orderResource;
+    private ?ResourceConnection $resource;
+    private ?AdapterInterface $connection;
+    private ?SubscriberCollectionFactory $subscriberCollectionFactory;
+    private ?SubscriberResource $subscriberResource;
+    private ?Publish $cronPubish;
 
     /**
      * @inheritdoc
@@ -208,7 +146,7 @@ class PublishTest extends AbstractController
         /**
          * This is being created here as opposed to setUp() due to the `currentTime` being set and used to delete old
          * messages. If this is done in setUp, the current time is _earlier_ than the order creation time as it is
-         * set in the construct of the class, thus it doesn't pick up the changlog to publish
+         * set in the construct of the class, thus it doesn't pick up the changelog to publish
          */
         $this->cronPubish = $this->_objectManager->get(Publish::class);
         $this->cronPubish->publishOrders();
