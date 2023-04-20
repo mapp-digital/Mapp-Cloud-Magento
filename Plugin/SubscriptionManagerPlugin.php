@@ -20,25 +20,13 @@ use MappDigital\Cloud\Model\Connect\SubscriptionManager;
 
 class SubscriptionManagerPlugin
 {
-    protected ScopeConfigInterface $scopeConfig;
-    protected CustomerRepositoryInterface $customerRepository;
-    protected ConnectHelper $connectHelper;
-    protected CombinedLogger $mappCombinedLogger;
-    protected SubscriptionManager $subscriptionManager;
-
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
-        CustomerRepositoryInterface $customerRepository,
-        ConnectHelper $connectHelper,
-        SubscriptionManager $subscriptionManager,
-        CombinedLogger $mappCombinedLogger
-    ) {
-        $this->scopeConfig = $scopeConfig;
-        $this->customerRepository= $customerRepository;
-        $this->connectHelper = $connectHelper;
-        $this->subscriptionManager = $subscriptionManager;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-    }
+        protected ScopeConfigInterface $scopeConfig,
+        protected CustomerRepositoryInterface $customerRepository,
+        protected ConnectHelper $connectHelper,
+        protected SubscriptionManager $subscriptionManager,
+        protected CombinedLogger $mappCombinedLogger
+    ) {}
 
     // -----------------------------------------------
     // LEGACY METHODS VIA PLUGIN INTERCEPTORS

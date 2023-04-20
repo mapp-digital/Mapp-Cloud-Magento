@@ -17,23 +17,12 @@ class ConsumeQueue
 {
     const RETRY_MESSAGE = 'MAPP RETRY';
 
-    private Json $jsonSerializer;
-    private Order $orderExporter;
-    private Customer $customerExporter;
-    private Product $productExporter;
-
     public function __construct(
-        Json $jsonSerializer,
-        Order $orderExporter,
-        Customer $customerExporter,
-        Product $productExporter
-    )
-    {
-        $this->jsonSerializer = $jsonSerializer;
-        $this->orderExporter = $orderExporter;
-        $this->customerExporter = $customerExporter;
-        $this->productExporter = $productExporter;
-    }
+        private Json $jsonSerializer,
+        private Order $orderExporter,
+        private Customer $customerExporter,
+        private Product $productExporter
+    ) {}
 
     /**
      * @param string $message

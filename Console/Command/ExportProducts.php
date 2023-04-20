@@ -16,16 +16,13 @@ class ExportProducts extends AbstractCommand
 {
     const COMMAND_NAME = "mapp:export:products";
 
-    private ProductExport $productExport;
-
     public function __construct(
+        private ProductExport $productExport,
         ResourceConnection $resource,
         State $state,
-        ProductExport $productExport,
         $name = null
     ){
         parent::__construct($resource, $state, $name);
-        $this->productExport = $productExport;
     }
 
     /**

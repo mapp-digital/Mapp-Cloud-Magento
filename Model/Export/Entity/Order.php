@@ -58,24 +58,16 @@ class Order extends ExportAbstract
 
     protected bool $shouldIncludeImages = true;
 
-    protected OrderItemCollectionFactory $orderItemCollectionFactory;
-    protected SearchCriteriaBuilder $searchCriteriaBuilder;
-    protected AttributeRepositoryInterface $attributeRepository;
-
     public function __construct(
-        OrderItemCollectionFactory $orderItemCollectionFactory,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        AttributeRepositoryInterface $attributeRepository,
+        protected OrderItemCollectionFactory $orderItemCollectionFactory,
+        protected SearchCriteriaBuilder $searchCriteriaBuilder,
+        protected AttributeRepositoryInterface $attributeRepository,
         StoreManagerInterface $storeManager,
         MagentoFileSystemManager $magentoFilesystemManager,
         Sftp $sftp,
         MappFilesystemExport $mappFilesystemExport
     )
     {
-        $this->orderItemCollectionFactory = $orderItemCollectionFactory;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->attributeRepository = $attributeRepository;
-
         parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport);
     }
 
@@ -113,7 +105,7 @@ class Order extends ExportAbstract
      * @return OrderItemCollection
      * @throws LocalizedException
      */
-    public function getEntitiesForExport()
+    public function getEntitiesForExport(): OrderItemCollection
     {
         $orderItemCollection = $this->orderItemCollectionFactory->create();
         $orderItemCollection->addFieldToSelect(self::ATTRIBUTES_FOR_EXPORT);
@@ -137,7 +129,7 @@ class Order extends ExportAbstract
     }
 
     /**
-     * Adding basic filters
+     * @return array
      */
     private function getAdditionalAttributes(): array
     {
@@ -153,6 +145,10 @@ class Order extends ExportAbstract
         )->getItems() ?? [];
     }
 
+    /**
+     * @param bool $enabled
+     * @return void
+     */
     public function setShouldIncludeImages(bool $enabled)
     {
         $this->shouldIncludeImages = $enabled;

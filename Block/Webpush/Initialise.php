@@ -23,33 +23,17 @@ class Initialise extends Template
     const FIREBASE_APP_JS_PATH = 'MappDigital_Cloud::js/firebase-app.min.js';
     const FIREBASE_MESSAGING_JS_PATH = 'MappDigital_Cloud::js/firebase-messaging.min.js';
 
-    private CustomerSession $customerSession;
-    private CheckoutSession $checkoutSession;
-    protected CookieManagerInterface $cookieManager;
-    protected CookieMetadataFactory $cookieMetadataFactory;
-    protected SessionConfigInterface $sessionConfig;
-    protected AssetRepository $assetRepository;
-    protected CombinedLogger $mappCombinedLogger;
-
     public function __construct(
-        CustomerSession $customerSession,
-        CheckoutSession $checkoutSession,
-        CookieManagerInterface $cookieManager,
-        CookieMetadataFactory $cookieMetadataFactory,
-        SessionConfigInterface $sessionConfig,
-        AssetRepository $assetRepository,
-        CombinedLogger $mappCombinedLogger,
+        protected CustomerSession $customerSession,
+        protected CheckoutSession $checkoutSession,
+        protected CookieManagerInterface $cookieManager,
+        protected CookieMetadataFactory $cookieMetadataFactory,
+        protected SessionConfigInterface $sessionConfig,
+        protected AssetRepository $assetRepository,
+        protected CombinedLogger $mappCombinedLogger,
         Context $context,
         array $data = []
     ) {
-        $this->customerSession = $customerSession;
-        $this->checkoutSession = $checkoutSession;
-        $this->cookieManager = $cookieManager;
-        $this->cookieMetadataFactory = $cookieMetadataFactory;
-        $this->sessionConfig = $sessionConfig;
-        $this->assetRepository = $assetRepository;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-
         parent::__construct($context, $data);
     }
 

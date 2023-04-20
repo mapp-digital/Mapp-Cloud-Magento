@@ -16,16 +16,11 @@ class TransportBuilderPlugin
 {
     protected array $parameters = [];
 
-    protected ConnectHelper $mappConnectHelper;
-    protected FactoryInterface $templateFactory;
-
     public function __construct(
-        ConnectHelper $mappConnectHelper,
-        FactoryInterface  $templateFactory
+        protected ConnectHelper $mappConnectHelper,
+        protected FactoryInterface $templateFactory
     )
     {
-        $this->mappConnectHelper = $mappConnectHelper;
-        $this->templateFactory = $templateFactory;
         $this->reset();
     }
 

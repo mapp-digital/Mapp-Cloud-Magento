@@ -14,16 +14,13 @@ class CleanLogs extends AbstractCommand
 {
     const COMMAND_NAME = "mapp:logs:clean";
 
-    private Clean $cleanLogsCron;
-
     public function __construct(
+        private Clean $cleanLogsCron,
         ResourceConnection $resource,
         State $state,
-        Clean $cleanLogsCron,
         $name = null
     ){
         parent::__construct($resource, $state, $name);
-        $this->cleanLogsCron = $cleanLogsCron;
     }
 
     /**

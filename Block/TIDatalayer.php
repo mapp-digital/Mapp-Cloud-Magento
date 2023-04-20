@@ -16,24 +16,18 @@ use MappDigital\Cloud\Model\DataLayer;
 
 class TIDatalayer extends Template
 {
-    protected Config $config;
-    protected DataLayerHelper $dataLayerHelper;
-    protected DataLayer $dataLayerModel;
     protected $pageConfig;
 
     public function __construct(
+        protected Config $config,
+        protected DataLayerHelper $dataLayerHelper,
+        protected DataLayer $dataLayerModel,
         Context $context,
-        Config $config,
-        DataLayerHelper $dataLayerHelper,
-        DataLayer $dataLayer,
         FrameworkPageConfig $pageConfig,
         array $data = []
     ){
         parent::__construct($context, $data);
 
-        $this->config = $config;
-        $this->dataLayerHelper = $dataLayerHelper;
-        $this->dataLayerModel = $dataLayer;
         $this->pageConfig = $pageConfig;
     }
 

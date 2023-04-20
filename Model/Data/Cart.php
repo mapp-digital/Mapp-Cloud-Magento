@@ -10,16 +10,10 @@ use Magento\Checkout\Model\Session;
 
 class Cart extends AbstractData
 {
-    protected Session $checkoutSession;
-    protected Product $product;
-
     public function __construct(
-        Session $checkoutSession,
-        Product $product
-    ) {
-        $this->checkoutSession = $checkoutSession;
-        $this->product = $product;
-    }
+        protected Session $checkoutSession,
+        protected Product $product
+    ) {}
 
     private function generate()
     {

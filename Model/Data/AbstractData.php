@@ -16,9 +16,7 @@ class AbstractData extends DataObject
      */
     protected $_data = [];
 
-    public function __construct()
-    {
-    }
+    public function __construct(){}
 
     /**
      * @param mixed $data

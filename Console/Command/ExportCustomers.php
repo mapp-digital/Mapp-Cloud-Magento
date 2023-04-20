@@ -16,16 +16,13 @@ class ExportCustomers extends AbstractCommand
 {
     const COMMAND_NAME = "mapp:export:customers";
 
-    private CustomerExport $customerExport;
-
     public function __construct(
+        private CustomerExport $customerExport,
         ResourceConnection $resource,
         State $state,
-        CustomerExport $customerExport,
         $name = null
     ){
         parent::__construct($resource, $state, $name);
-        $this->customerExport = $customerExport;
     }
 
     /**

@@ -15,24 +15,16 @@ abstract class ExportAbstract
     const ATTRIBUTES_FOR_EXPORT = [];
     const EXPORT_FILE_PREFIX = '';
 
-    protected StoreManagerInterface $storeManager;
-    protected ?DirectoryWriter $directoryWriter;
-    protected MagentoFileSystemManager $magentoFileSystemManager;
-    protected MappFilesystemExport $mappFilesystemExport;
-    protected Sftp $sftp;
+    protected DirectoryWriter $directoryWriter;
 
     public function __construct(
-        StoreManagerInterface $storeManager,
-        MagentoFileSystemManager $magentoFileSystemManager,
-        Sftp $sftp,
-        MappFilesystemExport $mappFilesystemExport
+        protected StoreManagerInterface $storeManager,
+        protected MagentoFileSystemManager $magentoFileSystemManager,
+        protected Sftp $sftp,
+        protected MappFilesystemExport $mappFilesystemExport
     )
     {
-        $this->storeManager = $storeManager;
-        $this->magentoFileSystemManager = $magentoFileSystemManager;
         $this->directoryWriter = $this->magentoFileSystemManager->getDirectoryWrite(DirectoryList::VAR_DIR);
-        $this->sftp = $sftp;
-        $this->mappFilesystemExport = $mappFilesystemExport;
     }
 
     /**

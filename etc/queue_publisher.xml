@@ -19,4 +19,10 @@
     <publisher topic="mappdigital.cloud.entities.export.amqp">
         <connection name="amqp" exchange="magento-amqp" />
     </publisher>
+    <publisher topic="mappdigital.cloud.entities.export.catalog.product.amqp">
+        <connection name="amqp" exchange="magento-amqp" />
+    </publisher>
+    <publisher topic="mappdigital.cloud.entities.export.catalog.product.db">
+        <connection name="db" exchange="magento-db" />
+    </publisher>
 </config>

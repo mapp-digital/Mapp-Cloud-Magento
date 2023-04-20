@@ -18,25 +18,13 @@ use Psr\Log\LoggerInterface;
 
 class Order extends AbstractData
 {
-    protected Session $checkoutSession;
-    protected CollectionFactory $salesOrderCollection;
-    protected Product $product;
-    protected ProductAttributeRepositoryInterface $productAttributeRepositoryInterface;
-    protected CombinedLogger $mappCombinedLogger;
-
     public function __construct(
-        Session $checkoutSession,
-        CollectionFactory $salesOrderCollection,
-        Product $product,
-        ProductAttributeRepositoryInterface $productAttributeRepositoryInterface,
-        CombinedLogger $mappCombinedLogger
+        protected Session $checkoutSession,
+        protected CollectionFactory $salesOrderCollection,
+        protected Product $product,
+        protected ProductAttributeRepositoryInterface $productAttributeRepositoryInterface,
+        protected CombinedLogger $mappCombinedLogger
     ) {
-        $this->checkoutSession = $checkoutSession;
-        $this->salesOrderCollection = $salesOrderCollection;
-        $this->product = $product;
-        $this->productAttributeRepositoryInterface = $productAttributeRepositoryInterface;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-
         parent::__construct();
     }
 

@@ -14,28 +14,14 @@ use MappDigital\Cloud\Api\NewsletterSubscriberInterface;
 
 class NewsletterSubscriber implements NewsletterSubscriberInterface
 {
-    private SubscriberFactory $subscriberFactory;
-    private CustomerFactory $customerFactory;
-    private StoreManagerInterface $storeManager;
-    private EmailValidator $emailValidator;
-    private SubscriptionManager $subscriptionManager;
-    private Json $jsonSerializer;
-
     public function __construct(
-        SubscriberFactory $subscriberFactory,
-        CustomerFactory $customerFactory,
-        StoreManagerInterface $storeManager,
-        EmailValidator $emailValidator,
-        SubscriptionManager $subscriptionManager,
-        Json $jsonSerializer
-    ){
-        $this->subscriberFactory = $subscriberFactory;
-        $this->customerFactory = $customerFactory;
-        $this->storeManager = $storeManager;
-        $this->emailValidator = $emailValidator;
-        $this->subscriptionManager = $subscriptionManager;
-        $this->jsonSerializer = $jsonSerializer;
-    }
+        private SubscriberFactory $subscriberFactory,
+        private CustomerFactory $customerFactory,
+        private StoreManagerInterface $storeManager,
+        private EmailValidator $emailValidator,
+        private SubscriptionManager $subscriptionManager,
+        private Json $jsonSerializer
+    ){}
 
     /**
      * @param string $email

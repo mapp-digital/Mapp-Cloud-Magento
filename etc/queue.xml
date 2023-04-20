@@ -23,4 +23,11 @@
                maxMessages="1"
         />
     </broker>
+    <broker topic="mappdigital.cloud.entities.export.catalog.product.db" exchange="magento-db" type="db">
+        <queue name="mappdigital.cloud.entities.export.catalog.product.db"
+               consumer="mappdigital.cloud.entities.export.catalog.product.db"
+               consumerInstance="Magento\Framework\MessageQueue\Consumer"
+               handler="MappDigital\Cloud\Model\Connect\Catalog\Product\Consumer::processMessage"
+               maxMessages="1"/>
+    </broker>
 </config>

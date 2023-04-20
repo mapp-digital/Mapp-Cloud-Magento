@@ -18,22 +18,12 @@ use Psr\Log\LoggerInterface;
 
 class SubscriberPlugin
 {
-    protected ScopeConfigInterface $scopeConfig;
-    protected ConnectHelper $connectHelper;
-    protected CombinedLogger $mappCombinedLogger;
-    protected SubscriptionManager $subscriptionManager;
-
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
-        ConnectHelper $connectHelper,
-        CombinedLogger $mappCombinedLogger,
-        SubscriptionManager $subscriptionManager
-    ) {
-        $this->scopeConfig = $scopeConfig;
-        $this->connectHelper = $connectHelper;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-        $this->subscriptionManager = $subscriptionManager;
-    }
+        protected ScopeConfigInterface $scopeConfig,
+        protected ConnectHelper $connectHelper,
+        protected CombinedLogger $mappCombinedLogger,
+        protected SubscriptionManager $subscriptionManager
+    ) {}
 
     // -----------------------------------------------
     // LEGACY METHODS VIA PLUGIN INTERCEPTORS

@@ -24,30 +24,16 @@ class Product extends AbstractData
      */
     const ATTRIBUTE_SOURCE_TABLE = 'Magento\Eav\Model\Entity\Attribute\Source\Table';
 
-    protected Data $catalogData;
-    protected CategoryRepository $categoryRepository;
-    protected Session $catalogSession;
-    protected ProductRepository $productRepository;
-    protected ProductUrlRewriteResource $productUrlRewriteResource;
-    protected CombinedLogger $mappCombinedLogger;
     protected ?CatalogProductModel $product = null;
 
     public function __construct(
-        Data $catalogData,
-        CategoryRepository $categoryRepository,
-        Session $session,
-        ProductRepository $productRepository,
-        ProductUrlRewriteResource $productUrlRewriteResource,
-        CombinedLogger $mappCombinedLogger
-    )
-    {
-        $this->catalogData = $catalogData;
-        $this->categoryRepository = $categoryRepository;
-        $this->catalogSession = $session;
-        $this->productRepository = $productRepository;
-        $this->productUrlRewriteResource = $productUrlRewriteResource;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-    }
+        protected Data $catalogData,
+        protected CategoryRepository $categoryRepository,
+        protected Session $catalogSession,
+        protected ProductRepository $productRepository,
+        protected ProductUrlRewriteResource $productUrlRewriteResource,
+        protected CombinedLogger $mappCombinedLogger
+    ) {}
 
     private function generate($productUrlFragment)
     {
@@ -130,6 +116,9 @@ class Product extends AbstractData
         return ucfirst(implode('', explode('_', ucwords($methodeName, '_')))) ?? '';
     }
 
+    /**
+     * @return void
+     */
     private function setAttributes()
     {
         $productAttributes = $this->product->getAttributes();
@@ -154,6 +143,9 @@ class Product extends AbstractData
         }
     }
 
+    /**
+     * @return void
+     */
     private function setBreadcrumb()
     {
         $path = $this->catalogData->getBreadcrumbPath();

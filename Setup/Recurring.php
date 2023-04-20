@@ -21,13 +21,9 @@ use Zend_Db_Exception;
  */
 class Recurring implements InstallSchemaInterface
 {
-    private SubscriptionManager $subscriptionManager;
-
     public function __construct(
-        SubscriptionManager $subscriptionManager
-    ) {
-        $this->subscriptionManager = $subscriptionManager;
-    }
+        private SubscriptionManager $subscriptionManager
+    ) {}
 
     /**
      * @param SchemaSetupInterface $setup

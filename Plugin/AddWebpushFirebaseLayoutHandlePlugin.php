@@ -11,7 +11,6 @@ namespace MappDigital\Cloud\Plugin;
 
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\View\Result\Layout;
-use Magento\Customer\Model\Session as CustomerSession;
 
 /**
  * Plugin to add Adobe ims layout handle when module is active
@@ -22,16 +21,9 @@ class AddWebpushFirebaseLayoutHandlePlugin
     const COOKIE_NAME_POSITIVE_VALUE = 'initialised';
     const WEBPUSH_JS_HANDLE = 'webpush_initialise_scripts';
 
-    private CustomerSession $customerSession;
-    protected CookieManagerInterface $cookieManager;
-
     public function __construct(
-        CustomerSession $customerSession,
-        CookieManagerInterface $cookieManager
-    ) {
-        $this->customerSession = $customerSession;
-        $this->cookieManager = $cookieManager;
-    }
+        private CookieManagerInterface $cookieManager
+    ) {}
 
     /**
      * Add handle only when user hasn't had it initialised to avoid needlessly loading JS onto the page

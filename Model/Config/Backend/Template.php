@@ -16,16 +16,10 @@ class Template implements OptionSourceInterface
 {
     private static ?array $cache = null;
 
-    protected ConnectHelper $helper;
-    protected ManagerInterface $messageManager;
-
     public function __construct(
-        ConnectHelper $helper,
-        ManagerInterface $messageManager
-    ) {
-        $this->helper = $helper;
-        $this->messageManager = $messageManager;
-    }
+        protected ConnectHelper $helper,
+        protected ManagerInterface $messageManager
+    ) {}
 
     /**
      * @return array

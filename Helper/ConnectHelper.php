@@ -29,23 +29,14 @@ class ConnectHelper extends AbstractHelper
     const XML_PATH_EMAILS_ENABLED = 'mapp_connect_messages/general/enable';
 
     protected ?MappConnectClient $client = null;
-    protected Http $request;
-    protected ScopeConfigInterface $config;
-    private State $state;
-    protected MappConnectClientFactory $mappConnectClientFactory;
 
     public function __construct(
-        Http $request,
-        ScopeConfigInterface $config,
-        State $state,
-        MappConnectClientFactory $mappConnectClientFactory,
+        protected Http $request,
+        protected ScopeConfigInterface $config,
+        protected State $state,
+        protected MappConnectClientFactory $mappConnectClientFactory,
         Context $context
     ) {
-        $this->request = $request;
-        $this->config = $config;
-        $this->state = $state;
-        $this->mappConnectClientFactory = $mappConnectClientFactory;
-
         parent::__construct($context);
     }
 

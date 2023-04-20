@@ -11,7 +11,6 @@ use MappDigital\Cloud\Api\Data\LogInterface;
 
 class LogLevel implements OptionSourceInterface
 {
-
     /**
      * Options getter
      *

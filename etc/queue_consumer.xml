@@ -21,4 +21,11 @@
               connection="amqp"
               maxMessages="1"
     />
+    <consumer name="mappdigital.cloud.entities.export.catalog.product.amqp"
+              queue="mappdigital.cloud.entities.export.catalog.product.amqp"
+              consumerInstance="Magento\Framework\MessageQueue\Consumer"
+              handler="MappDigital\Cloud\Model\Connect\Catalog\Product\Consumer::processMessage"
+              connection="amqp"
+              maxMessages="1"
+    />
 </config>

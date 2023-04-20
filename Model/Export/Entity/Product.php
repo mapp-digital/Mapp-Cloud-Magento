@@ -43,27 +43,17 @@ class Product extends ExportAbstract
         'description'
     ];
 
-    protected ProductCollectionFactory $productCollectionFactory;
-    protected AddStockDataToCollectionWithAllColumns $addStockDataToCollection;
-    protected GetStockIdForCurrentWebsite $getStockIdForCurrentWebsite;
-    protected CategoryRepository $categoryRepository;
-
     public function __construct(
-        ProductCollectionFactory $productCollectionFactory,
-        AddStockDataToCollectionWithAllColumns $addStockDataToCollection,
-        GetStockIdForCurrentWebsite $getStockIdForCurrentWebsite,
-        CategoryRepository $categoryRepository,
+        protected ProductCollectionFactory $productCollectionFactory,
+        protected AddStockDataToCollectionWithAllColumns $addStockDataToCollection,
+        protected GetStockIdForCurrentWebsite $getStockIdForCurrentWebsite,
+        protected CategoryRepository $categoryRepository,
         StoreManagerInterface $storeManager,
         MagentoFileSystemManager $magentoFilesystemManager,
         Sftp $sftp,
         MappFilesystemExport $mappFilesystemExport
     )
     {
-        $this->productCollectionFactory = $productCollectionFactory;
-        $this->addStockDataToCollection = $addStockDataToCollection;
-        $this->getStockIdForCurrentWebsite = $getStockIdForCurrentWebsite;
-        $this->categoryRepository = $categoryRepository;
-
         parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport);
     }
 
@@ -109,7 +99,7 @@ class Product extends ExportAbstract
     /**
      * @return ProductCollection
      */
-    public function getEntitiesForExport()
+    public function getEntitiesForExport(): ProductCollection
     {
         $productCollection = $this->productCollectionFactory->create();
         $productCollection->addAttributeToSelect(self::ATTRIBUTES_FOR_EXPORT, 'left');

@@ -17,33 +17,18 @@ use MappDigital\Cloud\Model\Data\Wishlist;
 
 class DataLayer extends DataObject
 {
-    protected Context $context;
-    protected Product $product;
-    protected Page $page;
-    protected Customer $customer;
-    protected Cart $cart;
-    protected Order $order;
-    protected Wishlist $wishlist;
     protected array $_variables = [];
     protected string $fullActionName = '';
 
     public function __construct(
-        Context $context,
-        Product $product,
-        Page $page,
-        Customer $customer,
-        Cart $cart,
-        Order $order,
-        Wishlist $wishlist
+        protected Context $context,
+        protected Product $product,
+        protected Page $page,
+        protected Customer $customer,
+        protected Cart $cart,
+        protected Order $order,
+        protected Wishlist $wishlist
     ) {
-        $this->context = $context;
-        $this->product = $product;
-        $this->page = $page;
-        $this->customer = $customer;
-        $this->cart = $cart;
-        $this->order = $order;
-        $this->wishlist = $wishlist;
-
         $this->fullActionName = $this->context->getRequest()->getFullActionName() ?? '';
     }
 

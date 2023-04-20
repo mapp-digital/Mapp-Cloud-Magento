@@ -17,16 +17,13 @@ class SubscribeCustomerTestTool extends AbstractCommand
 {
     const COMMAND_NAME = "mapp:newsletter:subscription";
 
-    private SubscriberFactory $subscriberFactory;
-
     public function __construct(
+        private SubscriberFactory $subscriberFactory,
         ResourceConnection $resource,
         State $state,
-        SubscriberFactory $subscriberFactory,
         $name = null
     ){
         parent::__construct($resource, $state, $name);
-        $this->subscriberFactory = $subscriberFactory;
     }
 
     protected function configure()

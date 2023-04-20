@@ -19,22 +19,20 @@ abstract class Cron extends Value
     const CRON_MODEL_PATH = '';
 
     protected string $runModelPath = '';
-    protected ValueFactory $valueFactory;
 
     public function __construct(
-        Context              $context,
-        Registry             $registry,
+        protected ValueFactory $valueFactory,
+        Context $context,
+        Registry $registry,
         ScopeConfigInterface $config,
-        TypeListInterface    $cacheTypeList,
-        ValueFactory         $valueFactory,
-        AbstractResource     $resource = null,
-        AbstractDb           $resourceCollection = null,
-                             $runModelPath = '',
-        array                $data = []
+        TypeListInterface $cacheTypeList,
+        AbstractResource $resource = null,
+        AbstractDb $resourceCollection = null,
+        $runModelPath = '',
+        array $data = []
     )
     {
         $this->runModelPath = $runModelPath;
-        $this->valueFactory = $valueFactory;
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
     }
 

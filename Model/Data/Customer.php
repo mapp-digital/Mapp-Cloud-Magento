@@ -8,16 +8,17 @@ namespace MappDigital\Cloud\Model\Data;
 
 use Magento\Customer\Model\Address;
 use Magento\Customer\Model\Session;
+use Magento\Customer\Model\Customer as MagentoCustomerModel;
 
 class Customer extends AbstractData
 {
-
     /**
      * @var array
      */
     const ADDRESS_PATTERN = [
         '/ä/', '/ö/', '/ü/', '/ß/', '/[\s_\-]/', '/str(\.)?(\s|\|)/'
     ];
+
     /**
      * @var array
      */
@@ -25,15 +26,7 @@ class Customer extends AbstractData
         'ae', 'oe', 'ue', 'ss', '', 'strasse|'
     ];
 
-    /**
-     * @var \Magento\Customer\Model\Session
-     */
-    protected $_customerSession;
-
-    /**
-     * @var \Magento\Customer\Model\Customer
-     */
-    protected $_customer;
+    protected ?MagentoCustomerModel $customer;
     protected ?Address $billingAddress = null;
     protected ?Address $shippingAddress = null;
 
@@ -41,15 +34,13 @@ class Customer extends AbstractData
      * @param Session $customerSession
      */
     public function __construct(
-        Session $customerSession
-    ) {
-        $this->_customerSession = $customerSession;
-    }
+        protected Session $customerSession
+    ) {}
 
     private function generate()
     {
-        if ($this->_customerSession->isLoggedIn()) {
-            $this->_customer = $this->_customerSession->getCustomer();
+        if ($this->customerSession->isLoggedIn()) {
+            $this->customer = $this->customerSession->getCustomer();
 
             $this->setAttributes();
             $this->setAddresses();
@@ -66,7 +57,7 @@ class Customer extends AbstractData
      */
     private function getEmailHashes()
     {
-        $email = $this->validate($this->_customer->getEmail(), '/\s/');
+        $email = $this->validate($this->customer->getEmail(), '/\s/');
         $emailHashes = [];
 
         if ($email) {
@@ -93,32 +84,41 @@ class Customer extends AbstractData
         return $telephoneHashes;
     }
 
+    /**
+     * @return void
+     */
     private function setAttributes()
     {
-        $customerAttributes = $this->_customer->getData();
+        $customerAttributes = $this->customer->getData();
 
         foreach ($customerAttributes as $code => $attribute) {
             $this->set($code, $attribute);
         }
     }
 
+    /**
+     * @return void
+     */
     private function setAddresses()
     {
         $addresses = [];
 
-        if ($this->_customer->getPrimaryBillingAddress()) {
-            $this->billingAddress = $this->_customer->getPrimaryBillingAddress();
+        if ($this->customer->getPrimaryBillingAddress()) {
+            $this->billingAddress = $this->customer->getPrimaryBillingAddress();
             $addresses['billing'] = $this->billingAddress->getData();
         }
 
-        if ($this->_customer->getPrimaryShippingAddress()) {
-            $this->shippingAddress = $this->_customer->getPrimaryShippingAddress();
+        if ($this->customer->getPrimaryShippingAddress()) {
+            $this->shippingAddress = $this->customer->getPrimaryShippingAddress();
             $addresses['shipping'] = $this->shippingAddress->getData();
         }
 
         $this->set('address', $addresses);
     }
 
+    /**
+     * @return void
+     */
     private function setCDBData()
     {
         $cdbData = [];

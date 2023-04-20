@@ -11,4 +11,6 @@
     <topic name="mappdigital.cloud.triggers.consume_amqp" request="string"/>
     <topic name="mappdigital.cloud.entities.export.db" request="string"/>
     <topic name="mappdigital.cloud.entities.export.amqp" request="string"/>
+    <topic name="mappdigital.cloud.entities.export.catalog.product.db" request="string" />
+    <topic name="mappdigital.cloud.entities.export.catalog.product.amqp" request="string" />
 </config>

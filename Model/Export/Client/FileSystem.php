@@ -14,17 +14,10 @@ class FileSystem
 {
     const XML_PATH_LOCAL_FILEPATH = 'mapp_exports/general/local_filepath';
 
-    protected StoreManagerInterface $storeManager;
-    protected ScopeConfigInterface $scopeConfig;
-
     public function __construct(
-        StoreManagerInterface $storeManager,
-        ScopeConfigInterface $scopeConfig
-    )
-    {
-        $this->storeManager = $storeManager;
-        $this->scopeConfig = $scopeConfig;
-    }
+        protected StoreManagerInterface $storeManager,
+        protected ScopeConfigInterface $scopeConfig
+    ) {}
 
     /**
      * @return string

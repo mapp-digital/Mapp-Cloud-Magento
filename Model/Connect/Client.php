@@ -18,7 +18,6 @@ use Psr\Http\Message\RequestInterface;
 
 class Client
 {
-    protected ConnectHelper $connectHelper;
     protected string $integrationId = '';
     protected string $secret = '';
     protected string $baseUrl = '';
@@ -27,10 +26,8 @@ class Client
     const USERAGENT = 'MappConnectClientPHP/0.1.0';
 
     public function __construct(
-        ConnectHelper $connectHelper
-    ) {
-        $this->connectHelper = $connectHelper;
-    }
+        protected ConnectHelper $connectHelper
+    ) {}
 
     /**
      * @param array $options

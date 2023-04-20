@@ -14,14 +14,10 @@ use Magento\InventoryIndexer\Model\StockIndexTableNameResolverInterface;
  */
 class AddStockDataToCollectionWithAllColumns
 {
-    private StockIndexTableNameResolverInterface $stockIndexTableNameResolver;
-    private DefaultStockProviderInterface $defaultStockProvider;
-
     public function __construct(
-        StockIndexTableNameResolverInterface $stockIndexTableNameResolver,
-        DefaultStockProviderInterface $defaultStockProvider = null
+        private StockIndexTableNameResolverInterface $stockIndexTableNameResolver,
+        private ?DefaultStockProviderInterface $defaultStockProvider = null
     ) {
-        $this->stockIndexTableNameResolver = $stockIndexTableNameResolver;
         $this->defaultStockProvider = $defaultStockProvider ?: ObjectManager::getInstance()
             ->get(DefaultStockProviderInterface::class);
     }

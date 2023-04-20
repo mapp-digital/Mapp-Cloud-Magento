@@ -6,7 +6,9 @@
  */
 namespace MappDigital\Cloud\Model\Config\Source;
 
-class BaseURL implements \Magento\Framework\Option\ArrayInterface
+use Magento\Framework\Option\ArrayInterface;
+
+class BaseURL implements ArrayInterface
 {
     /**
      * @return array

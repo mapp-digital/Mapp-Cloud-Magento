@@ -21,12 +21,6 @@ use Magento\Framework\App\Request\Http;
 
 abstract class TIDatalayerCartAbstract implements ObserverInterface
 {
-    protected Session $checkoutSession;
-    protected Config $config;
-    protected MappProductModel $mappProductModel;
-    protected ProductAttributeRepositoryInterface $productAttributeRepositoryInterface;
-    protected Http $request;
-
     /**
      * @param Session $checkoutSession
      * @param Config $config
@@ -35,19 +29,13 @@ abstract class TIDatalayerCartAbstract implements ObserverInterface
      * @param Http $request
      */
     public function __construct(
-        Session $checkoutSession,
-        Config $config,
-        MappProductModel $mappProductModel,
-        ProductAttributeRepositoryInterface $productAttributeRepositoryInterface,
-        Http $request
+        protected Session $checkoutSession,
+        protected Config $config,
+        protected MappProductModel $mappProductModel,
+        protected ProductAttributeRepositoryInterface $productAttributeRepositoryInterface,
+        protected Http $request
     )
-    {
-        $this->checkoutSession = $checkoutSession;
-        $this->config = $config;
-        $this->mappProductModel = $mappProductModel;
-        $this->productAttributeRepositoryInterface = $productAttributeRepositoryInterface;
-        $this->request = $request;
-    }
+    {}
 
     /**
      * @param Observer $observer

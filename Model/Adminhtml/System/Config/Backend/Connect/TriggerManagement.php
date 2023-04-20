@@ -19,20 +19,16 @@ use Zend_Db_Exception;
 
 class TriggerManagement extends Value
 {
-    private SubscriptionManager $subscriptionManager;
-
     public function __construct(
+        private SubscriptionManager $subscriptionManager,
         Context $context,
         Registry $registry,
         ScopeConfigInterface $config,
         TypeListInterface $cacheTypeList,
-        SubscriptionManager $subscriptionManager,
         AbstractResource $resource = null,
         AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->subscriptionManager = $subscriptionManager;
-
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
     }
 

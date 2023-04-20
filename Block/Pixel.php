@@ -23,27 +23,15 @@ use MappDigital\Cloud\Block\FirebaseData as FirebaseDataBlock;
  */
 class Pixel extends Template implements IdentityInterface
 {
-    private PixelDataBlock $pixelDataBlock;
-    private FirebaseDataBlock $fireBaseDataBlock;
-    private StoreManagerInterface $storeManager;
-    private CustomerSession $customerSession;
-    private AssetRepository $assetRepository;
-
     public function __construct(
+        protected StoreManagerInterface $storeManager,
+        protected CustomerSession $customerSession,
+        protected PixelDataBlock $pixelDataBlock,
+        protected FirebaseDataBlock $fireBaseDataBlock,
+        protected AssetRepository $assetRepository,
         Context $context,
-        StoreManagerInterface $storeManager,
-        CustomerSession $customerSession,
-        PixelDataBlock $pixelDataBlock,
-        FirebaseDataBlock $fireBaseDataBlock,
-        AssetRepository $assetRepository,
         array $data = []
     ) {
-        $this->storeManager = $storeManager;
-        $this->customerSession = $customerSession;
-        $this->pixelDataBlock = $pixelDataBlock;
-        $this->fireBaseDataBlock = $fireBaseDataBlock;
-        $this->assetRepository = $assetRepository;
-
         parent::__construct($context, $data);
     }
 

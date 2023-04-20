@@ -17,19 +17,11 @@ use MappDigital\Cloud\Model\Connect\Client;
 
 class MappConnectCustomerGroupUpdate implements ObserverInterface
 {
-    protected ScopeConfigInterface $scopeConfig;
-    protected ConnectHelper $connectHelper;
-    protected CombinedLogger $mappCombinedLogger;
-
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
-        ConnectHelper $connectHelper,
-        CombinedLogger $mappCombinedLogger
-    ) {
-        $this->scopeConfig = $scopeConfig;
-        $this->connectHelper = $connectHelper;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-    }
+        protected ScopeConfigInterface $scopeConfig,
+        protected ConnectHelper $connectHelper,
+        protected CombinedLogger $mappCombinedLogger
+    ) {}
 
     /**
      * @throws GuzzleException

@@ -33,44 +33,22 @@ class SubscriptionManager
     const NEWSLETTER_CHANGELOG_TABLE_NAME = 'mapp_connect_newsletter_cl';
     const ORDER_CHANGELOG_TABLE_NAME = 'mapp_connect_order_cl';
 
-    private ResourceConnection $resource;
     private AdapterInterface $connection;
-    private TriggerFactory $triggerFactory;
-    private ScopeConfigInterface $coreConfig;
-    private CombinedLogger $mappCombinedLogger;
-    private ConnectHelper $connectHelper;
-    private StorageInterface $storage;
-    private CustomerAddressModelConfig $customerAddressModelConfig;
-    private PaymentDataHelper $paymentHelper;
-    private CatalogProductHelper $productHelper;
-    private DeploymentConfig $deploymentConfig;
-    private StoreManager $storeManager;
 
     public function __construct(
-        ResourceConnection $resource,
-        TriggerFactory $triggerFactory,
-        ScopeConfigInterface $coreConfig,
-        CombinedLogger $mappCombinedLogger,
-        ConnectHelper $connectHelper,
-        StorageInterface $storage,
-        CustomerAddressModelConfig $customerAddressModelConfig,
-        PaymentDataHelper $paymentHelper,
-        CatalogProductHelper $productHelper,
-        DeploymentConfig $deploymentConfig,
-        StoreManager $storeManager
+        private ResourceConnection $resource,
+        private TriggerFactory $triggerFactory,
+        private ScopeConfigInterface $coreConfig,
+        private CombinedLogger $mappCombinedLogger,
+        private ConnectHelper $connectHelper,
+        private StorageInterface $storage,
+        private CustomerAddressModelConfig $customerAddressModelConfig,
+        private PaymentDataHelper $paymentHelper,
+        private CatalogProductHelper $productHelper,
+        private DeploymentConfig $deploymentConfig,
+        private StoreManager $storeManager
     ) {
-        $this->resource = $resource;
         $this->connection = $resource->getConnection();
-        $this->triggerFactory = $triggerFactory;
-        $this->coreConfig = $coreConfig;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-        $this->connectHelper = $connectHelper;
-        $this->storage = $storage;
-        $this->customerAddressModelConfig = $customerAddressModelConfig;
-        $this->paymentHelper = $paymentHelper;
-        $this->productHelper = $productHelper;
-        $this->deploymentConfig = $deploymentConfig;
-        $this->storeManager = $storeManager;
     }
 
     // -----------------------------------------------

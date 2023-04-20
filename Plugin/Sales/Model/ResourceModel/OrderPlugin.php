@@ -12,16 +12,10 @@ use MappDigital\Cloud\Model\Connect\SubscriptionManager;
 
 class OrderPlugin
 {
-    protected ConnectHelper $connectHelper;
-    protected SubscriptionManager $subscriptionManager;
-
     public function __construct(
-        ConnectHelper $connectHelper,
-        SubscriptionManager $subscriptionManager
-    ) {
-        $this->connectHelper = $connectHelper;
-        $this->subscriptionManager = $subscriptionManager;
-    }
+        protected ConnectHelper $connectHelper,
+        protected SubscriptionManager $subscriptionManager
+    ) {}
 
     /**
      * @param Order $subject

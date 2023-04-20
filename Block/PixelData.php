@@ -25,24 +25,14 @@ use MappDigital\Cloud\Model\Pixel;
  */
 class PixelData extends AbstractBlock implements IdentityInterface
 {
-    private Pixel $pixelData;
-    private StoreManagerInterface $storeManager;
-    private CombinedLogger $mappCombinedLogger;
-    private Dir $magentoModuleDirectory;
-
     public function __construct(
+        protected Pixel $pixelData,
+        protected CombinedLogger $mappCombinedLogger,
+        protected StoreManagerInterface $storeManager,
+        protected Dir $magentoModuleDirectory,
         Context $context,
-        Pixel $pixelData,
-        CombinedLogger $mappCombinedLogger,
-        StoreManagerInterface $storeManager,
-        Dir $magentoModuleDirectory,
         array $data = []
     ) {
-        $this->pixelData = $pixelData;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-        $this->storeManager = $storeManager;
-        $this->magentoModuleDirectory = $magentoModuleDirectory;
-
         parent::__construct($context, $data);
     }
 

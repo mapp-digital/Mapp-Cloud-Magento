@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace MappDigital\Cloud\Model;
 
+use Exception;
 use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Exception\CouldNotDeleteException;
@@ -22,25 +23,13 @@ use MappDigital\Cloud\Model\ResourceModel\Log\CollectionFactory as LogCollection
 
 class LogRepository implements LogRepositoryInterface
 {
-    protected LogSearchResultsInterfaceFactory $searchResultsFactory;
-    protected ResourceLog $resource;
-    protected LogInterfaceFactory $logFactory;
-    protected CollectionProcessorInterface $collectionProcessor;
-    protected LogCollectionFactory $logCollectionFactory;
-
     public function __construct(
-        ResourceLog $resource,
-        LogInterfaceFactory $logFactory,
-        LogCollectionFactory $logCollectionFactory,
-        LogSearchResultsInterfaceFactory $searchResultsFactory,
-        CollectionProcessorInterface $collectionProcessor
-    ) {
-        $this->resource = $resource;
-        $this->logFactory = $logFactory;
-        $this->logCollectionFactory = $logCollectionFactory;
-        $this->searchResultsFactory = $searchResultsFactory;
-        $this->collectionProcessor = $collectionProcessor;
-    }
+        protected ResourceLog $resource,
+        protected LogInterfaceFactory $logFactory,
+        protected LogCollectionFactory $logCollectionFactory,
+        protected LogSearchResultsInterfaceFactory $searchResultsFactory,
+        protected CollectionProcessorInterface $collectionProcessor
+    ) {}
 
     /**
      * @inheritDoc
@@ -49,7 +38,7 @@ class LogRepository implements LogRepositoryInterface
     {
         try {
             $this->resource->save($log);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotSaveException(__(
                 'Could not save the log: %1',
                 $exception->getMessage()
@@ -105,7 +94,7 @@ class LogRepository implements LogRepositoryInterface
             $logModel = $this->logFactory->create();
             $this->resource->load($logModel, $log->getLogId());
             $this->resource->delete($logModel);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new CouldNotDeleteException(__(
                 'Could not delete the Log: %1',
                 $exception->getMessage()

@@ -10,17 +10,15 @@ use Magento\Checkout\Model\Session;
 
 class Wishlist extends AbstractData
 {
-    protected Session $checkoutSession;
-    protected Product $product;
 
     public function __construct(
-        Session $checkoutSession,
-        Product $product
-    ) {
-        $this->checkoutSession = $checkoutSession;
-        $this->product = $product;
-    }
+        protected Session $checkoutSession,
+        protected Product $product
+    ) {}
 
+    /**
+     * @return void
+     */
     private function generate()
     {
         $wishlistData = $this->checkoutSession->getData('webtrekk_addtowishlist') ?? '';

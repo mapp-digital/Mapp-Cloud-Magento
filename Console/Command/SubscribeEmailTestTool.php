@@ -20,21 +20,19 @@ class SubscribeEmailTestTool extends AbstractCommand
     const COMMAND_NAME = "mapp:newsletter:subscription-email";
     const AREA = 'frontend';
 
-    private SubscriberFactory $subscriberFactory;
-    private StoreManager $storeManager;
-
     public function __construct(
+        private SubscriberFactory $subscriberFactory,
+        private StoreManager $storeManager,
         ResourceConnection $resource,
         State $state,
-        SubscriberFactory $subscriberFactory,
-        StoreManager $storeManager,
         $name = null
     ){
         parent::__construct($resource, $state, $name);
-        $this->subscriberFactory = $subscriberFactory;
-        $this->storeManager = $storeManager;
     }
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         $this->addArgument(

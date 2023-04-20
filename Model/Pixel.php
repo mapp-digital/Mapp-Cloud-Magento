@@ -32,19 +32,11 @@ class Pixel
         'includeFirebaseScripts' => self::XML_CONFIG_PATH_INCLUDE_FIREBASE_SCRIPTS
     ];
 
-    private Firebase $firebase;
-    private ScopeConfigInterface $scopeConfig;
-    private StoreManager $storeManager;
-
     public function __construct(
-        Firebase $firebase,
-        ScopeConfigInterface $scopeConfig,
-        StoreManager $storeManager
-    ) {
-        $this->firebase = $firebase;
-        $this->scopeConfig = $scopeConfig;
-        $this->storeManager = $storeManager;
-    }
+        private Firebase $firebase,
+        private ScopeConfigInterface $scopeConfig,
+        private StoreManager $storeManager
+    ) {}
 
     /**
      * Get the main data for pixel-webpush.min.js file as defined in configuration

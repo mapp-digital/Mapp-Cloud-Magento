@@ -26,25 +26,13 @@ class CombinedLogger
         LogInterface::LOG_LEVEL_DEBUG => 'debug',
     ];
 
-    protected Logger $logger;
-    protected LogRepository $logRepository;
-    protected LogFactory $logFactory;
-    protected ScopeConfigInterface $config;
-    protected Json $jsonSerializer;
-
     public function __construct(
-        Logger $logger,
-        LogRepository $logRepository,
-        LogFactory $logFactory,
-        ScopeConfigInterface $config,
-        Json $jsonSerializer
-    ) {
-        $this->logger = $logger;
-        $this->logRepository = $logRepository;
-        $this->logFactory = $logFactory;
-        $this->config = $config;
-        $this->jsonSerializer = $jsonSerializer;
-    }
+        protected Logger $logger,
+        protected LogRepository $logRepository,
+        protected LogFactory $logFactory,
+        protected ScopeConfigInterface $config,
+        protected Json $jsonSerializer
+    ) {}
 
     // -----------------------------------------------
     // ENTRY METHODS

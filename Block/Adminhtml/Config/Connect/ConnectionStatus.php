@@ -18,7 +18,6 @@ use Magento\Backend\Block\Template\Context;
 class ConnectionStatus extends Field
 {
     protected ?MappConnectClientFactory $mappConnectClientFactory;
-    protected ConnectHelper $connectHelper;
 
     public function __construct(
         Context $context,

@@ -2,6 +2,7 @@
 
 namespace MappDigital\Cloud\Model\Export\Client;
 
+use Exception;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem\Io\Sftp as MagentoSftpConnector;
@@ -25,17 +26,10 @@ class Sftp
     const XML_PATH_SFTP_PASSWORD = 'mapp_exports/general/password';
     const XML_PATH_SFTP_FILEPATH = 'mapp_exports/general/filepath';
 
-    protected StoreManagerInterface $storeManager;
-    protected ScopeConfigInterface $scopeConfig;
-
     public function __construct(
-        StoreManagerInterface $storeManager,
-        ScopeConfigInterface $scopeConfig
-    )
-    {
-        $this->storeManager = $storeManager;
-        $this->scopeConfig = $scopeConfig;
-    }
+        protected StoreManagerInterface $storeManager,
+        protected ScopeConfigInterface $scopeConfig
+    ) {}
 
     /**
      * Connect to an SFTP server using specified configuration
@@ -43,6 +37,7 @@ class Sftp
      * @return MagentoSftpConnector
      * @throws LocalizedException
      * @throws ValidationException
+     * @throws Exception
      */
     public function createConnectionAndGoToConfiguredFilepath(): MagentoSftpConnector
     {
@@ -96,7 +91,7 @@ class Sftp
      * @return bool
      * @throws LocalizedException
      */
-    public function isSftpExportEnabled()
+    public function isSftpExportEnabled(): bool
     {
         return (bool)$this->scopeConfig->getValue(self::XML_PATH_EXPORT_METHOD, ScopeInterface::SCOPE_WEBSITE, $this->storeManager->getWebsite())
             == ExportMethod::EXPORT_METHOD_SFTP;

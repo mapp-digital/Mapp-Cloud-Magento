@@ -10,4 +10,7 @@
     <event name="customer_save_after_data_object">
         <observer name="mapp_connect_customer_update_observer" instance="MappDigital\Cloud\Observer\MappConnectCustomerGroupUpdate" />
     </event>
+    <event name="catalog_product_save_commit_after">
+        <observer name="mapp_connect_publish_product_update" instance="MappDigital\Cloud\Observer\Catalog\Product\MappConnectPublishProductUpdate" />
+    </event>
 </config>

@@ -27,33 +27,19 @@ class ConsumeQueue
     const MAX_ORDER_RETRY_COUNT = 10;
     const MAX_NEWSLETTER_RETRY_COUNT = 10;
 
-    private ResourceConnection $resource;
     private AdapterInterface $connection;
-    private Json $jsonSerializer;
-    private OrderRepository $orderRepository;
-    private CombinedLogger $mappCombinedLogger;
-    private SubscriptionManager $subscriptionManager;
-    private PublisherInterface $publisher;
-    private ScopeConfigInterface $coreConfig;
 
     public function __construct(
-        ResourceConnection $resource,
-        Json $jsonSerializer,
-        OrderRepository $orderRepository,
-        CombinedLogger $mappCombinedLogger,
-        SubscriptionManager $subscriptionManager,
-        PublisherInterface $publisher,
-        ScopeConfigInterface $coreConfig
+        private ResourceConnection $resource,
+        private Json $jsonSerializer,
+        private OrderRepository $orderRepository,
+        private CombinedLogger $mappCombinedLogger,
+        private SubscriptionManager $subscriptionManager,
+        private PublisherInterface $publisher,
+        private ScopeConfigInterface $coreConfig
     )
     {
-        $this->resource = $resource;
         $this->connection = $resource->getConnection();
-        $this->jsonSerializer = $jsonSerializer;
-        $this->orderRepository = $orderRepository;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-        $this->subscriptionManager = $subscriptionManager;
-        $this->publisher = $publisher;
-        $this->coreConfig = $coreConfig;
     }
 
     /**

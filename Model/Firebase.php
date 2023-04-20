@@ -36,16 +36,10 @@ class Firebase
         'measurementId' => self::XML_CONFIG_PATH_MEASUREMENT_ID,
     ];
 
-    private ScopeConfigInterface $scopeConfig;
-    private StoreManager $storeManager;
-
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
-        StoreManager $storeManager
-    ) {
-        $this->scopeConfig = $scopeConfig;
-        $this->storeManager = $storeManager;
-    }
+        private ScopeConfigInterface $scopeConfig,
+        private StoreManager $storeManager
+    ) {}
 
     /**
      * Get the main data for firebase-messaging-sw.js file as defined in configuration

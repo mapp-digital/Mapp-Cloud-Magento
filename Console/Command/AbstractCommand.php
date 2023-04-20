@@ -26,20 +26,16 @@ abstract class AbstractCommand extends Command
 
     protected ?InputInterface $input;
     protected ?OutputInterface $output;
-    protected ResourceConnection $resource;
     protected AdapterInterface $connection;
-    protected State $state;
 
     public function __construct(
-        ResourceConnection $resource,
-        State $state,
+        protected ResourceConnection $resource,
+        protected State $state,
         $name = null
     ) {
         parent::__construct($name);
 
-        $this->resource = $resource;
         $this->connection = $resource->getConnection(ResourceConnection::DEFAULT_CONNECTION);
-        $this->state = $state;
     }
 
     // -----------------------------------------------

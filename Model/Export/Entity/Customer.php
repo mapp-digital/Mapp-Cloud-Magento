@@ -32,17 +32,14 @@ class Customer extends ExportAbstract
 
     const EXPORT_FILE_PREFIX = 'customer_export_';
 
-    protected CustomerCollectionFactory $customerCollectionFactory;
-
     public function __construct(
-        CustomerCollectionFactory $customerCollectionFactory,
-        StoreManagerInterface     $storeManager,
-        MagentoFileSystemManager  $magentoFilesystemManager,
-        Sftp                      $sftp,
-        MappFilesystemExport      $mappFilesystemExport
+        protected CustomerCollectionFactory $customerCollectionFactory,
+        StoreManagerInterface $storeManager,
+        MagentoFileSystemManager $magentoFilesystemManager,
+        Sftp $sftp,
+        MappFilesystemExport $mappFilesystemExport
     )
     {
-        $this->customerCollectionFactory = $customerCollectionFactory;
         parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport);
     }
 
@@ -50,7 +47,7 @@ class Customer extends ExportAbstract
      * @return CustomerCollection
      * @throws LocalizedException
      */
-    public function getEntitiesForExport()
+    public function getEntitiesForExport(): CustomerCollection
     {
         $customerCollection = $this->customerCollectionFactory->create();
         $customerCollection->addAttributeToSelect(self::ATTRIBUTES_FOR_EXPORT);

@@ -17,35 +17,16 @@ use Magento\Theme\Block\Html\Pager;
 
 class Page extends AbstractData
 {
-    protected Context $context;
-    protected StoreManagerInterface $storeManager;
-    protected CatalogHelper $catalogData;
-    protected Resolver $resolver;
-    protected Title $title;
-    protected CatalogSearchHelper $normalSearch;
-    protected Advanced $advancedSearch;
-    protected Pager $pager;
-
     public function __construct(
-        Context $context,
-        StoreManagerInterface $storeManager,
-        CatalogHelper $catalogData,
-        Resolver $resolver,
-        Title $title,
-        CatalogSearchHelper $normalSearch,
-        Advanced $advancedSearch,
-        Pager $pager
-    )
-    {
-        $this->context = $context;
-        $this->storeManager = $storeManager;
-        $this->catalogData = $catalogData;
-        $this->resolver = $resolver;
-        $this->title = $title;
-        $this->normalSearch = $normalSearch;
-        $this->advancedSearch = $advancedSearch;
-        $this->pager = $pager;
-    }
+        protected Context $context,
+        protected StoreManagerInterface $storeManager,
+        protected CatalogHelper $catalogData,
+        protected Resolver $resolver,
+        protected Title $title,
+        protected CatalogSearchHelper $normalSearch,
+        protected Advanced $advancedSearch,
+        protected Pager $pager
+    ) {}
 
     private function generate()
     {
@@ -69,9 +50,13 @@ class Page extends AbstractData
         $this->set('storeId', $store->getId());
     }
 
+    /**
+     * @return void
+     */
     private function setBasic()
     {
         $request = $this->context->getRequest();
+
         if ($request) {
             $action = $request->getFullActionName();
             if($action === 'catalog_category_view' || $action === 'catalogsearch_result_index') {
@@ -82,20 +67,30 @@ class Page extends AbstractData
         }
     }
 
+    /**
+     * @return void
+     */
     private function setLanguage()
     {
         $locale = $this->resolver->getLocale();
+
         if ($locale) {
             $this->set('locale', $locale);
             $this->set('language', explode('_', $locale)[0]);
         }
     }
 
+    /**
+     * @return void
+     */
     private function setPageTitle()
     {
         $this->set('title', $this->title->getShort());
     }
 
+    /**
+     * @return void
+     */
     private function setNormalSearch()
     {
         $searchTerm = $this->normalSearch->getEscapedQueryText();
@@ -105,6 +100,9 @@ class Page extends AbstractData
         }
     }
 
+    /**
+     * @return void
+     */
     private function setAdvancedSearch()
     {
         $advancedSearchCriterias = $this->advancedSearch->getSearchCriterias();
@@ -120,6 +118,9 @@ class Page extends AbstractData
         }
     }
 
+    /**
+     * @return void
+     */
     private function setCategory()
     {
         $pageAction = $this->get('action');
@@ -143,6 +144,9 @@ class Page extends AbstractData
         }
     }
 
+    /**
+     * @return void
+     */
     private function setSearch()
     {
         $this->setNormalSearch();
@@ -152,9 +156,9 @@ class Page extends AbstractData
     /**
      * @return array
      */
-    public function getDataLayer()
+    public function getDataLayer(): array
     {
         $this->generate();
-        return $this->_data;
+        return $this->_data ?? [];
     }
 }

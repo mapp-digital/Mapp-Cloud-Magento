@@ -23,21 +23,13 @@ use MappDigital\Cloud\Model\Firebase;
  */
 class FirebaseData extends AbstractBlock implements IdentityInterface
 {
-    private Firebase $firebase;
-    private StoreManagerInterface $storeManager;
-    private CombinedLogger $mappCombinedLogger;
-
     public function __construct(
+        private Firebase $firebase,
+        private CombinedLogger $mappCombinedLogger,
+        private StoreManagerInterface $storeManager,
         Context $context,
-        Firebase $firebase,
-        CombinedLogger $mappCombinedLogger,
-        StoreManagerInterface $storeManager,
         array $data = []
     ) {
-        $this->firebase = $firebase;
-        $this->mappCombinedLogger = $mappCombinedLogger;
-        $this->storeManager = $storeManager;
-
         parent::__construct($context, $data);
     }
 

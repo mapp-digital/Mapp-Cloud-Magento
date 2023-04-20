@@ -29,14 +29,10 @@ class Config extends AbstractHelper
     const XML_PATH_GTM_TRIGGER_BASKET = 'mapp_gtm/general/gtm_trigger_basket';
     const XML_PATH_GTM_ADD_TO_CART_EVENTNAME = 'mapp_gtm/general/gtm_add_to_cart_eventname';
 
-    protected Repository $assetRepository;
-
     public function __construct(
-        Context $context,
-        Repository $assetRepository
+        protected Repository $assetRepository,
+        Context $context
     ) {
-        $this->assetRepository = $assetRepository;
-
         parent::__construct($context);
     }
 

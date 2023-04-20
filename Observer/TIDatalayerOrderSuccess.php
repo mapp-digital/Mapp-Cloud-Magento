@@ -13,20 +13,10 @@ use MappDigital\Cloud\Helper\Config;
 
 class TIDatalayerOrderSuccess implements ObserverInterface
 {
-    protected Session $checkoutSession;
-    protected Config $config;
-
-    /**
-     * @param Session $checkoutSession
-     * @param Config $config
-     */
     public function __construct(
-        Session $checkoutSession,
-        Config $config
-    ) {
-        $this->checkoutSession = $checkoutSession;
-        $this->config = $config;
-    }
+        protected Session $checkoutSession,
+        protected Config $config
+    ) {}
 
     /**
      * @param Observer $observer
