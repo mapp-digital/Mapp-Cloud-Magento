@@ -152,7 +152,7 @@ class Consumer
     /**
      * @return string
      */
-    private function getBaseDomainForImagePath(): string
+    public function getBaseDomainForImagePath(): string
     {
         if (!$this->baseDomainForImagePaths) {
             $mediaUrl = $this->coreConfig->getValue(Store::XML_PATH_SECURE_BASE_MEDIA_URL);
