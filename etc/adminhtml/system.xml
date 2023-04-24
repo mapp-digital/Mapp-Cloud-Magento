@@ -217,6 +217,33 @@
                     <source_model>MappDigital\Cloud\Model\Config\Source\SyncMethod</source_model>
                     <backend_model>MappDigital\Cloud\Model\Adminhtml\System\Config\Backend\Connect\TriggerManagement</backend_model>
                 </field>
+                <field id="product_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable Product Synchronisation</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="product_image_cache_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Add Cached Product URLs to Sync</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[
+                        By default Magento will resize catalog images and then cache them.
+                    This ensures that only the relevant size of image is then loaded. If it is not found,
+                    the placeholder images is then used. This option is recommended to be enabled to prevent large
+                    images from being synced accidentally. If you are unable to use cached images reliably, disable this option.
+                    If this option is changed, it is recommended to perform a full sync of products again via the mapp:export:products command
+                    to ensure everything is then up to date
+                    ]]>
+                    </comment>
+                </field>
+                <field id="product_image_generate_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Generate Resized Product Images during Sync</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[
+                        To be sure that all of your cached images exist when syncing your products, you can enable this option.
+                        Be warned, however, that this will decrease the performance of the export as it will be generating the
+                        two resized files if they don't exist for each product when synced.
+                    ]]>
+                    </comment>
+                </field>
                 <field id="customer_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Enable Customer Synchronisation</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

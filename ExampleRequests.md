@@ -629,3 +629,176 @@ API Request Subtype: `user`
     "group": "600350573"
 }
 ```
+
+#### Product Save / Manual Sync 
+
+This request is sent if a product is saved, and the product sync is enabled in the configuration.
+
+There is also a console command "mapp:sync:products" of which syncs the whole catalog if needed. This queues
+
+a single message per product and will send requests of a number that depends on the environment setup values of each store
+
+The `category` key is a comma seperated list of category names.
+
+All custom Magento product attributes are added into the request in case of the need to match these up in Mapp
+
+API Request Subtype: `product`
+
+```JSON
+{
+    "entity_id": "2",
+    "attribute_set_id": "16",
+    "type_id": "simple",
+    "sku": "24-MB04",
+    "has_options": "0",
+    "required_options": "0",
+    "created_at": "2022-12-12 13:02:40",
+    "updated_at": "2022-12-12 13:02:40",
+    "row_id": "2",
+    "created_in": "1",
+    "updated_in": "2147483647",
+    "name": "Strive Shoulder Pack",
+    "image": "https:\/\/domain.com\/media\/catalog\/product\/cache\/fd79fb95a4530579d3f7fdd0f01c8ba7\/m\/b\/mb04-black-0.jpg",
+    "small_image": "https:\/\/domain.com\/media\/catalog\/product\/cache\/fd79fb95a4530579d3f7fdd0f01c8ba7\/m\/b\/mb04-black-0.jpg",
+    "thumbnail": "https:\/\/domain.com\/media\/catalog\/product\/cache\/fd79fb95a4530579d3f7fdd0f01c8ba7\/m\/b\/mb04-black-0.jpg",
+    "options_container": "container2",
+    "url_key": "strive-shoulder-pack",
+    "msrp_display_actual_price_type": "0",
+    "is_returnable": "2",
+    "status": "1",
+    "visibility": "4",
+    "tax_class_id": "2",
+    "erin_recommends": "1",
+    "sale": "1",
+    "price": "32.000000",
+    "special_price": "32.000000",
+    "special_from_date": "2022-12-12 00:00:00",
+    "description": "<p>Convenience is next to nothing when your day is crammed with action. So whether you're heading to class, gym, or the unbeaten path, make sure you've got your Strive Shoulder Pack stuffed with all your essentials, and extras as well.<\/p>\n<ul>\n<li>Zippered main compartment.<\/li>\n<li>Front zippered pocket.<\/li>\n<li>Side mesh pocket.<\/li>\n<li>Cell phone pocket on strap.<\/li>\n<li>Adjustable shoulder strap and top carry handle.<\/li>\n<\/ul>",
+    "activity": "20,30,32,27",
+    "style_bags": "36,38,39",
+    "material": "41,42,45,47",
+    "strap_bags": "70,71,74,75,76",
+    "features_bags": "81,83,84,87",
+    "options": [],
+    "media_gallery": {
+        "images": {
+            "2": {
+                "value_id": "2",
+                "file": "https:\/\/domain.com\/media\/catalog\/product\/cache\/fd79fb95a4530579d3f7fdd0f01c8ba7\/m\/b\/mb04-black-0.jpg",
+                "media_type": "image",
+                "row_id": "2",
+                "label": "Image",
+                "position": "1",
+                "disabled": "0",
+                "label_default": "Image",
+                "position_default": "1",
+                "disabled_default": "0",
+                "video_provider": null,
+                "video_url": null,
+                "video_title": null,
+                "video_description": null,
+                "video_metadata": null,
+                "video_provider_default": null,
+                "video_url_default": null,
+                "video_title_default": null,
+                "video_description_default": null,
+                "video_metadata_default": null
+            },
+            "3": {
+                "value_id": "3",
+                "file": "https:\/\/domain.com\/media\/catalog\/product\/cache\/fd79fb95a4530579d3f7fdd0f01c8ba7\/m\/b\/mb04-black-0_alt1.jpg",
+                "media_type": "image",
+                "row_id": "2",
+                "label": "Image",
+                "position": "2",
+                "disabled": "0",
+                "label_default": "Image",
+                "position_default": "2",
+                "disabled_default": "0",
+                "video_provider": null,
+                "video_url": null,
+                "video_title": null,
+                "video_description": null,
+                "video_metadata": null,
+                "video_provider_default": null,
+                "video_url_default": null,
+                "video_title_default": null,
+                "video_description_default": null,
+                "video_metadata_default": null
+            }
+        },
+        "values": []
+    },
+    "extension_attributes": {
+        "extension_attributes": {
+            "category_links": [
+                {
+                    "category_id": "3",
+                    "position": "0"
+                },
+                {
+                    "category_id": "4",
+                    "position": "0"
+                },
+                {
+                    "category_id": "7",
+                    "position": "0"
+                }
+            ],
+            "website_ids": [
+                "1"
+            ],
+            "stock_item": {
+                "item_id": "2",
+                "product_id": "2",
+                "stock_id": "1",
+                "qty": "100.0000",
+                "min_qty": "0.0000",
+                "use_config_min_qty": "1",
+                "is_qty_decimal": "0",
+                "backorders": "0",
+                "use_config_backorders": "1",
+                "min_sale_qty": "1.0000",
+                "use_config_min_sale_qty": "1",
+                "max_sale_qty": "0.0000",
+                "use_config_max_sale_qty": "1",
+                "is_in_stock": "1",
+                "low_stock_date": null,
+                "notify_stock_qty": null,
+                "use_config_notify_stock_qty": "1",
+                "manage_stock": "0",
+                "use_config_manage_stock": "1",
+                "stock_status_changed_auto": "0",
+                "use_config_qty_increments": "1",
+                "qty_increments": "0.0000",
+                "use_config_enable_qty_inc": "1",
+                "enable_qty_increments": "0",
+                "is_decimal_divided": "0",
+                "website_id": "0",
+                "deferred_stock_update": "0",
+                "use_config_deferred_stock_update": "1",
+                "type_id": "simple"
+            }
+        }
+    },
+    "tier_price": [],
+    "tier_price_changed": 0,
+    "quantity_and_stock_status": {
+        "is_in_stock": true,
+        "qty": 100
+    },
+    "category_ids": [
+        "3",
+        "4",
+        "7"
+    ],
+    "is_salable": 1,
+    "productName": "Strive Shoulder Pack",
+    "productPrice": "32.000000",
+    "productSKU": "24-MB04",
+    "productURL": "https:\/\/domain.com\/strive-shoulder-pack.html",
+    "category": "Gear, Bags, Collections",
+    "imageURL": "https:\/\/domain.com\/media\/catalog\/product\/cache\/fd79fb95a4530579d3f7fdd0f01c8ba7\/m\/b\/mb04-black-0.jpg",
+    "zoomImageURL": "https:\/\/domain.com\/media\/catalog\/product\/cache\/fd79fb95a4530579d3f7fdd0f01c8ba7\/m\/b\/mb04-black-0.jpg"
+}
+```
