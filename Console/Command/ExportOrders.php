@@ -34,6 +34,6 @@ class ExportOrders extends AbstractCommand
     {
         $this->getOutput()->writeln('<info>Starting To Export Orders To CSV...</info>');
         $this->orderExport->execute();
-        $this->getOutput()->writeln('<info>Logs Have Been Cleaned</info>');
+        $this->getOutput()->writeln('<info>Orders Have Been Exported</info>');
     }
 }

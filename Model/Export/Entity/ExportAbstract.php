@@ -7,6 +7,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem as MagentoFileSystemManager;
 use Magento\Framework\Filesystem\Directory\WriteInterface as DirectoryWriter;
 use Magento\Store\Model\StoreManagerInterface;
+use MappDigital\Cloud\Model\Connect\Catalog\Product\Consumer;
 use MappDigital\Cloud\Model\Export\Client\FileSystem as MappFilesystemExport;
 use MappDigital\Cloud\Model\Export\Client\Sftp;
 
@@ -21,7 +22,8 @@ abstract class ExportAbstract
         protected StoreManagerInterface $storeManager,
         protected MagentoFileSystemManager $magentoFileSystemManager,
         protected Sftp $sftp,
-        protected MappFilesystemExport $mappFilesystemExport
+        protected MappFilesystemExport $mappFilesystemExport,
+        private Consumer $productConsumer
     )
     {
         $this->directoryWriter = $this->magentoFileSystemManager->getDirectoryWrite(DirectoryList::VAR_DIR);
@@ -87,5 +89,14 @@ abstract class ExportAbstract
         }
 
         return $rows ?? [];
+    }
+
+    /**
+     * @param $image
+     * @return string
+     */
+    protected function getFullPathForImage($image)
+    {
+        return $this->productConsumer->getBaseDomainForImagePath() . $image;
     }
 }

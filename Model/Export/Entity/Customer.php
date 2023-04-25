@@ -7,6 +7,7 @@ use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerC
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem as MagentoFileSystemManager;
 use Magento\Store\Model\StoreManagerInterface;
+use MappDigital\Cloud\Model\Connect\Catalog\Product\Consumer;
 use MappDigital\Cloud\Model\Export\Client\FileSystem as MappFilesystemExport;
 use MappDigital\Cloud\Model\Export\Client\Sftp;
 
@@ -37,10 +38,11 @@ class Customer extends ExportAbstract
         StoreManagerInterface $storeManager,
         MagentoFileSystemManager $magentoFilesystemManager,
         Sftp $sftp,
-        MappFilesystemExport $mappFilesystemExport
+        MappFilesystemExport $mappFilesystemExport,
+        Consumer $productConsumer
     )
     {
-        parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport);
+        parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport, $productConsumer);
     }
 
     /**

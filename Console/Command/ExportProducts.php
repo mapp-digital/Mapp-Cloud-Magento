@@ -32,8 +32,8 @@ class ExportProducts extends AbstractCommand
      */
     public function doExecute()
     {
-        $this->getOutput()->writeln('<info>Starting To Export Orders To CSV...</info>');
+        $this->getOutput()->writeln('<info>Starting To Export Products To CSV...</info>');
         $this->productExport->execute();
-        $this->getOutput()->writeln('<info>Logs Have Been Cleaned</info>');
+        $this->getOutput()->writeln('<info>Products Have Been Exported</info>');
     }
 }

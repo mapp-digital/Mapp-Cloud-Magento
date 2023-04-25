@@ -9,6 +9,7 @@ use Magento\Sales\Model\ResourceModel\Order\Item\CollectionFactory as OrderItemC
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem as MagentoFileSystemManager;
 use Magento\Store\Model\StoreManagerInterface;
+use MappDigital\Cloud\Model\Connect\Catalog\Product\Consumer;
 use MappDigital\Cloud\Model\Export\Client\FileSystem as MappFilesystemExport;
 use MappDigital\Cloud\Model\Export\Client\Sftp;
 
@@ -65,10 +66,11 @@ class Order extends ExportAbstract
         StoreManagerInterface $storeManager,
         MagentoFileSystemManager $magentoFilesystemManager,
         Sftp $sftp,
-        MappFilesystemExport $mappFilesystemExport
+        MappFilesystemExport $mappFilesystemExport,
+        Consumer $productConsumer
     )
     {
-        parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport);
+        parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport, $productConsumer);
     }
 
     /**
@@ -88,10 +90,18 @@ class Order extends ExportAbstract
         while ($entity = $entities->fetchItem()) {
             $data = [];
             foreach ($this::ALL_COLUMNS_IN_ORDER as $column) {
+                if (str_contains($column, 'image')) {
+                    $dataEntry = $this->getFullPathForImage($entity->getData($column));
+                } elseif ($column === 'price') {
+                    $dataEntry =  $entity->getPrice() ?: $entity->getMinimalPrice() ?? $entity->getFinalPrice();
+                } else {
+                    $dataEntry = $entity->getData($column);
+                }
+
                 $data[] = '"' . str_replace(
                         ['"', '\\'],
                         ['""', '\\\\'],
-                        $entity->getData($column) ?: ''
+                        $dataEntry ?? ''
                     ) . '"';
             }
 

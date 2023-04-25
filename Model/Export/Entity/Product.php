@@ -50,14 +50,14 @@ class Product extends ExportAbstract
         private AddStockDataToCollectionWithAllColumns $addStockDataToCollection,
         private GetStockIdForCurrentWebsite $getStockIdForCurrentWebsite,
         private CategoryRepository $categoryRepository,
-        private Consumer $productConsumer,
+        Consumer $productConsumer,
         StoreManagerInterface $storeManager,
         MagentoFileSystemManager $magentoFilesystemManager,
         Sftp $sftp,
         MappFilesystemExport $mappFilesystemExport
     )
     {
-        parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport);
+        parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport, $productConsumer);
     }
 
     /**
@@ -108,15 +108,6 @@ class Product extends ExportAbstract
         }
 
         return $rows ?? [];
-    }
-
-    /**
-     * @param $image
-     * @return string
-     */
-    private function getFullPathForImage($image)
-    {
-        return $this->productConsumer->getBaseDomainForImagePath() . $image;
     }
 
     /**
