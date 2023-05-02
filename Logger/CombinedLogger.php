@@ -1,13 +1,14 @@
 <?php
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 namespace MappDigital\Cloud\Logger;
 
 use JsonException;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
@@ -27,11 +28,12 @@ class CombinedLogger
     ];
 
     public function __construct(
-        protected Logger $logger,
-        protected LogRepository $logRepository,
-        protected LogFactory $logFactory,
-        protected ScopeConfigInterface $config,
-        protected Json $jsonSerializer
+        private Logger $logger,
+        private LogRepository $logRepository,
+        private LogFactory $logFactory,
+        private ScopeConfigInterface $config,
+        private Json $jsonSerializer,
+        private ManagerInterface $eventManager
     ) {}
 
     // -----------------------------------------------
@@ -148,7 +150,9 @@ class CombinedLogger
         try {
             if ($this->config->getValue(LogInterface::CONFIG_XML_PATH_LOGGING_FILE_ENABLED, ScopeInterface::SCOPE_STORE) && isset($this->levelToMethodMap[$level])) {
                 $method = $this->levelToMethodMap[$level];
-                $this->logger->$method($class . '::' . $function . ' ====== ' . $message, $context);
+                $logMessage = $class . '::' . $function . ' ====== ' . $message;
+                $this->logger->$method($logMessage, $context);
+                $this->eventManager->dispatch('mapp_combinedlogger_add_file_message', ['message' => $logMessage]);
             }
 
             if ($this->config->getValue(LogInterface::CONFIG_XML_PATH_LOGGING_DB_ENABLED, ScopeInterface::SCOPE_STORE)) {

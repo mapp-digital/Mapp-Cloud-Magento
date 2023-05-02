@@ -17,7 +17,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
-use MappDigital\Cloud\Enum\Connect\ConfigurationPaths;
+use MappDigital\Cloud\Enum\Connect\ConfigurationPaths as ConnectConfigurationPaths;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Logger\CombinedLogger;
 
@@ -78,8 +78,8 @@ class Consumer
      */
     private function addMediaUrlsIncludingDomainToData(Product $product, array &$data)
     {
-        if ($this->coreConfig->getValue(ConfigurationPaths::XML_PATH_PRODUCT_SYNC_USE_CACHED_URLS, ScopeInterface::SCOPE_STORE)) {
-            if ($this->coreConfig->getValue(ConfigurationPaths::XML_PATH_PRODUCT_SYNC_GENERATE_CACHED_URLS, ScopeInterface::SCOPE_STORE)) {
+        if ($this->coreConfig->getValue(ConnectConfigurationPaths::XML_PATH_PRODUCT_SYNC_USE_CACHED_URLS->value, ScopeInterface::SCOPE_STORE)) {
+            if ($this->coreConfig->getValue(ConnectConfigurationPaths::XML_PATH_PRODUCT_SYNC_GENERATE_CACHED_URLS->value, ScopeInterface::SCOPE_STORE)) {
                 $this->imageCache->generate($product);
             }
 
@@ -99,7 +99,7 @@ class Consumer
         if ((isset($data['media_gallery']) && isset($data['media_gallery']['images'])) && is_array($data['media_gallery']['images'])) {
             foreach ($data['media_gallery']['images'] as $key => $media) {
                 if (isset($media['media_type']) && $media['media_type'] === 'image') {
-                    if ($this->coreConfig->getValue(ConfigurationPaths::XML_PATH_PRODUCT_SYNC_USE_CACHED_URLS, ScopeInterface::SCOPE_STORE)) {
+                    if ($this->coreConfig->getValue(ConnectConfigurationPaths::XML_PATH_PRODUCT_SYNC_USE_CACHED_URLS->value, ScopeInterface::SCOPE_STORE)) {
                         $data['media_gallery']['images'][$key]['file'] = $this->imageUrlBuilder->getUrl($data['media_gallery']['images'][$key]['file'], 'product_base_image');
                     } else {
                         $data['media_gallery']['images'][$key]['file'] = $this->getBaseDomainForImagePath() . $data['media_gallery']['images'][$key]['file'];

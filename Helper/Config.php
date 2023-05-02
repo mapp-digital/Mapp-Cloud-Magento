@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2022 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 namespace MappDigital\Cloud\Helper;
@@ -10,25 +10,12 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Store\Model\ScopeInterface;
+use MappDigital\Cloud\Enum\Acquire\ConfigurationPaths as AcquireConfigPaths;
+use MappDigital\Cloud\Enum\GTM\ConfigurationPaths as GTMConfigPaths;
+use MappDigital\Cloud\Enum\TagIntegration\ConfigurationPaths as TagIntegrationConfigPaths;
 
 class Config extends AbstractHelper
 {
-    const XML_PATH_ENABLE = 'tagintegration/general/enable';
-    const XML_PATH_TAGINTEGRATION_ID = 'tagintegration/general/tagintegration_id';
-    const XML_PATH_TAGINTEGRATION_DOMAIN = 'tagintegration/general/tagintegration_domain';
-    const XML_PATH_CUSTOM_DOMAIN = 'tagintegration/general/custom_domain';
-    const XML_PATH_CUSTOM_PATH = 'tagintegration/general/custom_path';
-    const XML_PATH_ATTRIBUTE_BLACKLIST = 'tagintegration/general/attribute_blacklist';
-    const XML_PATH_ADD_TO_CART_EVENT_NAME = 'tagintegration/general/add_to_cart_event_name';
-    const XML_PATH_REMOVE_FROM_CART_EVENT_NAME = 'tagintegration/general/remove_from_cart_event_name';
-    const XML_PATH_ACQUIRE = 'mapp_acquire/general/acquire';
-    const XML_PATH_GTM_ENABLE = 'mapp_gtm/general/gtm_enable';
-    const XML_PATH_GTM_LOAD = 'mapp_gtm/general/gtm_load';
-    const XML_PATH_GTM_ID = 'mapp_gtm/general/gtm_id';
-    const XML_PATH_GTM_DATALAYER = 'mapp_gtm/general/gtm_datalayer';
-    const XML_PATH_GTM_TRIGGER_BASKET = 'mapp_gtm/general/gtm_trigger_basket';
-    const XML_PATH_GTM_ADD_TO_CART_EVENTNAME = 'mapp_gtm/general/gtm_add_to_cart_eventname';
-
     public function __construct(
         protected Repository $assetRepository,
         Context $context
@@ -41,24 +28,24 @@ class Config extends AbstractHelper
      */
     public function isEnabled(): bool
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_ENABLE, ScopeInterface::SCOPE_STORE) || $this->scopeConfig->isSetFlag(self::XML_PATH_GTM_ENABLE, ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->isSetFlag(TagIntegrationConfigPaths::XML_PATH_ENABLE->value, ScopeInterface::SCOPE_STORE) || $this->scopeConfig->isSetFlag(GTMConfigPaths::XML_PATH_GTM_ENABLE->value, ScopeInterface::SCOPE_STORE);
     }
 
     /**
      * @return string
      */
-    private function getAttributeBlacklist()
+    private function getAttributeBlacklist(): string
     {
-        $attributeBlacklist = $this->scopeConfig->getValue(self::XML_PATH_ATTRIBUTE_BLACKLIST, ScopeInterface::SCOPE_STORE);
-        return preg_split("/(?:\r\n|,)/", $attributeBlacklist);
+        $attributeBlacklist = $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_ATTRIBUTE_BLACKLIST->value, ScopeInterface::SCOPE_STORE);
+        return preg_split("/(?:\r\n|,)/", $attributeBlacklist ?? '') ?? '';
     }
 
     /**
-     * @return string | null
+     * @return string|null
      */
     private function getAcquireLink()
     {
-        $acquireScript = $this->scopeConfig->getValue(self::XML_PATH_ACQUIRE, ScopeInterface::SCOPE_STORE);
+        $acquireScript = $this->scopeConfig->getValue(AcquireConfigPaths::XML_PATH_ACQUIRE->value, ScopeInterface::SCOPE_STORE);
 
         if(!is_null($acquireScript) && preg_match('/id=(\d+?)&m=(\d+?)\D/', $acquireScript, $ids)) {
             return 'https://c.flx1.com/' . $ids[2] . '-' . $ids[1] .'.js?id=' . $ids[1] . '&m=' . $ids[2];
@@ -73,12 +60,12 @@ class Config extends AbstractHelper
     public function getGTMConfig(): array
     {
         return [
-            'enable' => $this->scopeConfig->getValue(self::XML_PATH_GTM_ENABLE, ScopeInterface::SCOPE_STORE),
-            'load' => $this->scopeConfig->getValue(self::XML_PATH_GTM_LOAD, ScopeInterface::SCOPE_STORE),
-            'id' => $this->scopeConfig->getValue(self::XML_PATH_GTM_ID, ScopeInterface::SCOPE_STORE),
-            'datalayer' => $this->scopeConfig->getValue(self::XML_PATH_GTM_DATALAYER, ScopeInterface::SCOPE_STORE),
-            'triggerBasket' => $this->scopeConfig->getValue(self::XML_PATH_GTM_TRIGGER_BASKET, ScopeInterface::SCOPE_STORE),
-            'event' => $this->scopeConfig->getValue(self::XML_PATH_GTM_ADD_TO_CART_EVENTNAME, ScopeInterface::SCOPE_STORE)
+            'enable' => $this->scopeConfig->getValue(GTMConfigPaths::XML_PATH_GTM_ENABLE->value, ScopeInterface::SCOPE_STORE),
+            'load' => $this->scopeConfig->getValue(GTMConfigPaths::XML_PATH_GTM_LOAD->value, ScopeInterface::SCOPE_STORE),
+            'id' => $this->scopeConfig->getValue(GTMConfigPaths::XML_PATH_GTM_ID->value, ScopeInterface::SCOPE_STORE),
+            'datalayer' => $this->scopeConfig->getValue(GTMConfigPaths::XML_PATH_GTM_DATALAYER->value, ScopeInterface::SCOPE_STORE),
+            'triggerBasket' => $this->scopeConfig->getValue(GTMConfigPaths::XML_PATH_GTM_TRIGGER_BASKET->value, ScopeInterface::SCOPE_STORE),
+            'event' => $this->scopeConfig->getValue(GTMConfigPaths::XML_PATH_GTM_ADD_TO_CART_EVENTNAME->value, ScopeInterface::SCOPE_STORE)
         ];
     }
 
@@ -88,11 +75,11 @@ class Config extends AbstractHelper
     public function getConfig(): array
     {
         return [
-            'tiEnable' => $this->scopeConfig->getValue(self::XML_PATH_ENABLE, ScopeInterface::SCOPE_STORE),
-            'tiId' => $this->scopeConfig->getValue(self::XML_PATH_TAGINTEGRATION_ID, ScopeInterface::SCOPE_STORE),
-            'tiDomain' => $this->scopeConfig->getValue(self::XML_PATH_TAGINTEGRATION_DOMAIN, ScopeInterface::SCOPE_STORE),
-            'customDomain' => $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_DOMAIN, ScopeInterface::SCOPE_STORE),
-            'customPath' => $this->scopeConfig->getValue(self::XML_PATH_CUSTOM_PATH, ScopeInterface::SCOPE_STORE),
+            'tiEnable' => $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_ENABLE->value, ScopeInterface::SCOPE_STORE),
+            'tiId' => $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_TAGINTEGRATION_ID->value, ScopeInterface::SCOPE_STORE),
+            'tiDomain' => $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_TAGINTEGRATION_DOMAIN->value, ScopeInterface::SCOPE_STORE),
+            'customDomain' => $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_CUSTOM_DOMAIN->value, ScopeInterface::SCOPE_STORE),
+            'customPath' => $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_CUSTOM_PATH->value, ScopeInterface::SCOPE_STORE),
             'option' => (object)[],
             'acquire' => $this->getAcquireLink(),
             'gtm' => $this->getGTMConfig()
@@ -104,7 +91,7 @@ class Config extends AbstractHelper
      */
     public function getAddToCartEventName(): string
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_ADD_TO_CART_EVENT_NAME, ScopeInterface::SCOPE_STORE) ?? 'add-to-cart';
+        return $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_ADD_TO_CART_EVENT_NAME->value, ScopeInterface::SCOPE_STORE) ?? 'add-to-cart';
     }
 
     /**
@@ -112,7 +99,7 @@ class Config extends AbstractHelper
      */
     public function getRemoveFromCartEventName(): string
     {
-        return $this->scopeConfig->getValue(self::XML_PATH_REMOVE_FROM_CART_EVENT_NAME, ScopeInterface::SCOPE_STORE) ?? 'remove-from-cart';
+        return $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_REMOVE_FROM_CART_EVENT_NAME->value, ScopeInterface::SCOPE_STORE) ?? 'remove-from-cart';
     }
 
     /**
