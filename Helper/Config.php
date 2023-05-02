@@ -32,12 +32,12 @@ class Config extends AbstractHelper
     }
 
     /**
-     * @return string
+     * @return array
      */
-    private function getAttributeBlacklist(): string
+    private function getAttributeBlacklist(): array
     {
         $attributeBlacklist = $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_ATTRIBUTE_BLACKLIST->value, ScopeInterface::SCOPE_STORE);
-        return preg_split("/(?:\r\n|,)/", $attributeBlacklist ?? '') ?? '';
+        return preg_split("/(?:\r\n|,)/", $attributeBlacklist ?? '') ?: [];
     }
 
     /**
