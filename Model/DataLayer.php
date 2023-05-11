@@ -8,6 +8,7 @@ namespace MappDigital\Cloud\Model;
 
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\DataObject;
+use Magento\Framework\Exception\NoSuchEntityException;
 use MappDigital\Cloud\Model\Data\Cart;
 use MappDigital\Cloud\Model\Data\Customer;
 use MappDigital\Cloud\Model\Data\Order;
@@ -56,6 +57,10 @@ class DataLayer extends DataObject
         $this->_addArray('page', $this->page->getDataLayer());
     }
 
+    /**
+     * @param $productUrlFragment
+     * @return void
+     */
     public function setProductDataLayer($productUrlFragment)
     {
         $productDataLayer = $this->product->getDataLayer($productUrlFragment);
@@ -68,21 +73,34 @@ class DataLayer extends DataObject
         $this->_addArray('product', $productDataLayer);
     }
 
+    /**
+     * @return void
+     */
     public function setCustomerDataLayer()
     {
         $this->_addArray('customer', $this->customer->getDataLayer());
     }
 
+    /**
+     * @return void
+     */
     public function setCartDataLayer()
     {
         $this->_addArray('add', $this->cart->getDataLayer());
     }
 
+    /**
+     * @return void
+     */
     public function setWishlistData()
     {
         $this->_addArray('add', $this->wishlist->getDataLayer());
     }
 
+    /**
+     * @return void
+     * @throws NoSuchEntityException
+     */
     public function setOrderDataLayer()
     {
         $orderData = $this->order->getDataLayer();

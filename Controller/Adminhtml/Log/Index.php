@@ -41,5 +41,15 @@ class Index extends Action
         $resultPage->getConfig()->getTitle()->prepend(__('MAPP Digital Log Grid'));
         return $resultPage;
     }
+
+    /**
+     * @return bool
+     */
+    protected function _isAllowed()
+    {
+        return $this->_authorization->isAllowed(
+            'MappDigital_Cloud::log_view'
+        );
+    }
 }
 

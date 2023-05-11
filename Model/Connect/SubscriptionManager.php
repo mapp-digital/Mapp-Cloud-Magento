@@ -24,6 +24,7 @@ use Magento\Framework\Validation\ValidationException;
 use Magento\Payment\Helper\Data as PaymentDataHelper;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\StoreManager;
+use MappDigital\Cloud\Enum\Connect\ConfigurationPaths;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Logger\CombinedLogger;
 use Zend_Db_Exception;
@@ -413,7 +414,7 @@ class SubscriptionManager
         $columnChecks[] = sprintf(
             '(NEW.%1$s = "%2$s")',
             $this->connection->quoteIdentifier('state'),
-            $status ?? $this->coreConfig->getValue(ConnectHelper::XML_PATH_ORDER_STATUS_EXPORT)
+            $status ?? $this->coreConfig->getValue(ConfigurationPaths::XML_PATH_ORDER_STATUS_EXPORT->value)
         );
 
         $trigger = sprintf(

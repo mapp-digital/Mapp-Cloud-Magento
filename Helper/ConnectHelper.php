@@ -15,6 +15,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
+use MappDigital\Cloud\Enum\Connect\ConfigurationPaths;
 use MappDigital\Cloud\Model\Config\Source\SyncMethod;
 use MappDigital\Cloud\Model\Connect\Client as MappConnectClient;
 use MappDigital\Cloud\Model\Connect\ClientFactory as MappConnectClientFactory;
@@ -22,11 +23,7 @@ use MappDigital\Cloud\Model\Connect\ClientFactory as MappConnectClientFactory;
 class ConnectHelper extends AbstractHelper
 {
     const CONFIG_PREFIX = 'mapp_connect';
-    const XML_PATH_SYNC_METHOD = 'mapp_connect/export/sync_method';
-    const XML_PATH_ORDER_STATUS_EXPORT = 'mapp_connect/export/transaction_send_on_status';
-    const XML_PATH_NEWSLETTER_RETRY_LIMIT = 'mapp_connect/export/newsletter_retry_max';
     const XML_PATH_ORDER_RETRY_LIMIT = 'mapp_connect/export/transaction_retry_max';
-    const XML_PATH_EMAILS_ENABLED = 'mapp_connect_messages/general/enable';
 
     protected ?MappConnectClient $client = null;
 
@@ -118,7 +115,7 @@ class ConnectHelper extends AbstractHelper
      */
     public function isMappEmailEnabled(): bool
     {
-        return (bool)$this->config->getValue(self::XML_PATH_EMAILS_ENABLED);
+        return (bool)$this->config->getValue(ConfigurationPaths::XML_PATH_EMAILS_ENABLED->value, ScopeInterface::SCOPE_STORE);
     }
 
     /**

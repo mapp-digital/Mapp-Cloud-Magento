@@ -15,6 +15,7 @@ use Magento\Framework\MessageQueue\PublisherInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Newsletter\Model\Subscriber;
 use Magento\Sales\Model\OrderRepository;
+use MappDigital\Cloud\Enum\Connect\ConfigurationPaths;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Logger\CombinedLogger;
 use MappDigital\Cloud\Model\Connect\SubscriptionManager;
@@ -147,7 +148,7 @@ class ConsumeQueue
      */
     private function getMaxOrderRetryCount(): int
     {
-        return $this->coreConfig->getValue(ConnectHelper::XML_PATH_ORDER_RETRY_LIMIT) ?? self::MAX_ORDER_RETRY_COUNT;
+        return $this->coreConfig->getValue(ConfigurationPaths::XML_PATH_ORDER_RETRY_LIMIT->value) ?? self::MAX_ORDER_RETRY_COUNT;
     }
 
     /**
@@ -155,6 +156,6 @@ class ConsumeQueue
      */
     private function getMaxNewsletterRetryCount(): int
     {
-        return $this->coreConfig->getValue(ConnectHelper::XML_PATH_NEWSLETTER_RETRY_LIMIT) ?? self::MAX_NEWSLETTER_RETRY_COUNT;
+        return $this->coreConfig->getValue(ConfigurationPaths::XML_PATH_NEWSLETTER_RETRY_LIMIT->value) ?? self::MAX_NEWSLETTER_RETRY_COUNT;
     }
 }

@@ -243,6 +243,9 @@
                         two resized files if they don't exist for each product when synced.
                     ]]>
                     </comment>
+                    <depends>
+                        <field id="product_image_cache_enable">1</field>
+                    </depends>
                 </field>
                 <field id="customer_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Enable Customer Synchronisation</label>
@@ -266,6 +269,7 @@
                     <validate>validate-number</validate>
                     <depends>
                         <field id="transaction_enable">1</field>
+                        <field id="sync_method">1</field>
                     </depends>
                 </field>
                 <field id="newsletter_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -284,11 +288,12 @@
                     <validate>validate-number</validate>
                     <depends>
                         <field id="newsletter_enable">1</field>
+                        <field id="sync_method">1</field>
                     </depends>
                 </field>
             </group>
             <group id="group" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Mapp Engage Group configuration</label>
+                <label>Mapp Engage Groups</label>
                 <field id="customers" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Customers Group</label>
                     <source_model>MappDigital\Cloud\Model\Config\Backend\Group</source_model>
