@@ -35,7 +35,7 @@ class Product extends ExportAbstract
         'sku' => 'productSKU',
         'name' => 'productName',
         'price' => 'productPrice',
-        'url' => 'imageURL',
+        'url' => 'productURL',
         'qty' => 'qty',
         'image' => 'imageURL',
         'small_image' => 'zoomImageURL',
