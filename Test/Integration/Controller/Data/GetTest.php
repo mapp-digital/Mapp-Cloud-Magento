@@ -25,7 +25,7 @@ use Magento\TestFramework\TestCase\AbstractController;
  *
  * @magentoDataFixture MappDigital_Cloud::Test/Integration/_files/mapp_product_simple.php
  * @magentoDataFixture MappDigital_Cloud::Test/Integration/_files/mapp_category.php
-
+ *
  * @magentoDbIsolation enabled
  */
 class GetTest extends AbstractController
@@ -155,6 +155,10 @@ class GetTest extends AbstractController
     }
 
     /**
+     * @magentoConfigFixture current_store tagintegration/general/enable 1
+     * @magentoConfigFixture current_store tagintegration/general/tagintegration_id 164891111181113
+     * @magentoConfigFixture current_store tagintegration/general/tagintegration_domain mapp.local.com
+     * @magentoConfigFixture current_store tagintegration/general/custom_domain mapp.local.com
      * @magentoConfigFixture current_store mapp_acquire/general/enable 1
      * @magentoConfigFixture current_store mapp_acquire/general/acquire (function(e){var t=document,n=t.createElement("script");n.async=!0,n.defer=!0,n.src=e,t.getElementsByTagName("head")[0].appendChild(n)})("https://go.flx1.com/100-20000.js?id=20000&m=100")
      * @return void
@@ -164,12 +168,20 @@ class GetTest extends AbstractController
         $this->getRequest()->setMethod(HttpRequest::METHOD_GET);
         $this->dispatch('/');
 
-        $this->assertStringContainsString('100', $this->getResponse());
-        $this->assertStringContainsString('20000', $this->getResponse());
+        $this->assertStringContainsString('acquireAdd', $this->getResponse());
+        $this->assertStringContainsString('acquireRemove', $this->getResponse());
+        $this->assertStringContainsString('acquireWishlist', $this->getResponse());
+        $this->assertStringContainsString('id=20000', $this->getResponse());
+        $this->assertStringContainsString('m=100', $this->getResponse());
+        $this->assertStringContainsString('c.flx1.com', $this->getResponse());
     }
 
     /**
      * @magentoConfigFixture current_store customer/captcha/enable 0
+     * @magentoConfigFixture current_store tagintegration/general/enable 1
+     * @magentoConfigFixture current_store tagintegration/general/tagintegration_id 164891111181113
+     * @magentoConfigFixture current_store tagintegration/general/tagintegration_domain mapp.local.com
+     * @magentoConfigFixture current_store tagintegration/general/custom_domain mapp.local.com
      * @magentoDataFixture Magento/Customer/_files/customer.php
      * @return void
      */
@@ -234,7 +246,7 @@ class GetTest extends AbstractController
         $product = $this->productRepository->get('simple');
         $this->prepareAndGoToPageAndClearRequestReadyForDataTest(HttpRequest::METHOD_GET, '/catalog/product/view/id/' . $product->getId());
         $this->catalogSession->setData('last_viewedproduct_id', $product->getId());
-        $dataLayer = $this->prepareAndGoToDataLayerGetEndpointAndReturnDataLayerResponse(['product' => $product->getUrlKey()]);
+        $dataLayer = $this->prepareAndGoToDataLayerGetEndpointAndReturnDataLayerResponse(['product' => $product->getId()]);
 
         $this->assertThatAllBasicPageKeysExistInDataLayerArray($dataLayer);
         $this->assertThatAllBasicProductKeysExistInDataLayerArray($dataLayer);

@@ -9,6 +9,7 @@ use Magento\TestFramework\TestCase\AbstractController;
 class PixelDataTest extends AbstractController
 {
     /**
+     * @magentoConfigFixture current_store mapp_web_push/general/enable 1
      * @magentoConfigFixture current_store mapp_web_push/pixel/service_url test_service_url
      * @magentoConfigFixture current_store mapp_web_push/pixel/webpush_script_included test_webpush_script_included
      * @magentoConfigFixture current_store mapp_web_push/pixel/use_user_matching test_use_user_matching

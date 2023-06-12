@@ -9,6 +9,7 @@ use Magento\TestFramework\TestCase\AbstractController;
 class FirebaseDataTest extends AbstractController
 {
     /**
+     * @magentoConfigFixture current_store mapp_web_push/general/enable 1
      * @magentoConfigFixture current_store mapp_web_push/firebase/firebase_version test_firebase_version
      * @magentoConfigFixture current_store mapp_web_push/firebase/api_key test_api_key
      * @magentoConfigFixture current_store mapp_web_push/firebase/auth_domain test_auth_domain

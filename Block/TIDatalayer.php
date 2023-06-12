@@ -9,6 +9,8 @@ namespace MappDigital\Cloud\Block;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\View\Page\Config as FrameworkPageConfig;
+use Magento\Catalog\Block\Product\View;
+use Magento\Catalog\Helper\Data as Catalog;
 use MappDigital\Cloud\Helper\Config;
 use MappDigital\Cloud\Helper\TrackingScript;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
@@ -22,6 +24,8 @@ class TIDatalayer extends Template
         protected Config $config,
         protected DataLayerHelper $dataLayerHelper,
         protected DataLayer $dataLayerModel,
+        protected View $view,
+        protected Catalog $catalog,
         Context $context,
         FrameworkPageConfig $pageConfig,
         array $data = []
@@ -59,6 +63,23 @@ class TIDatalayer extends Template
      */
     public function getScript(): string
     {
-        return TrackingScript::generateJS($this->config->getConfig());
+        return TrackingScript::generateJS($this->config->getConfig(), $this->getProductId());
+    }
+
+
+    /**
+     * @return int|null
+     */
+    private function getProductId(): ?int
+    {
+        $product = $this->view->getProduct();
+        $productId = $product?->getId();
+
+        if (is_null($productId)) {
+            $product = $this->catalog->getProduct();
+            return $product?->getId();
+        }
+
+        return $productId;
     }
 }

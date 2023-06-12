@@ -12,7 +12,7 @@ class TrackingScript
      * @param $config
      * @return string
      */
-    public static function generateJS($config)
+    public static function generateJS($config, $productId)
     {
         $_psVersion = self::getVersion();
 
@@ -180,7 +180,7 @@ class TrackingScript
                 window.wts.push(['_mappAddToCartHelper']);
                 window.dataLayer = window.dataLayer || [];
                 $.ajax({
-                    url: mappEndpoint + (isProductView ? '?product='+location.href.split('/').pop() : ''),
+                    url: mappEndpoint + (isProductView ? '?product={$productId}' : ''),
                     type: 'GET',
                     dataType: 'json',
                     complete: function(response) {

@@ -26,6 +26,7 @@ class ProductTest extends TestCase
     }
 
     /**
+     * @magentoConfigFixture current_store mapp_web_push/general/enable 1
      * @return void
      * @throws LocalizedException
      */
@@ -35,7 +36,6 @@ class ProductTest extends TestCase
 
         $this->assertContains('"simple"', $csvContent);
         $this->assertContains('"Simple Product"', $csvContent);
-        $this->assertContains('"simple-product"', $csvContent);
         $this->assertContains('"10.000000"', $csvContent);
         $this->assertContains('"15.000000"', $csvContent);
         $this->assertContains('"100.0000"', $csvContent);

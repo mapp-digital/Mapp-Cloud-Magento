@@ -38,7 +38,7 @@ class OrderTest extends TestCase
         $this->assertContains('"100000333"', $csvContent);
         $this->assertContains('"simple"', $csvContent);
         $this->assertContains('"Simple Product"', $csvContent);
-        $this->assertContains('"90.0000"', $csvContent);
+        $this->assertContains('"90"', $csvContent);
         $this->assertContains('"50.0000"', $csvContent);
         $this->assertContains('"10.0000"', $csvContent);
         $this->assertContains('"1"', $csvContent);

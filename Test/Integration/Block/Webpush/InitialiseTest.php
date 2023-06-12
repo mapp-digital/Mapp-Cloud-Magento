@@ -29,6 +29,7 @@ class InitialiseTest extends AbstractController
     /**
      * Confirm that no alias can be found on the homepage when not logged in
      *
+     * @magentoConfigFixture current_store mapp_web_push/general/enable 1
      * @return void
      */
     public function testThatNoUserAliasIsReturnedWhenLoggedOutAndNotOnOrderSuccessPage()
@@ -42,6 +43,7 @@ class InitialiseTest extends AbstractController
     /**
      * Confirm that alias can be found on the homepage when logged in
      *
+     * @magentoConfigFixture current_store mapp_web_push/general/enable 1
      * @magentoDataFixture Magento/Customer/_files/customer.php
      * @return void
      */
@@ -55,6 +57,7 @@ class InitialiseTest extends AbstractController
     }
 
     /**
+     * @magentoConfigFixture current_store mapp_web_push/general/enable 1
      * @return void
      */
     public function testLayoutHandleAddedIfCookieNotSetAfterPageLoad()
@@ -65,6 +68,7 @@ class InitialiseTest extends AbstractController
     }
 
     /**
+     * @magentoConfigFixture current_store mapp_web_push/general/enable 1
      * @return void
      */
     public function testCookieNotSetAfterPageLoad()
@@ -76,6 +80,7 @@ class InitialiseTest extends AbstractController
     }
 
     /**
+     * @magentoConfigFixture current_store mapp_web_push/general/enable 1
      * @magentoConfigFixture current_store customer/captcha/enable 0
      * @magentoDataFixture Magento/Customer/_files/customer.php
      * @return void

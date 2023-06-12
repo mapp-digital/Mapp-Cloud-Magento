@@ -35,18 +35,14 @@ class Product extends AbstractData
         protected CombinedLogger $mappCombinedLogger
     ) {}
 
-    private function generate($productUrlFragment)
+    private function generate($productId)
     {
         $this->setBreadcrumb();
 
         if (!$this->product) {
-            $productId = $this->catalogSession->getData('last_viewedproduct_id');
-            if (is_null($productId)) {
-                $productId = $this->fallbackProductIdGetter($productUrlFragment);
-            }
-            if (!is_null($productId)) {
+            try {
                 $this->product = $this->productRepository->getById($productId);
-            }
+            } catch (NoSuchEntityException) {}
         }
 
         if ($this->product) {
@@ -178,12 +174,12 @@ class Product extends AbstractData
     }
 
     /**
-     * @param $productUrlFragment
+     * @param $productId
      * @return array
      */
-    public function getDataLayer($productUrlFragment): array
+    public function getDataLayer($productId): array
     {
-        $this->generate($productUrlFragment);
+        $this->generate($productId);
         return $this->_data ?? [];
     }
 

@@ -155,7 +155,7 @@ class Consumer
     public function getBaseDomainForImagePath(): string
     {
         if (!$this->baseDomainForImagePaths) {
-            $mediaUrl = $this->coreConfig->getValue(Store::XML_PATH_SECURE_BASE_MEDIA_URL);
+            $mediaUrl = (string)$this->coreConfig->getValue(Store::XML_PATH_SECURE_BASE_MEDIA_URL);
             $domain = (string)$this->coreConfig->getValue(Store::XML_PATH_SECURE_BASE_URL);
 
             if (!str_contains($mediaUrl, $domain)) {

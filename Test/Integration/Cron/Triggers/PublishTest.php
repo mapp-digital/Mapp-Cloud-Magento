@@ -28,7 +28,7 @@ use MappDigital\Cloud\Cron\Triggers\Publish;
  */
 class PublishTest extends AbstractController
 {
-    private string $subscriberToDelete = '';
+    private ?string $subscriberToDelete = '';
 
     private ?Session $session;
     private ?CustomerRepositoryInterface $customerRepository;
@@ -44,7 +44,7 @@ class PublishTest extends AbstractController
     private ?AdapterInterface $connection;
     private ?SubscriberCollectionFactory $subscriberCollectionFactory;
     private ?SubscriberResource $subscriberResource;
-    private ?Publish $cronPubish;
+    private ?Publish $cronPubish = null;
 
     /**
      * @inheritdoc
