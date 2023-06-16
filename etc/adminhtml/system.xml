@@ -213,12 +213,12 @@
             <group id="export" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Export Connection Configuration</label>
                 <field id="sync_method" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Synchronisation method</label>
+                    <label>Synchronization method</label>
                     <source_model>MappDigital\Cloud\Model\Config\Source\SyncMethod</source_model>
                     <backend_model>MappDigital\Cloud\Model\Adminhtml\System\Config\Backend\Connect\TriggerManagement</backend_model>
                 </field>
                 <field id="product_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Enable Product Synchronisation</label>
+                    <label>Enable Product Synchronization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="product_image_cache_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
@@ -248,11 +248,11 @@
                     </depends>
                 </field>
                 <field id="customer_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Enable Customer Synchronisation</label>
+                    <label>Enable Customer Synchronization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="transaction_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Enable Sales Transaction Synchronisation</label>
+                    <label>Enable Sales Transaction Synchronization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="transaction_send_on_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
@@ -709,7 +709,7 @@
                     <label>Enable Web Push Integration via Mapp</label>
                     <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
                     <tooltip>
-                        Here you can activate and deactivate the Mapp Intelligence extension.
+                        Here you can activate and deactivate the Mapp Engage extension.
                     </tooltip>
                 </field>
             </group>
