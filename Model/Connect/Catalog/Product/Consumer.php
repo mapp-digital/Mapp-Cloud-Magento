@@ -48,6 +48,8 @@ class Consumer
         $productData = $this->jsonSerializer->unserialize($productDataJson);
         $product = $this->productRepository->get($productData['sku']);
 
+        $this->mappCombinedLogger->info('MappConnect: -- Product Sync Consumer -- Sending Product SKU to Mapp: ' . $product->getSku(), __CLASS__,__FUNCTION__);
+        
         $data = $product->getData();
         $data['productName'] = $product->getName();
         $data['productPrice'] = $product->getPrice() ?: $product->getMinimalPrice() ?? $product->getFinalPrice();
@@ -60,7 +62,6 @@ class Consumer
             $data['extension_attributes'] = $this->getAllProductExtensionAttributesAsArray($product);
         }
 
-        $this->mappCombinedLogger->info('MappConnect: -- Product Sync Consumer -- Sending Product SKU to Mapp: ' . $product->getSku(), __CLASS__,__FUNCTION__);
         $this->mappCombinedLogger->debug(
             'MappConnect: -- Product Sync Consumer -- Sending Product data mapp',
             __CLASS__, __FUNCTION__,
