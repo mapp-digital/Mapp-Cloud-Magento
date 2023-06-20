@@ -27,6 +27,10 @@ class MappConnectPublishProductUpdate implements ObserverInterface
             /** @var MagentoProductModel $product */
             $product = $observer->getEvent()->getData('product');
             $this->publisher->publish($this->getPublisherName(), $this->jsonSerializer->serialize(['sku' => $product->getSku()]));
+            $this->mappCombinedLogger->debug(
+                'Adding Message To Queue for Sku: ' . $product->getSku(),
+                __CLASS__, __FUNCTION__
+            );
         } catch (\Exception $exception) {
             $this->mappCombinedLogger->critical(
                 $exception->getMessage(),
