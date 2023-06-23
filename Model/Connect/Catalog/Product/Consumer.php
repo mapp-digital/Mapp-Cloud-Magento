@@ -63,7 +63,7 @@ class Consumer
         }
 
         $this->mappCombinedLogger->debug(
-            'MappConnect: -- Product Sync Consumer -- Sending Product data mapp',
+            'MappConnect: -- Product Sync Consumer -- Sending Product data mapp: ' . json_encode($data, JSON_PRETTY_PRINT),
             __CLASS__, __FUNCTION__,
             ['data' => $data]
         );
