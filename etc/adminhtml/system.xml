@@ -255,15 +255,6 @@
                     <label>Enable Sales Transaction Synchronization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="transaction_send_on_status" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Transaction send on status</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
-                    <backend_model>MappDigital\Cloud\Model\Adminhtml\System\Config\Backend\Connect\OrderSubscriptionTriggerOnSave</backend_model>
-                    <comment>IMPORTANT: Changing this will update DB triggers.</comment>
-                    <depends>
-                        <field id="transaction_enable">1</field>
-                    </depends>
-                </field>
                 <field id="transaction_retry_max" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Max Order Request Retry Count</label>
                     <validate>validate-number</validate>

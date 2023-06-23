@@ -406,20 +406,14 @@ class SubscriptionManager
 
         $trigger = "INSERT IGNORE INTO %s (%s) VALUES (%s);";
 
-        $columnChecks[] = sprintf(
+        $columnCheck = sprintf(
             'NOT(NEW.%1$s <=> OLD.%1$s)',
             $this->connection->quoteIdentifier('state')
         );
 
-        $columnChecks[] = sprintf(
-            '(NEW.%1$s = "%2$s")',
-            $this->connection->quoteIdentifier('state'),
-            $status ?? $this->coreConfig->getValue(ConfigurationPaths::XML_PATH_ORDER_STATUS_EXPORT->value)
-        );
-
         $trigger = sprintf(
             "IF (%s) THEN %s END IF;",
-            implode(' AND ', $columnChecks),
+            $columnCheck,
             $trigger
         );
 
