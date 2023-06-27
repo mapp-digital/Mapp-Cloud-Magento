@@ -408,7 +408,7 @@ class SubscriptionManager
 
         $columnCheck = sprintf(
             'NOT(NEW.%1$s <=> OLD.%1$s)',
-            $this->connection->quoteIdentifier('state')
+            $this->connection->quoteIdentifier('status')
         );
 
         $trigger = sprintf(
