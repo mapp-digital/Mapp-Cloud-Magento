@@ -45,30 +45,38 @@ class Consumer
      */
     public function processMessage(string $productDataJson)
     {
-        $productData = $this->jsonSerializer->unserialize($productDataJson);
-        $product = $this->productRepository->get($productData['sku']);
+        try {
+            $productData = $this->jsonSerializer->unserialize($productDataJson);
+            $product = $this->productRepository->get($productData['sku']);
 
-        $this->mappCombinedLogger->info('MappConnect: -- Product Sync Consumer -- Sending Product SKU to Mapp: ' . $product->getSku(), __CLASS__,__FUNCTION__);
-        
-        $data = $product->getData();
-        $data['productName'] = $product->getName();
-        $data['productPrice'] = $product->getPrice() ?: $product->getMinimalPrice() ?? $product->getFinalPrice();
-        $data['productSKU'] = $product->getSku();
-        $data['productURL'] = $product->getProductUrl();
-        $data['category'] = $this->getProductCategoryImplodedString($product);
-        $this->addMediaUrlsIncludingDomainToData($product, $data);
+            $this->mappCombinedLogger->info('MappConnect: -- Product Sync Consumer -- Sending Product SKU to Mapp: ' . $product->getSku(), __CLASS__,__FUNCTION__);
 
-        if (is_object($product->getExtensionAttributes())) {
-            $data['extension_attributes'] = $this->getAllProductExtensionAttributesAsArray($product);
+            $data = $product->getData();
+            $data['productName'] = $product->getName();
+            $data['productPrice'] = $product->getPrice() ?: $product->getMinimalPrice() ?? $product->getFinalPrice();
+            $data['productSKU'] = $product->getSku();
+            $data['productURL'] = $product->getProductUrl();
+            $data['category'] = $this->getProductCategoryImplodedString($product);
+            $this->addMediaUrlsIncludingDomainToData($product, $data);
+
+            if (is_object($product->getExtensionAttributes())) {
+                $data['extension_attributes'] = $this->getAllProductExtensionAttributesAsArray($product);
+            }
+
+            $this->mappCombinedLogger->debug(
+                'MappConnect: -- Product Sync Consumer -- Sending Product data mapp: ' . json_encode($data, JSON_PRETTY_PRINT),
+                __CLASS__, __FUNCTION__,
+                ['data' => $data]
+            );
+
+            $this->connectHelper->getMappConnectClient()->event('product', $data);
+        } catch (\Exception $exception) {
+            $this->mappCombinedLogger->critical(
+                'MappConnect: -- Product Sync Consumer -- Error when sending to Mapp: ' . json_encode($exception->getTraceAsString(), JSON_PRETTY_PRINT),
+                __CLASS__, __FUNCTION__,
+                ['exception' => $exception->getTraceAsString()]
+            );
         }
-
-        $this->mappCombinedLogger->debug(
-            'MappConnect: -- Product Sync Consumer -- Sending Product data mapp: ' . json_encode($data, JSON_PRETTY_PRINT),
-            __CLASS__, __FUNCTION__,
-            ['data' => $data]
-        );
-
-        $this->connectHelper->getMappConnectClient()->event('product', $data);
     }
 
     /**
