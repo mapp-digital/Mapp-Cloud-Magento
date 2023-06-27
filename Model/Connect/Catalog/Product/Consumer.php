@@ -92,11 +92,11 @@ class Consumer
                 $this->imageCache->generate($product);
             }
 
-            $data['image'] = $this->imageUrlBuilder->getUrl($product->getImage(), 'product_base_image');
-            $data['thumbnail'] = $this->imageUrlBuilder->getUrl($product->getThumbnail(), 'product_thumbnail_image');
-            $data['small_image'] = $this->imageUrlBuilder->getUrl($product->getSmallImage(), 'product_small_image');
-            $data['imageURL'] = $this->imageUrlBuilder->getUrl($product->getImage(), 'product_base_image');
-            $data['zoomImageURL'] = $this->imageUrlBuilder->getUrl($product->getImage(), 'product_page_image_large');
+            $data['image'] = $this->imageUrlBuilder->getUrl($product->getImage() ?? 'no_selection', 'product_base_image');
+            $data['thumbnail'] = $this->imageUrlBuilder->getUrl($product->getThumbnail() ?? 'no_selection', 'product_thumbnail_image');
+            $data['small_image'] = $this->imageUrlBuilder->getUrl($product->getSmallImage() ?? 'no_selection', 'product_small_image');
+            $data['imageURL'] = $this->imageUrlBuilder->getUrl($product->getImage() ?? 'no_selection', 'product_base_image');
+            $data['zoomImageURL'] = $this->imageUrlBuilder->getUrl($product->getImage() ?? 'no_selection', 'product_page_image_large');
         } else {
             $data['image'] = $this->getBaseDomainForImagePath() . $product->getImage();
             $data['thumbnail'] = $this->getBaseDomainForImagePath() . $product->getThumbnail();
@@ -124,13 +124,15 @@ class Consumer
      */
     private function getProductCategoryImplodedString(ProductInterface $product): string
     {
+        $productAvailableInCategory = [];
+
         foreach ($product->getCategoryIds() ?? [] as $categoryId) {
             try {
                 $productAvailableInCategory[] = $this->categoryRepository->get($categoryId)->getName();
             } catch (NoSuchEntityException) {}
         }
 
-        return implode(', ', $productAvailableInCategory ?? null) ?? '';
+        return implode(', ', $productAvailableInCategory ?? []) ?? '';
     }
 
     /**
