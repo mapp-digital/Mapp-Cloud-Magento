@@ -160,12 +160,6 @@ class SubscriptionManager
      */
     public function sendNewOrderTransaction(OrderInterface $order)
     {
-        if ($requireOrderStatusForExport = $this->connectHelper->getConfigValue('export', 'transaction_send_on_status', $order->getStoreId())) {
-            if ($order->getStatus() != $requireOrderStatusForExport) {
-                return;
-            }
-        }
-
         $transactionKey = 'mapp_connect_transaction_' . $order->getId();
 
         if ($this->connectHelper->getConfigValue('export', 'transaction_enable', $order->getStoreId())
