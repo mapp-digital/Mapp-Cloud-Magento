@@ -24,7 +24,6 @@ use Magento\Framework\Validation\ValidationException;
 use Magento\Payment\Helper\Data as PaymentDataHelper;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\StoreManager;
-use MappDigital\Cloud\Enum\Connect\ConfigurationPaths;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Logger\CombinedLogger;
 use Zend_Db_Exception;
@@ -80,14 +79,19 @@ class SubscriptionManager
             $this->connection->commit();
         } catch (\Exception $exception) {
             $this->connection->rollBack();
-            $this->mappCombinedLogger->error($exception->getTraceAsString(), __CLASS__, __FUNCTION__, ['Error' => $exception]);
+            $this->mappCombinedLogger->error(
+                $exception->getTraceAsString(),
+                __CLASS__,
+                __FUNCTION__,
+                ['Error' => $exception]
+            );
         }
     }
 
     /**
      * @return void
      */
-    public function initNewsletters()
+    public function initNewsletters(): void
     {
         try {
             // No DDL statements within a transaction, so these are outside
@@ -115,7 +119,7 @@ class SubscriptionManager
      * @throws GuzzleException
      * @throws LocalizedException
      */
-    public function sendNewsletterSubscriptionUpdate(string $email, bool $isSubscribed, ?int $storeId = null)
+    public function sendNewsletterSubscriptionUpdate(string $email, bool $isSubscribed, ?int $storeId = null): void
     {
         if (!$this->connectHelper->getMappConnectClient()) {
             return;
@@ -127,7 +131,12 @@ class SubscriptionManager
 
         $data = $this->getDataForNewsletterSubscriptionUpdateExport($email, $isSubscribed, $storeId);
 
-        $this->mappCombinedLogger->info(\json_encode(['Type' => 'Newsletter Subscribe', $data], JSON_PRETTY_PRINT), __CLASS__,__FUNCTION__);
+        $this->mappCombinedLogger->info(
+            \json_encode(['Type' => 'Newsletter Subscribe', $data], JSON_PRETTY_PRINT),
+            __CLASS__,
+            __FUNCTION__
+        );
+
         $this->connectHelper->getMappConnectClient()->event('newsletter', $data);
     }
 
@@ -137,7 +146,7 @@ class SubscriptionManager
      * @throws GuzzleException
      * @throws LocalizedException
      */
-    public function sendNewGuestUserToGroupFromOrder(OrderInterface $order)
+    public function sendNewGuestUserToGroupFromOrder(OrderInterface $order): void
     {
         if ($this->connectHelper->getConfigValue('export', 'customer_enable', $order->getStoreId())
             && $order->getData('customer_is_guest')) {
@@ -158,23 +167,46 @@ class SubscriptionManager
      * @return void
      * @throws LocalizedException
      */
-    public function sendNewOrderTransaction(OrderInterface $order)
+    public function sendNewOrderTransaction(OrderInterface $order): void
     {
         $transactionKey = 'mapp_connect_transaction_' . $order->getId();
 
         if ($this->connectHelper->getConfigValue('export', 'transaction_enable', $order->getStoreId())
-            && $this->storage->getData($transactionKey) != true) {
-            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Gathering Order Transaction Data', __CLASS__,__FUNCTION__);
+            && !$this->storage->getData($transactionKey)) {
+            $this->mappCombinedLogger->debug(
+                'MappConnect: -- SubscriptionManager -- Gathering Order Transaction Data',
+                __CLASS__,
+                __FUNCTION__
+            );
+
             $data = $this->getFullOrderDataFromOrderObjectForExport($order);
             try {
-                $this->mappCombinedLogger->info(\json_encode(['Type' => 'MappConnect: -- SubscriptionManager -- Sending Order Transaction Request To Connect', 'data' => $data], JSON_PRETTY_PRINT), __CLASS__,__FUNCTION__);
+                $this->mappCombinedLogger->info(
+                    \json_encode(['Type' => 'MappConnect: -- SubscriptionManager -- Sending Order Transaction Request To Connect', 'data' => $data],
+                        JSON_PRETTY_PRINT),
+                    __CLASS__,
+                    __FUNCTION__
+                );
+
                 $this->connectHelper->getMappConnectClient()->event('transaction', $data);
                 $this->storage->setData($transactionKey, true);
             } catch (GuzzleException $exception) {
-                $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To MAPP Connect', __CLASS__, __FUNCTION__, ['Error' => $exception]);
+                $this->mappCombinedLogger->error(
+                    'Mapp Connect -- ERROR -- Connection Could Not Be Made To MAPP Connect',
+                    __CLASS__,
+                    __FUNCTION__,
+                    ['Error' => $exception]
+                );
+
                 $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
             } catch (Exception $exception) {
-                $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', __CLASS__, __FUNCTION__, ['Error' => $exception]);
+                $this->mappCombinedLogger->error(
+                    'Mapp Connect -- ERROR -- A General Error Has Occurred',
+                    __CLASS__,
+                    __FUNCTION__,
+                    ['Error' => $exception]
+                );
+
                 $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
             }
         }
@@ -188,7 +220,7 @@ class SubscriptionManager
      * @return void
      * @throws Zend_Db_Exception
      */
-    private function createNewsletterChangelogTable()
+    private function createNewsletterChangelogTable(): void
     {
         $changelogTableName = $this->resource->getTableName(self::NEWSLETTER_CHANGELOG_TABLE_NAME);
         if (!$this->connection->isTableExists($changelogTableName)) {
@@ -228,7 +260,12 @@ class SubscriptionManager
                 ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
             );
 
-            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Table: ' . self::NEWSLETTER_CHANGELOG_TABLE_NAME, __CLASS__,__FUNCTION__);
+            $this->mappCombinedLogger->debug(
+                'MappConnect: -- SubscriptionManager -- Creating DB Table: ' . self::NEWSLETTER_CHANGELOG_TABLE_NAME,
+                __CLASS__,
+                __FUNCTION__,
+            );
+
             $this->connection->createTable($table);
         }
     }
@@ -237,7 +274,7 @@ class SubscriptionManager
      * @return void
      * @throws Zend_Db_Exception
      */
-    private function createOrderChangelogTable()
+    private function createOrderChangelogTable(): void
     {
         $changelogTableName = $this->resource->getTableName(self::ORDER_CHANGELOG_TABLE_NAME);
         if (!$this->connection->isTableExists($changelogTableName)) {
@@ -277,7 +314,12 @@ class SubscriptionManager
                 ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
             );
 
-            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Table: ' . self::ORDER_CHANGELOG_TABLE_NAME, __CLASS__,__FUNCTION__);
+            $this->mappCombinedLogger->debug(
+                'MappConnect: -- SubscriptionManager -- Creating DB Table: ' . self::ORDER_CHANGELOG_TABLE_NAME,
+                __CLASS__,
+                __FUNCTION__
+            );
+
             $this->connection->createTable($table);
         }
     }
@@ -346,7 +388,12 @@ class SubscriptionManager
                 ($event == Trigger::EVENT_INSERT) ? 'NEW.`subscriber_id`' : 'OLD.`subscriber_id`'
             );
 
-            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__,__FUNCTION__);
+            $this->mappCombinedLogger->debug(
+                'MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(),
+                __CLASS__,
+                __FUNCTION__
+            );
+
             $triggerObject->addStatement($trigger);
             $this->connection->dropTrigger($triggerObject->getName());
             $this->connection->createTrigger($triggerObject);

@@ -9,6 +9,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\MessageQueue\PublisherInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Store\Model\StoreManager;
 use MappDigital\Cloud\Logger\CombinedLogger;
 
 class MappConnectPublishProductUpdate implements ObserverInterface
@@ -18,7 +19,8 @@ class MappConnectPublishProductUpdate implements ObserverInterface
         private PublisherInterface $publisher,
         private DeploymentConfig $deploymentConfig,
         private ProductRepository $productRepository,
-        private Json $jsonSerializer
+        private Json $jsonSerializer,
+        private StoreManager $storeManager
     ) {}
 
     public function execute(Observer $observer)
@@ -26,7 +28,7 @@ class MappConnectPublishProductUpdate implements ObserverInterface
         try {
             /** @var MagentoProductModel $product */
             $product = $observer->getEvent()->getData('product');
-            $this->publisher->publish($this->getPublisherName(), $this->jsonSerializer->serialize(['sku' => $product->getSku()]));
+            $this->publisher->publish($this->getPublisherName(), $this->jsonSerializer->serialize(['sku' => $product->getSku(), 'store_id' => $product->getStoreId() ?: $this->storeManager->getStore()->getId()]));
             $this->mappCombinedLogger->debug(
                 'Adding Message To Queue for Sku: ' . $product->getSku(),
                 __CLASS__, __FUNCTION__

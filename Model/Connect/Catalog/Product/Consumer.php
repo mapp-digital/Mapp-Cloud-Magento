@@ -12,9 +12,12 @@ use Magento\Catalog\Model\Product\Image\UrlBuilder;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\InventoryConfigurationApi\Exception\SkuIsNotAssignedToStockException;
+use Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use MappDigital\Cloud\Enum\Connect\ConfigurationPaths as ConnectConfigurationPaths;
@@ -34,7 +37,8 @@ class Consumer
         private ScopeConfigInterface $coreConfig,
         private DeploymentConfig $deploymentConfig,
         private UrlBuilder $imageUrlBuilder,
-        private Cache $imageCache
+        private Cache $imageCache,
+        private GetSalableQuantityDataBySku $getSalableQuantityDataBySku
     ) {}
 
     /**
@@ -47,7 +51,7 @@ class Consumer
     {
         try {
             $productData = $this->jsonSerializer->unserialize($productDataJson);
-            $product = $this->productRepository->get($productData['sku']);
+            $product = $this->productRepository->get($productData['sku'], false, $productData['store_id'], true);
 
             $this->mappCombinedLogger->info('MappConnect: -- Product Sync Consumer -- Sending Product SKU to Mapp: ' . $product->getSku(), __CLASS__,__FUNCTION__);
 
@@ -57,6 +61,7 @@ class Consumer
             $data['productSKU'] = $product->getSku();
             $data['productURL'] = $product->getProductUrl();
             $data['category'] = $this->getProductCategoryImplodedString($product);
+            $data['stockTotal'] = $this->getProductTotalQty($product);
             $this->addMediaUrlsIncludingDomainToData($product, $data);
 
             if (is_object($product->getExtensionAttributes())) {
@@ -81,11 +86,32 @@ class Consumer
 
     /**
      * @param Product $product
+     * @return mixed
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     * @throws InputException
+     * @throws SkuIsNotAssignedToStockException
+     */
+    private function getProductTotalQty(Product $product): int
+    {
+        $qty = 0;
+
+        foreach ($this->getSalableQuantityDataBySku->execute($product->getSku()) as $stockInfo) {
+            if ($stockInfo['manage_stock']) {
+                $qty += $stockInfo['qty'];
+            }
+        }
+
+        return $qty;
+    }
+
+    /**
+     * @param Product $product
      * @param array $data
      * @return void
      *
      */
-    private function addMediaUrlsIncludingDomainToData(Product $product, array &$data)
+    private function addMediaUrlsIncludingDomainToData(Product $product, array &$data): void
     {
         if ($this->coreConfig->getValue(ConnectConfigurationPaths::XML_PATH_PRODUCT_SYNC_USE_CACHED_URLS->value, ScopeInterface::SCOPE_STORE)) {
             if ($this->coreConfig->getValue(ConnectConfigurationPaths::XML_PATH_PRODUCT_SYNC_GENERATE_CACHED_URLS->value, ScopeInterface::SCOPE_STORE)) {
@@ -99,13 +125,13 @@ class Consumer
             $data['zoomImageURL'] = $this->imageUrlBuilder->getUrl($product->getImage() ?? 'no_selection', 'product_page_image_large');
         } else {
             $data['image'] = $this->getBaseDomainForImagePath() . $product->getImage();
-            $data['thumbnail'] = $this->getBaseDomainForImagePath() . $product->getThumbnail();
-            $data['small_image'] = $this->getBaseDomainForImagePath() . $product->getSmallImage();
-            $data['imageURL'] = $this->getBaseDomainForImagePath() . $product->getImage();
-            $data['zoomImageURL'] = $this->getBaseDomainForImagePath() . $product->getSmallImage();
+            $data['thumbnail'] = $this->getBaseDomainForImagePath() . $product->getThumbnail() ?? '';
+            $data['small_image'] = $this->getBaseDomainForImagePath() . $product->getSmallImage() ?? '';
+            $data['imageURL'] = $this->getBaseDomainForImagePath() . $product->getImage() ?? '';
+            $data['zoomImageURL'] = $this->getBaseDomainForImagePath() . $product->getSmallImage() ?? '';
         }
 
-        if ((isset($data['media_gallery']) && isset($data['media_gallery']['images'])) && is_array($data['media_gallery']['images'])) {
+        if (isset($data['media_gallery']['images']) && is_array($data['media_gallery']['images'])) {
             foreach ($data['media_gallery']['images'] as $key => $media) {
                 if (isset($media['media_type']) && $media['media_type'] === 'image') {
                     if ($this->coreConfig->getValue(ConnectConfigurationPaths::XML_PATH_PRODUCT_SYNC_USE_CACHED_URLS->value, ScopeInterface::SCOPE_STORE)) {
