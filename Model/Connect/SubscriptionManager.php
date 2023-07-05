@@ -71,7 +71,6 @@ class SubscriptionManager
     {
         try {
             // No DDL statements within a transaction, so these are outside
-            $this->createOrderUpdateTrigger();
             $this->createOrderCreateDeleteTrigger();
 
             $this->connection->beginTransaction();

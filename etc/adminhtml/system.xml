@@ -304,7 +304,7 @@
             <label>Mapp Engage (Connect) - Emails</label>
             <tab>mapp</tab>
             <resource>MappDigital_Cloud::mapp_connect</resource>
-            <group id="general" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+            <group id="general" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
                 <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Emails Via Mapp</label>
