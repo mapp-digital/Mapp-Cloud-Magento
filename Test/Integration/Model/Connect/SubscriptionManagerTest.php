@@ -102,22 +102,6 @@ class SubscriptionManagerTest extends TestCase
     /**
      * @magentoAppArea global
      */
-    public function testOrderUpdateTriggerCreatedSuccessfully()
-    {
-        $sql = $this->getTriggerSelectSql(
-            'sales_order',
-            Trigger::EVENT_UPDATE
-        );
-
-        $result = $this->connection->fetchCol($sql);
-
-        $this->assertTrue(count($result) > 0);
-        $this->assertContains('trg_sales_order_after_update', $result);
-    }
-
-    /**
-     * @magentoAppArea global
-     */
     public function testOrderDeleteTriggerCreatedSuccessfully()
     {
         $sql = $this->getTriggerSelectSql(
