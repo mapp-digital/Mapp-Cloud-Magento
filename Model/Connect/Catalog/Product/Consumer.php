@@ -61,7 +61,7 @@ class Consumer
             $data['productSKU'] = $product->getSku();
             $data['productURL'] = $product->getProductUrl();
             $data['category'] = $this->getProductCategoryImplodedString($product);
-            $data['stockTotal'] = $this->getProductTotalQty($product);
+            $data['stockTotal'] = "{$this->getProductTotalQty($product)}";
             $data['store_id'] = $productData['store_id'] ?? 0;
             $this->addMediaUrlsIncludingDomainToData($product, $data);
 
