@@ -28,10 +28,6 @@
         <plugin name="MappConnectNewsletterSubscriptionManager" type="MappDigital\Cloud\Plugin\SubscriptionManagerPlugin"/>
     </type>
 
-    <type name="Magento\Sales\Model\ResourceModel\Order">
-        <plugin name="MappConnectOrder" type="MappDigital\Cloud\Plugin\Sales\Model\ResourceModel\OrderPlugin"/>
-    </type>
-
     <!-- /////////////////////////////////////
         PLUGINS - Retry Logic Added For Queues
     ////////////////////////////////////// -->
