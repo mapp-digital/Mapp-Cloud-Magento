@@ -1,16 +1,17 @@
 <?php
 
-namespace MappDigital\Cloud\Plugin\Sales\Model\ResourceModel;
+namespace MappDigital\Cloud\Observer\Sales\Model\ResourceModel;
 
 use GuzzleHttp\Exception\GuzzleException;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Model\ResourceModel\Order;
 use Magento\Sales\Model\ResourceModel\Order\Interceptor;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Model\Connect\SubscriptionManager;
 
-class OrderPlugin
+class Order implements ObserverInterface
 {
     public function __construct(
         protected ConnectHelper $connectHelper,
@@ -25,8 +26,10 @@ class OrderPlugin
      * @throws LocalizedException
      * @throws GuzzleException
      */
-    public function afterSave(Order $subject, Interceptor $interceptor, OrderInterface $order): OrderInterface
+    public function execute(Observer $observer): OrderInterface
     {
+        $order = $observer->getOrder();
+
         if (!$this->connectHelper->isLegacySyncEnabled()) {
             return $order;
         }

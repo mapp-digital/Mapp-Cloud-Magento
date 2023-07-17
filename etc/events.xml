@@ -13,4 +13,7 @@
     <event name="catalog_product_save_commit_after">
         <observer name="mapp_connect_publish_product_update" instance="MappDigital\Cloud\Observer\Catalog\Product\MappConnectPublishProductUpdate" />
     </event>
+    <event name="sales_order_place_after">
+        <observer name="mapp_connect_send_order_transaction" instance="MappDigital\Cloud\Observer\Sales\Model\ResourceModel\Order" />
+    </event>
 </config>
