@@ -84,8 +84,8 @@ set-version:
         echo "Error: version parameter is not set. Set like: make set-version version=1.2.3"; \
         exit 1; \
     fi
-	sed -i 's/"version":\s*"[^"]*"/"version": "$(version)"/' ./src/MappDigital/Cloud/composer.json
-	sed -i 's/psVersion\s=\s"[0-9]\+.[0-9]\+.[0-9]\+";/psVersion = "$(version)";/' ./src/MappDigital/Cloud/Helper/TrackingScript.php
+	sed -i 's/"version":\s*"[^"]*"/"version": "$(version)"/' ./composer.json
+	sed -i 's/psVersion\s=\s"[0-9]\+.[0-9]\+.[0-9]\+";/psVersion = "$(version)";/' ./Helper/TrackingScript.php
 
 zip:
 	rm -f *.zip && cd src && zip -r ../Mapp_Cloud_Magento_$$(jq -r '.version' ./MappDigital/Cloud/composer.json).zip ./MappDigital
