@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2021 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 
@@ -13,55 +13,29 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
 use MappDigital\Cloud\Helper\Config;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
-use MappDigital\Cloud\Model\DataLayer;
+use MappDigital\Cloud\Model\DataLayer as DataLayerModel;
 
 class Get implements HttpGetActionInterface
 {
-    /**
-     * @var JsonFactory
-     */
-    protected $resultJsonFactory;
+    protected JsonFactory $resultJsonFactory;
+    protected Http $request;
+    protected Config $config;
+    protected DataLayerModel $dataLayerModel;
+    protected DataLayerHelper $dataLayerHelper;
 
-    /**
-     * @var Http
-     */
-    protected $_request;
-
-    /**
-     * @var Config
-     */
-    protected $_config;
-
-    /**
-     * @var DataLayer
-     */
-    protected $_dataLayerModel;
-
-    /**
-     * @var DataLayerHelper
-     */
-    protected $_dataLayerHelper;
-
-    /**
-     * @param JsonFactory $resultJsonFactory
-     * @param Http $request
-     * @param Config $config
-     * @param DataLayer $dataLayer
-     * @param DataLayerHelper $dataLayerHelper
-     */
     public function __construct(
         JsonFactory $resultJsonFactory,
         Http $request,
         Config $config,
-        DataLayer $dataLayer,
+        DataLayerModel $dataLayer,
         DataLayerHelper $dataLayerHelper
     )
     {
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->_request = $request;
-        $this->_config = $config;
-        $this->_dataLayerModel = $dataLayer;
-        $this->_dataLayerHelper = $dataLayerHelper;
+        $this->request = $request;
+        $this->config = $config;
+        $this->dataLayerModel = $dataLayer;
+        $this->dataLayerHelper = $dataLayerHelper;
     }
 
     /**
@@ -71,23 +45,102 @@ class Get implements HttpGetActionInterface
      */
     public function execute()
     {
-        $params = $this->_request->getParams();
+        $params = $this->request->getParams();
         $isAddToCart = isset($params['add']);
-        if(!$isAddToCart) {
+        $isRemoveFromCart = isset($params['remove']);
+
+        if (!$isAddToCart && !$isRemoveFromCart) {
             if (isset($params['product'])) {
-                $this->_dataLayerModel->setProductDataLayer($params['product']);
+                $this->dataLayerModel->setProductDataLayer($params['product']);
             }
-            $this->_dataLayerModel->setCustomerDataLayer();
-            $this->_dataLayerModel->setOrderDataLayer();
+            $this->dataLayerModel->setCustomerDataLayer();
+            $this->dataLayerModel->setOrderDataLayer();
+            $this->dataLayerModel->setWishlistData();
         }
-        $this->_dataLayerModel->setCartDataLayer();
-        $dataLayer  = $this->_dataLayerHelper->mappify($this->_dataLayerModel->getVariables());
-        $dataLayer = $this->_config->removeParameterByBlacklist($dataLayer);
+
+        $this->dataLayerModel->setCartDataLayer();
+        $dataLayer = $this->dataLayerHelper->mappify($this->dataLayerModel->getVariables());
+        $dataLayer = $this->config->removeParameterByBlacklist($dataLayer);
+
         $data = [
-                "eventName" => $this->_config->getAddToCartEventName(),
-                "dataLayer" => $dataLayer
+            "eventName" => $this->config->getAddToCartEventName(),
+            "eventNameRemove" => $this->config->getRemoveFromCartEventName(),
+            "dataLayer" => $dataLayer,
+            "config" => $this->config->getConfig()
         ];
-        $data['config'] = $this->_config->getConfig();
+
+        if ($isAddToCart || $isRemoveFromCart) {
+            $data = $this->addCartActionData($data, $dataLayer);
+        }
+
+        if (isset($dataLayer['addWishlistProductId'])) {
+            $data = $this->addWishlistData($data, $dataLayer);
+        }
+
         return $this->resultJsonFactory->create()->setData($data);
+    }
+
+    /**
+     * @return string
+     */
+    private function getCartAction(): string
+    {
+        $params = $this->request->getParams();
+
+        if (isset($params['add'])) {
+            return 'addToCartMapp';
+        }
+
+        if (isset($params['remove'])) {
+            return 'removeFromCartMapp';
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $data
+     * @param array $dataLayer
+     * @return array
+     */
+    private function addCartActionData(array $data, array $dataLayer): array
+    {
+        $data[$this->getCartAction()] = [
+            "product" => [
+                "id" => $dataLayer['addProductId'] ?? "",
+                "name" => $dataLayer['addProductName'] ?? "",
+                "sku" => $dataLayer['addProductSku'] ?? "",
+                "price" => $dataLayer['addProductPrice'] ?? "",
+                "specialPrice" => $dataLayer['addProductSpecialPrice'] ?? "",
+                "qty" => $dataLayer['addProductQty'] ?? "",
+                "category" => implode(' ; ',$dataLayer['addProductCategories'] ?? []),
+                "url" => $dataLayer['addProductUrlKey'] ?? "",
+                "img" => $dataLayer['addProductImage'] ?? "",
+                "currency" => $dataLayer['addProductCurrency'] ?? ""
+            ]
+        ];
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @param array $dataLayer
+     * @return array
+     */
+    private function addWishlistData(array $data, array $dataLayer): array
+    {
+        $data['addToWishlistMapp'] = [
+            "product" => [
+                "id" => $dataLayer['addWishlistProductId'] ?? "",
+                "name" => $dataLayer['addWishlistProductName'] ?? "",
+                "sku" => $dataLayer['addWishlistProductSku'] ?? "",
+                "price" => $dataLayer['addWishlistProductPrice'] ?? "",
+                "qty" => $dataLayer['addWishlistQty'] ?? "",
+                "currency" => $dataLayer['addWishlistCurrency'] ?? "",
+            ]
+        ];
+
+        return $data;
     }
 }

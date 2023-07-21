@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2021 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 namespace MappDigital\Cloud\Model\Data;
@@ -16,9 +16,7 @@ class AbstractData extends DataObject
      */
     protected $_data = [];
 
-    public function __construct()
-    {
-    }
+    public function __construct(){}
 
     /**
      * @param mixed $data

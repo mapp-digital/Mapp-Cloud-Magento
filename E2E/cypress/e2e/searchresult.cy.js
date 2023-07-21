@@ -30,7 +30,7 @@ describe('MappIntelligencePluginTests: Searchresult', () => {
                 expect(params.eid).to.match(/^2\d{18}$/);
             }
         }
-        cy.visit('/catalogsearch/result/?q=mapp');
+        cy.visit('/catalogsearch/result/?q=mapp', { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
         cy.testTrackRequest('@trackRequest').then(trackRequest => {
             expectationsForPI[trackRequest.version](trackRequest.params);
         });
@@ -54,7 +54,7 @@ describe('MappIntelligencePluginTests: Searchresult', () => {
 
     it('search result basic datalayer page 2', () => {
         let data;
-        cy.visit('/catalogsearch/result/index/?p=2&q=mapp');
+        cy.visit('/catalogsearch/result/index/?p=2&q=mapp', { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
         const expectationsForPI = {
             '5': (params) => {
                 expect(params.cg1).to.equal('Catalogsearch');

@@ -15,38 +15,20 @@ https://local.domain.com
 ### cleanup-host:
     Deletes everything inside app directory from within php server, so `make server-start` has to be executed before
 
-### install-23
-    Starts Mapp network and installs 2.3 version of Magento by pulling the repos, checking the version out and then starting the install process. Will use backup of plugin code if available.
- 
-### install-24
+### install
     Starts Mapp network and installs latest 2.4-developer version of Magento by pulling the repos, checking the version out and then starting the install process. Will use backup of plugin code if available.
  
-### old-server-start
-    Starts the server with PHP 7.3, which is needed for Magento 2.3 -> needs to be installed first. Will be saved in volume. Creates network 'Mapp'.
-
 ### server-start
-    Starts the server -> needs to be installed first. Will be saved in volume. Creates network 'Mapp'.
+    Starts the docker containers
  
 ### dev-server-start
     Same as server-start, but with xdebug activated (which is slower).
 
-### old-dev-server-start
-    Same as server-start, but with xdebug activated (which is slower) and PHP 7.3.
-
 ### stop-server
-    Stops the server, shuts down docker network 'Mapp'.
+    Stops the docker containers
  
 ### tests
     Runs the tests, given that the server is already started.
- 
-### run-tests
-    Starts the server, runs the tests, closes the server.
- 
-### jenkins-test
-    Complete test routine for Jenkins: host will be prepared, server started, app-volume reset, db reset, version 2.4-developer installed, tests will run, server will be stopped.
-
-### jenkins-test-complete
-    Complete test routine for Jenkins: host will be prepared, server started, app-volume reset, db reset, version 2.3 and 2.4, tests will run, server will be stopped.
  
 ### exec 
     Bash shell into Magento container.

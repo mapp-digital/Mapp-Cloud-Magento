@@ -31,3 +31,13 @@
 
 # 1.1.6
 - use product block view class and catalog helper to retrieve product id
+
+# 2.0.0
+- Connect
+- Acquire
+- Web Push
+- CSV Exports (filebase + SFTP)
+- Tests, PHP 8.1, email transports
+- Email Transport
+- Message Queue Integration
+- Custom Logging (DB and File based)

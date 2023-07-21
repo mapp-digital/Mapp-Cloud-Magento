@@ -7,7 +7,7 @@ describe("Order Products", () => {
 
   it("Order with multiple products", () => {
 
-    cy.visit("/customer/account/login/");
+    cy.visit("/customer/account/login/", { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
     cy.wait("@trackRequest");
     cy.wait("@trackRequest");
 
@@ -15,6 +15,8 @@ describe("Order Products", () => {
       const form_key = form.attr("value");
       cy.visit({
         url: '/customer/account/loginPost/',
+        responseTimeout: 120000, 
+        headers: { "Accept-Encoding": "gzip, deflate" },
         method: 'POST',
         body: {
           form_key,
@@ -28,7 +30,7 @@ describe("Order Products", () => {
     })
 
 
-    cy.visit("/mapp-simple-product.html");
+    cy.visit("/mapp-simple-product.html", { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
     cy.wait("@trackRequest");
     cy.wait("@trackRequest");
     cy.get("#qty").clear().type("5");
@@ -36,7 +38,7 @@ describe("Order Products", () => {
     cy.wait("@trackRequest");
     cy.wait("@trackRequest");
 
-    cy.visit("/mapp-configurable-product.html");
+    cy.visit("/mapp-configurable-product.html", { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
     cy.wait("@trackRequest");
     cy.wait("@trackRequest");
     cy.get(".super-attribute-select").select("green");
@@ -45,7 +47,7 @@ describe("Order Products", () => {
     cy.wait("@trackRequest");
     cy.wait("@trackRequest");
 
-    cy.visit("/mapp-bundle.html");
+    cy.visit("/mapp-bundle.html", { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
     cy.wait("@trackRequest");
     cy.wait("@trackRequest");
     cy.get("div.product-add-form").invoke("attr", "style", "display: block");
@@ -54,7 +56,7 @@ describe("Order Products", () => {
     cy.wait("@trackRequest");
     cy.wait("@trackRequest");
 
-    cy.visit("checkout/#shipping");
+    cy.visit("checkout/#shipping", { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
     const expectationsForCheckoutPI = {
       5: (params) => {
         expect(params.cg1).to.equal("Checkout");

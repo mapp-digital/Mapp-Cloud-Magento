@@ -7,7 +7,7 @@ describe('MappIntelligencePluginTests: Homepage', () => {
         let gtmData;
         cy.server();
         cy.route('GET', '/mappintelligence/data/get').as('get');
-        cy.visit('/').then(()=> {
+        cy.visit('/', { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } }).then(()=> {
             cy.wait('@get');
             cy.get('@get').should('have.property', 'status', 200);
             cy.get('@get').its('response').then((res) => {

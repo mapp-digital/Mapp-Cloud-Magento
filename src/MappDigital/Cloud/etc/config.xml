@@ -2,7 +2,7 @@
 <!--
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2021 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 -->
@@ -10,7 +10,6 @@
     <default>
         <tagintegration>
             <general>
-                <enable>0</enable>
 				<attribute_blacklist>customerPasswordHash
 customerRpToken
 customerRpTokenCreatedAt</attribute_blacklist>
@@ -19,11 +18,39 @@ customerRpTokenCreatedAt</attribute_blacklist>
         </tagintegration>
         <mapp_gtm>
             <general>
-                <gtm_enable>0</gtm_enable>
                 <gtm_datalayer>dataLayer</gtm_datalayer>
                 <gtm_trigger_basket>mapp.load</gtm_trigger_basket>
                 <gtm_add_to_cart_eventname>add-to-cart</gtm_add_to_cart_eventname>
             </general>
         </mapp_gtm>
+        <mapp_connect>
+            <export>
+                <sync_method>0</sync_method>
+                <product_image_cache_enable>1</product_image_cache_enable>
+                <product_image_generate_enable>0</product_image_generate_enable>
+                <transaction_retry_max>10</transaction_retry_max>
+                <newsletter_retry_max>10</newsletter_retry_max>
+                <transaction_send_on_status>new</transaction_send_on_status>
+            </export>
+        </mapp_connect>
+        <mapp_web_push>
+            <firebase>
+                <firebase_version>8.9.1</firebase_version>
+            </firebase>
+            <pixel>
+                <webpush_script_included>false</webpush_script_included>
+                <use_user_matching>true</use_user_matching>
+                <include_firebase_scripts>false</include_firebase_scripts>
+            </pixel>
+        </mapp_web_push>
+        <mapp_logging>
+            <general>
+                <enable_logging>1</enable_logging>
+                <enable_db_logging>1</enable_db_logging>
+                <enable_file_logging>0</enable_file_logging>
+                <severity>2</severity>
+                <log_lifetime>31</log_lifetime>
+            </general>
+        </mapp_logging>
     </default>
 </config>

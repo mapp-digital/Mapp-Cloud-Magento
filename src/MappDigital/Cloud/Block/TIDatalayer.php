@@ -1,76 +1,46 @@
 <?php
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2021 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 namespace MappDigital\Cloud\Block;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\View\Page\Config as FrameworkPageConfig;
+use Magento\Catalog\Block\Product\View;
+use Magento\Catalog\Helper\Data as Catalog;
 use MappDigital\Cloud\Helper\Config;
 use MappDigital\Cloud\Helper\TrackingScript;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
 use MappDigital\Cloud\Model\DataLayer;
-use Magento\Catalog\Block\Product\View;
-use Magento\Catalog\Helper\Data as Catalog;
 
 class TIDatalayer extends Template
 {
+    protected $pageConfig;
 
-    /**
-     * @var Config
-     */
-    protected $_config;
-
-    /**
-     * @var DataLayerHelper
-     */
-    protected $_dataLayerHelper;
-
-    /**
-     * @var DataLayer
-     */
-    protected $_dataLayerModel = null;
-
-    /**
-     * @var View
-     */
-    protected View $_view;
-
-        /**
-     * @var Catalog
-     */
-    protected Catalog $_catalog;
-
-    /**
-     * @param Context $context
-     * @param Config $config
-     * @param DataLayerHelper $dataLayerHelper
-     * @param DataLayer $dataLayer
-     * @param View $view
-     * @param Catalog $catalog
-     * @param array $data
-     */
-    public function __construct(Context $context, Config $config, DataLayerHelper $dataLayerHelper, DataLayer $dataLayer, View $view, Catalog $catalog, array $data = [])
-    {
-        $this->_config = $config;
-        $this->_dataLayerHelper = $dataLayerHelper;
-        $this->_dataLayerModel = $dataLayer;
-        $this->_view = $view;
-        $this->_catalog = $catalog;
-
+    public function __construct(
+        protected Config $config,
+        protected DataLayerHelper $dataLayerHelper,
+        protected DataLayer $dataLayerModel,
+        protected View $view,
+        protected Catalog $catalog,
+        Context $context,
+        FrameworkPageConfig $pageConfig,
+        array $data = []
+    ){
         parent::__construct($context, $data);
+
+        $this->pageConfig = $pageConfig;
     }
-
-
 
     /**
      * @return string
      */
     protected function _toHtml()
     {
-        if (!$this->_config->isEnabled()) {
+        if (!$this->config->isEnabled()) {
             return '';
         }
 
@@ -78,32 +48,38 @@ class TIDatalayer extends Template
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getDataLayer()
+    public function getDataLayer(): string
     {
-        $this->_dataLayerModel->setPageDataLayer();
-        $data = $this->_dataLayerHelper->mappifyPage($this->_dataLayerModel->getVariables());
-        $data = $this->_config->removeParameterByBlacklist($data);
-        return json_encode($data, JSON_PRETTY_PRINT);
-    }
-
-    private function getProductId(): ?int
-    {
-        $product = $this->_view->getProduct();
-        $productId = $product?->getId();
-        if(is_null($productId)) {
-            $product = $this->_catalog->getProduct();
-            return $product?->getId();
-        }
-        return $productId;
+        $this->dataLayerModel->setPageDataLayer();
+        $data = $this->dataLayerHelper->mappifyPage($this->dataLayerModel->getVariables());
+        $data = $this->config->removeParameterByBlacklist($data);
+        return json_encode($data ?? [], JSON_PRETTY_PRINT);
     }
 
     /**
      * @return string
      */
-    public function getScript()
+    public function getScript(): string
     {
-        return TrackingScript::generateJS($this->_config->getConfig(), $this->getProductId());
+        return TrackingScript::generateJS($this->config->getConfig(), $this->getProductId());
+    }
+
+
+    /**
+     * @return int|null
+     */
+    private function getProductId(): ?int
+    {
+        $product = $this->view->getProduct();
+        $productId = $product?->getId();
+
+        if (is_null($productId)) {
+            $product = $this->catalog->getProduct();
+            return $product?->getId();
+        }
+
+        return $productId;
     }
 }

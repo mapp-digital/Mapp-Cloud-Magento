@@ -1,88 +1,87 @@
 <?php
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2021 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 namespace MappDigital\Cloud\Model\Data;
 
+use Magento\CatalogUrlRewrite\Model\ResourceModel\Category\Product as ProductUrlRewriteResource;
 use Magento\Catalog\Helper\Data;
 use Magento\Catalog\Model\CategoryRepository;
 use Magento\Catalog\Model\Session;
 use Magento\Catalog\Model\ProductRepository;
+use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
+use Magento\Catalog\Model\Product as CatalogProductModel;
 use Magento\Framework\Exception\NoSuchEntityException;
-
+use MappDigital\Cloud\Logger\CombinedLogger;
+use Psr\Log\LoggerInterface;
 
 class Product extends AbstractData
 {
-
     /**
      * @var string
      */
     const ATTRIBUTE_SOURCE_TABLE = 'Magento\Eav\Model\Entity\Attribute\Source\Table';
 
-    /**
-     * @var Data
-     */
-    protected $_catalogData;
+    protected ?CatalogProductModel $product = null;
 
-    /**
-     * @var CategoryRepository
-     */
-    protected $_categoryRepository;
-
-    /**
-     * @var \Magento\Catalog\Model\Product
-     */
-    protected $_product;
-
-    /**
-     * @var Session
-     */
-    protected $_catalogSession;
-
-    /**
-     * @var ProductRepository
-     */
-    protected $_productRepository;
-
-    /**
-     * @param Data $catalogData
-     * @param CategoryRepository $categoryRepository
-     * @param Session $session
-     * @param ProductRepository $productRepository
-     */
     public function __construct(
-        Data $catalogData,
-        CategoryRepository $categoryRepository,
-        Session $session,
-        ProductRepository $productRepository
-    )
+        protected Data $catalogData,
+        protected CategoryRepository $categoryRepository,
+        protected Session $catalogSession,
+        protected ProductRepository $productRepository,
+        protected ProductUrlRewriteResource $productUrlRewriteResource,
+        protected CombinedLogger $mappCombinedLogger
+    ) {}
+
+    private function generate($productId)
     {
-        $this->_catalogData = $catalogData;
-        $this->_categoryRepository = $categoryRepository;
-        $this->_catalogSession = $session;
-        $this->_productRepository = $productRepository;
+        $this->setBreadcrumb();
+
+        if (!$this->product) {
+            try {
+                $this->product = $this->productRepository->getById($productId);
+            } catch (NoSuchEntityException) {}
+        }
+
+        if ($this->product) {
+            $this->setAvailableCategories();
+            $this->setAttributes();
+        }
     }
 
+    // -----------------------------------------------
+    // SETTERS AND GETTERS
+    // -----------------------------------------------
+
+    /**
+     * @return void
+     */
     private function setAvailableCategories()
     {
-        $categoryIds = $this->_product->getCategoryIds();
+        $categoryIds = $this->product->getCategoryIds();
         $productAvailableInCategory = [];
 
-        for ($j = 0; $j < count($categoryIds); $j++) {
-            $productAvailableInCategory[] = $this->_categoryRepository->get($categoryIds[$j])->getName();
+        foreach ($categoryIds as $categoryId) {
+            try {
+                $productAvailableInCategory[] = $this->categoryRepository->get($categoryId)->getName();
+            } catch (NoSuchEntityException $exception) {
+                $this->mappCombinedLogger->error(sprintf('Mapp Connect: -- ERROR -- Category Not Available: %s', $exception->getMessage()), __CLASS__, __FUNCTION__, ['exception' => $exception]);
+                $this->mappCombinedLogger->error($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
+            }
+
         }
 
         $this->set('availableInCategory', $productAvailableInCategory);
     }
 
     /**
-     * @param \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $productAttribute
+     * @param AbstractAttribute $productAttribute
      *
      * @return boolean
      */
-    private function canUseAttributeText($productAttribute)
+    private function canUseAttributeText($productAttribute): bool
     {
         /**
          * text -> Text Field
@@ -106,24 +105,27 @@ class Product extends AbstractData
 
     /**
      * @param string $methodeName
+     * @return string
      */
-    private function getMethodeName($methodeName)
+    private function getMethodeName(string $methodeName): string
     {
-        return ucfirst(implode('', explode('_', ucwords($methodeName, '_'))));
+        return ucfirst(implode('', explode('_', ucwords($methodeName, '_')))) ?? '';
     }
 
+    /**
+     * @return void
+     */
     private function setAttributes()
     {
-        $productAttributes = $this->_product->getAttributes();
+        $productAttributes = $this->product->getAttributes();
         foreach ($productAttributes as $productAttribute) {
             $productAttributeCode = $productAttribute->getAttributeCode();
-            $productAttributeData = $this->_product->getData($productAttributeCode);
+            $productAttributeData = $this->product->getData($productAttributeCode);
             $frontendInput = $productAttribute->getFrontendInput();
 
             if ($frontendInput != 'gallery') {
                 if ($this->canUseAttributeText($productAttribute) && !is_array($productAttributeData)) {
-                    $dataResult = $this->_product->getAttributeText($productAttributeCode);
-
+                    $dataResult = $this->product->getAttributeText($productAttributeCode);
                     $this->set($productAttributeCode, $dataResult);
                 } else {
                     $this->set($productAttributeCode, $productAttributeData);
@@ -131,15 +133,18 @@ class Product extends AbstractData
             }
 
             $methodeName = 'get' . $this->getMethodeName($productAttributeCode);
-            if (empty($this->get($productAttributeCode)) && method_exists($this->_product, $methodeName)) {
-                $this->set($productAttributeCode, $this->_product->{$methodeName}());
+            if (empty($this->get($productAttributeCode)) && method_exists($this->product, $methodeName)) {
+                $this->set($productAttributeCode, $this->product->{$methodeName}());
             }
         }
     }
 
+    /**
+     * @return void
+     */
     private function setBreadcrumb()
     {
-        $path = $this->_catalogData->getBreadcrumbPath();
+        $path = $this->catalogData->getBreadcrumbPath();
         $counter = 1;
 
         foreach ($path as $name => $breadcrumb) {
@@ -150,42 +155,52 @@ class Product extends AbstractData
         }
     }
 
-    private function generate($productId)
-    {
-        $this->setBreadcrumb();
-
-        if (!$this->_product) {
-            if(!is_null($productId)) {
-                try {
-                    $this->_product = $this->_productRepository->getById($productId);
-                } catch (NoSuchEntityException $e) {
-                }
-            }
-        }
-
-        if ($this->_product) {
-            $this->setAvailableCategories();
-            $this->setAttributes();
-        }
-    }
-
     /**
-     * @param \Magento\Catalog\Model\Product $product
+     * @param CatalogProductModel $product
      */
-    public function setProduct($product)
+    public function setProduct(CatalogProductModel $product)
     {
-        if ($product) {
-            $this->_product = $product;
+        if ($product->hasData()) {
+            $this->product = $product;
         }
     }
 
     /**
+     * @return CatalogProductModel|null
+     */
+    public function getProduct(): ?CatalogProductModel
+    {
+        return $this->product;
+    }
+
+    /**
+     * @param $productId
      * @return array
      */
-    public function getDataLayer($productId)
+    public function getDataLayer($productId): array
     {
         $this->generate($productId);
+        return $this->_data ?? [];
+    }
 
-        return $this->_data;
+    // -----------------------------------------------
+    // UTILITY
+    // -----------------------------------------------
+
+    private function fallbackProductIdGetter($productUrlFragment)
+    {
+        $connection = $this->productUrlRewriteResource->getConnection();
+        $table = $this->productUrlRewriteResource->getTable('url_rewrite');
+        $select = $connection->select();
+        $select->from($table, ['entity_id'])
+            ->where('entity_type = :entity_type')
+            ->where('request_path LIKE :request_path');
+
+        $result = $connection->fetchCol(
+            $select,
+            ['entity_type' => 'product', 'request_path' => $productUrlFragment]
+        );
+
+        return $result[0] ?? null;
     }
 }

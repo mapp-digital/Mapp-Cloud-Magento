@@ -1,96 +1,90 @@
 <?php
 /**
  * @author Mapp Digital
- * @copyright Copyright (c) 2021 Mapp Digital US, LLC (https://www.mapp.com)
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
 namespace MappDigital\Cloud\Model\Data;
 
 use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Model\ResourceModel\Order\Collection;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
+use Magento\Sales\Model\Order as MagentoOrderModel;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
+use MappDigital\Cloud\Logger\CombinedLogger;
+use Psr\Log\LoggerInterface;
 
 class Order extends AbstractData
 {
-
-    /**
-     * @var Session
-     */
-    protected $_checkoutSession;
-    /**
-     * @var CollectionFactory
-     */
-    protected $_salesOrderCollection;
-    /**
-     * @var Product
-     */
-    protected $_product;
-
-    /**
-     * @var ProductAttributeRepositoryInterface
-     */
-    protected $_productAttributeRepositoryInterface;
-
-    /**
-     * @param Session $checkoutSession
-     * @param CollectionFactory $salesOrderCollection
-     * @param Product $product
-     * @param ProductAttributeRepositoryInterface $productAttributeRepositoryInterface
-     */
-    public function __construct(Session $checkoutSession, CollectionFactory $salesOrderCollection, Product $product, ProductAttributeRepositoryInterface $productAttributeRepositoryInterface)
-    {
-        $this->_checkoutSession = $checkoutSession;
-        $this->_salesOrderCollection = $salesOrderCollection;
-        $this->_product = $product;
-        $this->_productAttributeRepositoryInterface = $productAttributeRepositoryInterface;
+    public function __construct(
+        protected Session $checkoutSession,
+        protected CollectionFactory $salesOrderCollection,
+        protected Product $product,
+        protected ProductAttributeRepositoryInterface $productAttributeRepositoryInterface,
+        protected CombinedLogger $mappCombinedLogger
+    ) {
+        parent::__construct();
     }
 
     /**
-     * @param array $orderIds
-     *
-     * @return Collection
+     * @throws NoSuchEntityException
      */
-    private function getOrderCollection($orderIds)
+    private function generate()
     {
-        $orderCollection = $this->_salesOrderCollection->create();
-        $orderCollection->addFieldToFilter('entity_id', ['in' => $orderIds]);
+        $orderIds = $this->checkoutSession->getData('webtrekk_order_success');
 
-        return $orderCollection;
+        if (!empty($orderIds)) {
+            $orderCollection = $this->getOrderCollection($orderIds);
+            if ($orderCollection->getSize()) {
+                $this->setOrders($orderCollection);
+            }
+
+            $this->checkoutSession->setData('webtrekk_order_success', null);
+        }
     }
+
+    // -----------------------------------------------
+    // SETTERS AND GETTERS
+    // -----------------------------------------------
 
     /**
      * @param array[\Magento\Sales\Model\Order\Item] $items
+     * @throws NoSuchEntityException
      */
     private function setProducts($items)
     {
         $existingProductData = [];
 
         foreach ($items as $item) {
-            $product = $item->getProduct();
-            $urlFragment = DataLayerHelper::getUrlFragment($product);
-            $this->_product->setProduct($product);
-            $productData = $this->_product->getDataLayer($urlFragment);
-            $productData['qty'] = intval($item->getQtyOrdered());
-            $productData['quantity'] = intval($item->getQtyOrdered());
+            try {
+                $product = $item->getProduct();
+                $urlFragment = DataLayerHelper::getUrlFragment($product);
+                $this->product->setProduct($product);
+                $productData = $this->product->getDataLayer($urlFragment);
+                $productData['qty'] = intval($item->getQtyOrdered());
+                $productData['quantity'] = intval($item->getQtyOrdered());
 
-            $productData['price'] = $item->getPrice();
-            $productData['cost'] = $item->getPrice();
+                $productData['price'] = $item->getPrice();
+                $productData['cost'] = $item->getPrice();
 
-            $productData['attributes'] = array();
-            $allAttributesForProduct = array();
-            if($item->getProductType() === 'configurable') {
-                $selectedOptions = $item->getProductOptions()['info_buyRequest']['super_attribute'];
-                foreach ($selectedOptions as $attributeCodeId => $optionValueId) {
-                    $attributeRepo = $this->_productAttributeRepositoryInterface->get($attributeCodeId);
-                    $allAttributesForProduct[$attributeRepo->getAttributeCode()] = $attributeRepo->getSource()->getOptionText($optionValueId);
+                $productData['attributes'] = array();
+                $allAttributesForProduct = array();
+                if($item->getProductType() === 'configurable') {
+                    $selectedOptions = $item->getProductOptions()['info_buyRequest']['super_attribute'];
+                    foreach ($selectedOptions as $attributeCodeId => $optionValueId) {
+                        $attributeRepo = $this->productAttributeRepositoryInterface->get($attributeCodeId);
+                        $allAttributesForProduct[$attributeRepo->getAttributeCode()] = $attributeRepo->getSource()->getOptionText($optionValueId);
+                    }
                 }
+                $productData['attributes'] = $allAttributesForProduct;
+                $tmp = DataLayerHelper::merge($existingProductData, $productData);
+                $existingProductData = $tmp;
+            } catch (NoSuchEntityException $exception) {
+                $this->mappCombinedLogger->error(sprintf('Mapp Connect: -- ERROR -- Sending setting datalayer products: %s', $exception->getMessage()), __CLASS__, __FUNCTION__, ['exception' => $exception]);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
             }
-            $productData['attributes'] = $allAttributesForProduct;
-
-            $tmp = DataLayerHelper::merge($existingProductData, $productData);
-            $existingProductData = $tmp;
         }
 
         $existingProductData['status'] = 'conf';
@@ -98,7 +92,7 @@ class Order extends AbstractData
     }
 
     /**
-     * @param \Magento\Sales\Model\Order $order
+     * @param MagentoOrderModel $order
      */
     private function setTransaction($order)
     {
@@ -125,12 +119,15 @@ class Order extends AbstractData
             'subtotalInclTax' => $order->getSubtotalInclTax(),
             'taxAmount' => $order->getTaxAmount()
         ];
+
         if (!is_null($order->getPayment())) {
             $transaction['payment'] = $order->getPayment()->getData();
         }
+
         if (!is_null($order->getBillingAddress())) {
             $transaction['billing'] = $order->getBillingAddress()->getData();
         }
+
         if (!is_null($order->getShippingAddress())) {
             $transaction['shipping'] = $order->getShippingAddress()->getData();
         }
@@ -139,7 +136,9 @@ class Order extends AbstractData
     }
 
     /**
-     * @param Collection $orderCollection
+     * @param $orderCollection
+     * @return void
+     * @throws NoSuchEntityException
      */
     private function setOrders($orderCollection)
     {
@@ -149,27 +148,26 @@ class Order extends AbstractData
         }
     }
 
-    private function generate()
+    /**
+     * @param array $orderIds
+     *
+     * @return Collection
+     */
+    private function getOrderCollection($orderIds): Collection
     {
-        $orderIds = $this->_checkoutSession->getData('webtrekk_order_success');
+        $orderCollection = $this->salesOrderCollection->create();
+        $orderCollection->addFieldToFilter('entity_id', ['in' => $orderIds]);
 
-        if (!empty($orderIds)) {
-            $orderCollection = $this->getOrderCollection($orderIds);
-            if ($orderCollection) {
-                $this->setOrders($orderCollection);
-            }
-
-            $this->_checkoutSession->setData('webtrekk_order_success', null);
-        }
+        return $orderCollection;
     }
 
     /**
      * @return array
+     * @throws NoSuchEntityException
      */
-    public function getDataLayer()
+    public function getDataLayer(): array
     {
         $this->generate();
-
-        return $this->_data;
+        return $this->_data ?? [];
     }
 }

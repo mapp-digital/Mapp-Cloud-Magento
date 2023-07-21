@@ -1,4 +1,11 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
 <csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
     <policies>
         <policy id="img-src">
@@ -15,6 +22,15 @@
                 <value id="mapp-intelligence-ti" type="host">https://responder.wt-safetag.com</value>
                 <value id="mapp-acquire" type="host">https://*.flx1.com/</value>
                 <value id="mapp-gtm" type="host">https://www.googletagmanager.com</value>
+                <value id="mapp-gstatic" type="host">https://*.gstatic.com</value>
+            </values>
+        </policy>
+        <policy id="connect-src">
+            <values>
+                <value id="mapp-acquire" type="host">https://*.flx1.com/</value>
+                <value id="mapp-gstatic" type="host">https://*.gstatic.com</value>
+                <value id="mapp-firebase-jamie" type="host">https://jamie.g.shortest-route.com</value>
+                <value id="mapp-firebase-googleapis" type="host">https://*.googleapis.com</value>
             </values>
         </policy>
     </policies>

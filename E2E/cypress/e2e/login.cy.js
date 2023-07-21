@@ -54,7 +54,7 @@ describe('MappIntelligencePluginTests: Login', () => {
             }
         };
 
-        cy.visit('/customer/account/login/');
+        cy.visit('/customer/account/login/', { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
         cy.testTrackRequest('@trackRequest').then(trackRequest => {
             expectationsForBeforeLogin[trackRequest.version](trackRequest.params);
         });
@@ -66,6 +66,8 @@ describe('MappIntelligencePluginTests: Login', () => {
             const form_key = form.attr("value");
             cy.visit({
                 url: '/customer/account/loginPost/',
+                responseTimeout: 120000,
+                headers: { "Accept-Encoding": "gzip, deflate" },
                 method: 'POST',
                 body: {
                     form_key,

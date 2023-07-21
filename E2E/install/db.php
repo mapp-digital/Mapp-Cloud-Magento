@@ -34,7 +34,7 @@ function drop_carts() {
   }
 
 function set_blank_theme() {
-    run_query('INSERT INTO magento.core_config_data (scope, scope_id, path,VALUE ) VALUES ("stores", 1, "design/theme/theme_id", 2 );', "Setting blank theme - don't forget to flush and reindex!");
+    run_query('INSERT INTO magento.core_config_data (scope, scope_id, path,VALUE ) VALUES ("stores", 1, "design/theme/theme_id", 1 );', "Setting blank theme - don't forget to flush and reindex!");
 }
 
 if(key_exists(1, $argv) && function_exists($argv[1])) {

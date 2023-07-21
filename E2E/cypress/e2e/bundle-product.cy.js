@@ -47,7 +47,7 @@ describe("Bundle Product", () => {
       method: "get",
     }).as("getData");
 
-    cy.visit("/mapp-bundle.html");
+    cy.visit("/mapp-bundle.html", { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
 
     cy.wait("@getData", { timeout: 30000 }).then(() => {
       cy.window().then((win) => {

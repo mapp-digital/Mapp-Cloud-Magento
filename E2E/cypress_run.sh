@@ -21,6 +21,9 @@ if ! id -un "${USER_ID}" > /dev/null 2>&1; then
   useradd "${USER_NAME}" -m -l -u "${USER_ID}" -g "${GROUP_ID}"
 fi
 
+bash -c "/wait-for-it.sh -t 0 local.domain.com:443"
+curl -s -k https://local.domain.com 2> /dev/null | head -n15
+
 cypress run --browser chrome
 
 RESULT=$?
