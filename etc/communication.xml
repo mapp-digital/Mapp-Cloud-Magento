@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Communication/etc/communication.xsd">
+    <topic name="mappdigital.cloud.triggers.consume_db" request="string"/>
+    <topic name="mappdigital.cloud.triggers.consume_amqp" request="string"/>
+    <topic name="mappdigital.cloud.entities.export.db" request="string"/>
+    <topic name="mappdigital.cloud.entities.export.amqp" request="string"/>
+    <topic name="mappdigital.cloud.entities.export.catalog.product.db" request="string" />
+    <topic name="mappdigital.cloud.entities.export.catalog.product.amqp" request="string" />
+</config>

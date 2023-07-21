@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+	<table name="mappdigital_cloud_log" resource="default" engine="innodb" comment="mappdigital_cloud_log Table">
+		<column xsi:type="int" name="log_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Entity Id"/>
+		<constraint xsi:type="primary" referenceId="PRIMARY">
+			<column name="log_id"/>
+		</constraint>
+		<index referenceId="MAPPDIGITAL_CLOUD_LOG_LOG_ID" indexType="btree">
+			<column name="log_id"/>
+		</index>
+		<column name="severity" nullable="true" xsi:type="smallint" comment="severity" default="5" identity="false" unsigned="true"/>
+		<column name="log_data" nullable="true" xsi:type="text" comment="log_data"/>
+		<column name="class_function" nullable="true" xsi:type="varchar" comment="class_function" default="255" length="255"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="true" default="0"
+                comment="Updated At"/>
+	</table>
+</schema>

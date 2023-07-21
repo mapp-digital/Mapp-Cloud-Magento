@@ -1,0 +1,18 @@
+{
+    "mappdigital_cloud_log": {
+        "column": {
+            "log_id": true,
+            "severity": true,
+            "log_data": true,
+            "class_function": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "MAPPDIGITAL_CLOUD_LOG_LOG_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

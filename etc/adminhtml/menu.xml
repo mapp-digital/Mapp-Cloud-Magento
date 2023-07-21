@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="MappDigital::top_level" title="Mapp Digital" module="MappDigital_Cloud" sortOrder="100" parent="Magento_Backend::system" resource="MappDigital_Cloud::logs"/>
+        <add id="MappDigital_Cloud::mappdigital_cloud_log" title="Mapp Digital Logs" module="MappDigital_Cloud" sortOrder="9999" resource="MappDigital_Cloud::logs" parent="MappDigital::top_level" action="mappdigital_cloud/log/index"/>
+    </menu>
+</config>

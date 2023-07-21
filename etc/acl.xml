@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="MappDigital_Cloud::logs" title="Log" sortOrder="10">
+                                <resource id="MappDigital_Cloud::log_delete" title="Delete Log" sortOrder="20"/>
+                                <resource id="MappDigital_Cloud::log_view" title="View Log" sortOrder="40"/>
+                            </resource>
+                            <resource id="MappDigital_Cloud::tagintegration" title="Mapp Tag Integration" />
+                            <resource id="MappDigital_Cloud::mapp_gtm" title="Mapp Google Tag Manager" />
+                            <resource id="MappDigital_Cloud::mapp_acquire" title="Mapp Acquire" />
+                            <resource id="MappDigital_Cloud::mapp_connect" title="Mapp Connect" />
+                            <resource id="MappDigital_Cloud::mapp_connect_messages" title="Mapp Connect Emails" />
+                            <resource id="MappDigital_Cloud::mapp_web_push" title="Mapp Web Push Integration" />
+                            <resource id="MappDigital_Cloud::mapp_exports" title="Mapp File Exports" />
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="mappdigital_cloud_triggers">
+        <job name="mappdigital_cloud_triggers_publish" instance="MappDigital\Cloud\Cron\Triggers\Publish" method="publishAll">
+            <schedule>* * * * *</schedule>
+        </job>
+        <job name="mappdigital_cloud_logs_clean" instance="MappDigital\Cloud\Cron\Log\Clean" method="execute">
+            <schedule>* * * * *</schedule>
+        </job>
+    </group>
+    <group id="default">
+        <job name="mapp_export_customer" instance="MappDigital\Cloud\Model\Export\Entity\Customer" method="execute" />
+        <job name="mapp_export_order" instance="MappDigital\Cloud\Model\Export\Entity\Order" method="execute" />
+        <job name="mapp_export_product" instance="MappDigital\Cloud\Model\Export\Entity\Product" method="execute" />
+    </group>
+</config>

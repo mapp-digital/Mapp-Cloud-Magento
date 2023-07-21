@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="customer_save_after_data_object">
+        <observer name="mapp_connect_customer_update_observer" instance="MappDigital\Cloud\Observer\MappConnectCustomerGroupUpdate" />
+    </event>
+    <event name="catalog_product_save_commit_after">
+        <observer name="mapp_connect_publish_product_update" instance="MappDigital\Cloud\Observer\Catalog\Product\MappConnectPublishProductUpdate" />
+    </event>
+    <event name="sales_order_place_after">
+        <observer name="mapp_connect_send_order_transaction" instance="MappDigital\Cloud\Observer\Sales\Model\ResourceModel\Order" />
+    </event>
+</config>
