@@ -69,7 +69,6 @@ plugin-install:
 get-magento-version:
 	@docker exec -t local.domain.com php -r "require '/home/application/app/vendor/composer/InstalledVersions.php';echo(Composer\InstalledVersions::getVersion('magento/magento2-base'));"
 
-
 set-version:
 	@if [ -z "$(version)" ]; then \
         echo "Error: version parameter is not set. Set like: make set-version version=1.2.3"; \
@@ -79,6 +78,4 @@ set-version:
 	sed -i 's/psVersion\s=\s"[0-9]\+.[0-9]\+.[0-9]\+";/psVersion = "$(version)";/' ./Helper/TrackingScript.php
 
 zip:
-	rm -f *.zip && cd src && zip -r ../Mapp_Cloud_Magento_$$(jq -r '.version' ./MappDigital/Cloud/composer.json).zip ./MappDigital
-	cd ./src/MappDigital/Cloud && zip -r ../../../Mapp_Cloud_Magento_For_Marketplace_$$(jq -r '.version' ./composer.json).zip ./*
-	
+	bash ./zip.sh	
