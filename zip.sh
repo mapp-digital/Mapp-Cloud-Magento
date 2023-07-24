@@ -2,6 +2,7 @@
 
 SCRIPT=$(readlink -f $0)
 ZIP=`dirname $SCRIPT`
+VERSION=$(jq -r '.version' ./composer.json)
 
 rm -f *.zip
 if [ -d ./temp ]
@@ -31,7 +32,7 @@ cp -r ./Setup ./temp/MappDigital/Cloud
 cp -r ./etc ./temp/MappDigital/Cloud
 cp -r ./view ./temp/MappDigital/Cloud
 
-cd ./temp && zip -rq ../Mapp_Cloud_Magento2_$(jq -r '.version' ./MappDigital/Cloud/composer.json).zip ./MappDigital
-cd ./MappDigital/Cloud && zip -rq ../../../Mapp_Cloud_Magento2_For_Marketplace_$(jq -r '.version' ./composer.json).zip ./*
+cd ./temp && zip -rq ../Mapp_Cloud_Magento2_$VERSION.zip ./MappDigital
+cd ./MappDigital/Cloud && zip -rq ../../../Mapp_Cloud_Magento2_For_Marketplace_$VERSION.zip ./*
 
 rm -rf $ZIP/temp
