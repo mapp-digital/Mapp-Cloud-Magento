@@ -5,66 +5,14 @@ function log {
 	tput sgr0
 }
 
-function copy_plugin_app_to_backup {
-	if [ -d /home/application/app/app/code/MappDigital ]
-	then
-		log "Backup plugin to source folder..."
-		cp -r -f -T /home/application/app/app/code/MappDigital /home/application/backup/MappDigital
-	fi
-}
-
-function copy_plugin_backup_to_app {
-	if [ -d /home/application/app/source/MappDigital ]
-	then
-		log "Restore plugin from backup into app..."
-		cp -r -f -T  /home/application/app/backup/MappDigital /home/application/app/app/code/MappDigital
-	else
-		log "No backup found!"
-	fi
-}
-
-function copy_plugin_app_to_volume {
-	if [ -d /home/application/app/app/code/MappDigital ]
-	then
-	log "Copy plugin version from app to volume directory (src directory)..."
-	cp -r -f -T /home/application/app/app/code/MappDigital /plugincode/MappDigital
-	else
-		log "Plugin not yet installed - install with"
-		log "make plugin-install"
-	fi
-}
-
-function copy_plugin_volume_to_app {
-	log "Copy plugin version from volume (src directory) into app directory..."
-	cp -r -f -T /plugincode/MappDigital /home/application/app/app/code/MappDigital
-}
-
 function uninstall {
 	log "Reset app directory..."
-	if [ -d /home/application/app/app/code/MappDigital ]
-	then
-		log "Backing up plugin code..."
-		if [ ! -d /home/application/backup ]
-		then
-			mkdir /home/application/backup
-		fi
-		cp -r -f /home/application/app/app/code/MappDigital /home/application/app/backup/MappDigital
-	fi
-
 	log "Delete existing data in app directory..."
         find /home/application/app/ -mindepth 1 ! -regex '^/home/application/app/source.*' -delete
         
         wait_for_db
         log "Resetting database..."
 	php /db.php drop_db
-}
-
-function uninstall_mapp {
-	if [ -d /home/application/app/source/MappDigital ]
-	then
-		log "Deleting backup of Mapp Cloud plugin..."
-		rm -r -f /home/application/app/source/MappDigital
-	fi
 }
 
 function empty_carts {
@@ -80,23 +28,7 @@ function install {
 		log "Get Magento repo via composer"
 		cd /home/application/ && composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition app
 
-	    if [ -d /home/application/app/app/code ]
-		then
-			log "Found code dir!"
-		else
-			log "code dir not found - creating it..."
-			mkdir /home/application/app/app/code
-		fi
-		
-		log "Getting plugin code..."
-		if [ -d /home/application/app/source/MappDigital ]
-		then
-			log "Found code backup - using the backup code..."
-			copy_plugin_backup_to_app
-		else
-			log "No backup of plugin code found - using code from src volume..."
-			copy_plugin_volume_to_app
-		fi
+		install_plugin
 		
 		wait_for_db
 
@@ -162,6 +94,38 @@ function install {
 		log "Password: test1234"
 		log "-----------------------"
 	fi	
+}
+
+function install_plugin {
+	if [ -d /home/application/app/app/code ]
+	then
+		log "Deleting existing plugin..."
+		rm -rf /home/application/app/app/code
+		mkdir -p /home/application/app/app/code/MappDigital/Cloud
+	fi
+	if [ ! -d /home/application/app/app/code/MappDigital/Cloud ]
+	then
+		mkdir -p /home/application/app/app/code/MappDigital/Cloud
+	fi
+	log "Copy plugin files into app..."
+	cp /home/application/plugin/composer.json /home/application/app/app/code/MappDigital/Cloud
+	cp /home/application/plugin/registration.php /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Api /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Controller /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Enum /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Framework /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Observer /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Block /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Console /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Cron /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Helper /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Logger /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Model /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Plugin /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/Setup /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/etc /home/application/app/app/code/MappDigital/Cloud
+	cp -r /home/application/plugin/view /home/application/app/app/code/MappDigital/Cloud
+	log "Done, plugin copied to Magento application"
 }
 
 function upgrade {

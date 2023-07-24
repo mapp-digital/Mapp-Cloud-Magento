@@ -27,7 +27,7 @@ services:
           - ./wait-for-it.sh:/wait-for-it.sh
           - ./db.php:/db.php
           - ./app:/home/application/app
-          - "./../../src:/plugincode"
+          - "./../../../:/home/application/plugin"
         ports:
           - "80:80"
           - "443:443"

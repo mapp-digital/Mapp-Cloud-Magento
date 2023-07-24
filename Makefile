@@ -10,10 +10,10 @@ GROUP_ID := $(shell id -g)
 USER_GROUP = $(USER_ID):$(GROUP_ID)
 
 prepare-host:
-	bash ./E2E/install/prepare_host.sh
+	bash ./Test/E2E/install/prepare_host.sh
 
 check:
-	@bash ./E2E/install/check.sh
+	@bash ./Test/E2E/install/check.sh
 	
 cleanup-host:
 	docker exec -t local.domain.com bash -c "rm -f -R /home/application/app/*"
@@ -24,13 +24,13 @@ install:
 start-server:
 	make prepare-host
 	make check
-	cd ./E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker-compose up -d
+	cd ./Test/E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker-compose up -d
 	
 dev-server-start:
-	make check && cd ./E2E/install && export PHPIMAGE="webdevops/php-apache-dev:8.1" && docker-compose up -d
+	make check && cd ./Test/E2E/install && export PHPIMAGE="webdevops/php-apache-dev:8.1" && docker-compose up -d
 
 stop-server:
-	cd ./E2E/install && export PHPIMAGE=$(PHP8) && docker-compose down
+	cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker-compose down
 	
 tests:
 	make empty-carts
@@ -63,17 +63,8 @@ upgrade:
 log-debug:
 	docker exec -t local.domain.com bash -c "/runner.sh print_debug_log"
 
-plugin-backup:
-	docker exec -t local.domain.com bash -c "/runner.sh copy_plugin_app_to_backup"
-	
-plugin-restore:
-	docker exec -t local.domain.com bash -c "/runner.sh copy_plugin_backup_to_app"
-
-plugin-copy-app-to-volume:
-	docker exec -t local.domain.com bash -c "/runner.sh copy_plugin_app_to_volume"
-
 plugin-install:
-	docker exec -t local.domain.com bash -c "/runner.sh copy_plugin_volume_to_app"
+	docker exec -t local.domain.com bash -c "/runner.sh install_plugin"
 
 get-magento-version:
 	@docker exec -t local.domain.com php -r "require '/home/application/app/vendor/composer/InstalledVersions.php';echo(Composer\InstalledVersions::getVersion('magento/magento2-base'));"
