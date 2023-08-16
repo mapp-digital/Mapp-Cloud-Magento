@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/queue.xsd">
+    <broker topic="mappdigital.cloud.triggers.consume_db" exchange="magento-db" type="db">
+        <queue name="mappdigital.cloud.triggers.consume_db"
+               consumer="mappdigital.cloud.triggers.consume_db"
+               consumerInstance="Magento\Framework\MessageQueue\Consumer"
+               handler="MappDigital\Cloud\Model\QueueMessage\Trigger\ConsumeQueue::processAll"
+               maxMessages="1"
+        />
+    </broker>
+    <broker topic="mappdigital.cloud.entities.export.db" exchange="magento-db" type="db">
+        <queue name="mappdigital.cloud.entities.export.db"
+               consumer="mappdigital.cloud.entities.export.db"
+               consumerInstance="Magento\Framework\MessageQueue\Consumer"
+               handler="MappDigital\Cloud\Model\QueueMessage\Exporter\ConsumeQueue::processAll"
+               maxMessages="1"
+        />
+    </broker>
+    <broker topic="mappdigital.cloud.entities.export.catalog.product.db" exchange="magento-db" type="db">
+        <queue name="mappdigital.cloud.entities.export.catalog.product.db"
+               consumer="mappdigital.cloud.entities.export.catalog.product.db"
+               consumerInstance="Magento\Framework\MessageQueue\Consumer"
+               handler="MappDigital\Cloud\Model\Connect\Catalog\Product\Consumer::processMessage"
+               maxMessages="1"/>
+    </broker>
+</config>

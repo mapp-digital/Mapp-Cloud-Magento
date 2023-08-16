@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/cron_groups.xsd">
+    <group id="mappdigital_cloud_triggers">
+        <schedule_generate_every>10</schedule_generate_every>
+        <schedule_ahead_for>20</schedule_ahead_for>
+        <schedule_lifetime>60</schedule_lifetime>
+        <history_cleanup_every>600</history_cleanup_every>
+        <history_success_lifetime>3600</history_success_lifetime>
+        <history_failure_lifetime>10080</history_failure_lifetime>
+        <use_separate_process>1</use_separate_process>
+    </group>
+</config>

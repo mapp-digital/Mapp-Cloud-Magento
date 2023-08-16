@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="MappDigital\Cloud\Api\NewsletterSubscriberInterface" type="MappDigital\Cloud\Model\NewsletterSubscriber" />
+    <preference for="MappDigital\Cloud\Api\LogRepositoryInterface" type="MappDigital\Cloud\Model\LogRepository"/>
+    <preference for="MappDigital\Cloud\Api\Data\LogInterface" type="MappDigital\Cloud\Model\Log"/>
+    <preference for="MappDigital\Cloud\Api\Data\LogSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
+    <!-- ///////////////////////////////////////////
+        PLUGINS - LEGACY IMPLEMENTATION OF CONNECT
+    //////////////////////////////////////////// -->
+
+    <type name="Magento\Framework\Mail\Template\TransportBuilder">
+        <plugin sortOrder="1" name="MappConnectTransportBuilder" type="MappDigital\Cloud\Plugin\Mail\TransportBuilderPlugin"/>
+    </type>
+
+    <type name="Magento\Newsletter\Model\Subscriber">
+        <plugin name="MappConnectNewsletterSubscriber" type="MappDigital\Cloud\Plugin\SubscriberPlugin"/>
+    </type>
+
+    <type name="Magento\Newsletter\Model\SubscriptionManager">
+        <plugin name="MappConnectNewsletterSubscriptionManager" type="MappDigital\Cloud\Plugin\SubscriptionManagerPlugin"/>
+    </type>
+
+    <!-- /////////////////////////////////////
+        PLUGINS - Retry Logic Added For Queues
+    ////////////////////////////////////// -->
+
+    <type name="Magento\Framework\Amqp\Queue">
+        <plugin name="MappConnectAmqpRetryFailedMessage" type="MappDigital\Cloud\Plugin\Framework\Amqp\QueuePlugin"/>
+    </type>
+
+    <type name="Magento\MysqlMq\Model\Driver\Queue">
+        <plugin name="MappConnectMysqlRetryFailedMessage" type="MappDigital\Cloud\Plugin\Framework\Mysql\QueuePlugin"/>
+    </type>
+
+    <!-- /////////////////////////////////
+        COMMANDS
+    ////////////////////////////////// -->
+
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="MappDigital::clean_log_messages" xsi:type="object">MappDigital\Cloud\Console\Command\CleanLogs</item>
+                <item name="MappDigital::export_customers" xsi:type="object">MappDigital\Cloud\Console\Command\ExportCustomers</item>
+                <item name="MappDigital::export_orders" xsi:type="object">MappDigital\Cloud\Console\Command\ExportOrders</item>
+                <item name="MappDigital::export_products" xsi:type="object">MappDigital\Cloud\Console\Command\ExportProducts</item>
+                <item name="MappDigital::sync_products" xsi:type="object">MappDigital\Cloud\Console\Command\SyncProductCatalog</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- /////////////////////////////////
+        COLLECTIONS
+    ////////////////////////////////// -->
+
+    <virtualType name="MappDigital\Cloud\Model\ResourceModel\Log\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">mappdigital_cloud_log</argument>
+            <argument name="resourceModel" xsi:type="string">MappDigital\Cloud\Model\ResourceModel\Log\Collection</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="mappdigital_cloud_log_listing_data_source" xsi:type="string">MappDigital\Cloud\Model\ResourceModel\Log\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- /////////////////////////////////
+        CUSTOMER LOGGER
+    ////////////////////////////////// -->
+
+    <type name="MappDigital\Cloud\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="MappDigital\Cloud\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">myLoggerName</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">MappDigital\Cloud\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- /////////////////////////////////
+        FIREBASE JS OUTPUT
+    ////////////////////////////////// -->
+
+    <virtualType name="firebaseResultPage" type="Magento\Framework\View\Result\Page">
+        <arguments>
+            <argument name="template" xsi:type="string">MappDigital_Cloud::js_output.phtml</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="firebaseResultPageFactory" type="Magento\Framework\View\Result\PageFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">firebaseResultPage</argument>
+        </arguments>
+    </virtualType>
+    <type name="MappDigital\Cloud\Controller\Index\Firebase">
+        <arguments>
+            <argument name="resultPageFactory" xsi:type="object">firebaseResultPageFactory</argument>
+        </arguments>
+    </type>
+
+    <!-- /////////////////////////////////
+        PIXEL JS OUTPUT
+    ////////////////////////////////// -->
+
+    <virtualType name="pixelResultPage" type="Magento\Framework\View\Result\Page">
+        <arguments>
+            <argument name="template" xsi:type="string">MappDigital_Cloud::js_output.phtml</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="pixelResultPageFactory" type="Magento\Framework\View\Result\PageFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">pixelResultPage</argument>
+        </arguments>
+    </virtualType>
+    <type name="MappDigital\Cloud\Controller\Index\Pixel">
+        <arguments>
+            <argument name="resultPageFactory" xsi:type="object">pixelResultPageFactory</argument>
+        </arguments>
+    </type>
+
+    <!-- /////////////////////////////////
+        WEBPUSH FUNCTIONALITY
+    ////////////////////////////////// -->
+
+    <type name="Magento\Framework\View\Result\Layout">
+        <plugin name="MappConnectAddWebPushWebHandle" type="MappDigital\Cloud\Plugin\AddWebpushFirebaseLayoutHandlePlugin"/>
+    </type>
+</config>

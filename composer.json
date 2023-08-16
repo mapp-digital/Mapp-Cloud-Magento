@@ -1,0 +1,27 @@
+{
+    "name": "mapp_digital/cloud",
+    "description": "Enable the full potential of the Mapp Cloud products in your Magento 2 webshop without touching a single line of code.",
+    "require": {
+        "php": "~8.1.0",
+        "firebase/php-jwt": "^6.4"
+    },
+    "type": "magento2-module",
+    "version": "1.2.0",
+    "authors": [{
+        "name": "Mapp Digital",
+        "email": "info@mapp.com",
+        "homepage": "https://www.mapp.com/",
+        "role": "Developer"
+    }],
+    "license": [
+        "MIT"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MappDigital\\Cloud\\": ""
+        }
+    }
+}
