@@ -3,7 +3,7 @@
 -include .env
 export
 
-PHP8=webdevops/php-apache:8.1
+PHP8=webdevops/php-apache:8.2
 USER_NAME := $(shell id -un)
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
