@@ -37,7 +37,7 @@ class Template implements OptionSourceInterface
             } else {
                 return [];
             }
-        } catch (\Exception $e) {
+        } catch (\Exception | \Throwable $e) {
             self::$cache = [];
         }
 
