@@ -41,3 +41,7 @@
 - Email Transport
 - Message Queue Integration
 - Custom Logging (DB and File based)
+
+# 1.2.1
+- Fix to null client in Model config breaking admin store configuration page settings
+- Add support for PHP 8.1 back into composer json

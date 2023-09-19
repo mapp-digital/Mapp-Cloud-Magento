@@ -36,7 +36,7 @@ class Group implements OptionSourceInterface
             } else {
                 return [];
             }
-        } catch (\Exception $e) {
+        } catch (\Exception | \Throwable) {
             self::$cache = [];
         }
 
