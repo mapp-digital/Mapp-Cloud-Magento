@@ -18,11 +18,6 @@ use Magento\Store\Model\Store;
 
 class EmailRepositoryModel implements EmailRepositoryInterface
 {
-    /**
-     * @param TransportBuilder $transportBuilder
-     * @param StateInterface $state
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         protected TransportBuilder $transportBuilder,
         protected StateInterface $state,

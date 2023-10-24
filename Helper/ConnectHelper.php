@@ -156,7 +156,7 @@ class ConnectHelper extends AbstractHelper
             'catalog_productalert_email_stock_template' => 'mapp_connect_messages/productalert/email_stock_template',
             'wishlist_email_email_template' => 'mapp_connect_messages/wishlist/email_template',
             'sales_email_order_cancel_template' => 'mapp_connect_messages/order/cancellation_template',
-            'sales_email_order_cancel_guest_template' => 'mapp_connect_messages/order/cancellation_template'
+            'sales_email_order_cancel_guest_template' => 'mapp_connect_messages/order/guest_cancellation_template'
         ];
 
         if (!array_key_exists($templateId, $map)) {
