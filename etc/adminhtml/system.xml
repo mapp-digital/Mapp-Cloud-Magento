@@ -336,6 +336,22 @@
                         <field id="*/general/enable">1</field>
                     </depends>
                 </field>
+                <field id="cancellation_template" translate="label comment" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Order Cancellation Email Template</label>
+                    <comment>Selecting the Magento Default option will continue to use Magento's email transport. Any others will go via Mapp's email connection</comment>
+                    <source_model>MappDigital\Cloud\Model\Config\Backend\Template</source_model>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="guest_cancellation_template" translate="label comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Order Cancellation Email Template for Guest</label>
+                    <comment>Selecting the Magento Default option will continue to use Magento's email transport. Any others will go via Mapp's email connection</comment>
+                    <source_model>MappDigital\Cloud\Model\Config\Backend\Template</source_model>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
             </group>
             <group id="order_comment" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Order Comments</label>
@@ -460,6 +476,32 @@
                 </field>
                 <field id="guest_template" translate="label comment" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Shipment Comment Email Template for Guest</label>
+                    <comment>Selecting the Magento Default option will continue to use Magento's email transport. Any others will go via Mapp's email connection</comment>
+                    <source_model>MappDigital\Cloud\Model\Config\Backend\Template</source_model>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="refund" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Refund</label>
+                <field id="integration_connection" translate="label" type="password" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Functionality Disabled</label>
+                    <frontend_model>MappDigital\Cloud\Block\Adminhtml\Config\Connect\EmailStatus</frontend_model>
+                    <depends>
+                        <field id="*/general/enable">0</field>
+                    </depends>
+                </field>
+                <field id="template" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Refund Transaction Email Template</label>
+                    <comment>Selecting the Magento Default option will continue to use Magento's email transport. Any others will go via Mapp's email connection</comment>
+                    <source_model>MappDigital\Cloud\Model\Config\Backend\Template</source_model>
+                    <depends>
+                        <field id="*/general/enable">1</field>
+                    </depends>
+                </field>
+                <field id="guest_template" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Refund Transaction Email Template Guest</label>
                     <comment>Selecting the Magento Default option will continue to use Magento's email transport. Any others will go via Mapp's email connection</comment>
                     <source_model>MappDigital\Cloud\Model\Config\Backend\Template</source_model>
                     <depends>

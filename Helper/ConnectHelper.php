@@ -154,7 +154,9 @@ class ConnectHelper extends AbstractHelper
             'sendfriend_email_template' => 'mapp_connect_messages/sendfriend/template',
             'catalog_productalert_email_price_template' => 'mapp_connect_messages/productalert/email_price_template',
             'catalog_productalert_email_stock_template' => 'mapp_connect_messages/productalert/email_stock_template',
-            'wishlist_email_email_template' => 'mapp_connect_messages/wishlist/email_template'
+            'wishlist_email_email_template' => 'mapp_connect_messages/wishlist/email_template',
+            'sales_email_order_cancel_template' => 'mapp_connect_messages/order/cancellation_template',
+            'sales_email_order_cancel_guest_template' => 'mapp_connect_messages/order/cancellation_template'
         ];
 
         if (!array_key_exists($templateId, $map)) {
@@ -180,5 +182,14 @@ class ConnectHelper extends AbstractHelper
         }
 
         return (int)$this->config->getValue($map[$templateId], ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * @param $path
+     * @return string
+     */
+    public function getConfigValueByPath($path): string
+    {
+        return $this->config->getValue($path, ScopeInterface::SCOPE_STORE);
     }
 }
