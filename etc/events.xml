@@ -16,4 +16,7 @@
     <event name="sales_order_place_after">
         <observer name="mapp_connect_send_order_transaction" instance="MappDigital\Cloud\Observer\Sales\Model\ResourceModel\Order" />
     </event>
+    <event name="sales_order_save_after">
+        <observer name="mapp_connect_sales_order_save_after" instance="MappDigital\Cloud\Observer\Sales\OrderSaveAfter"/>
+    </event>
 </config>

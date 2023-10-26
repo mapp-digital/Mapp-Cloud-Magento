@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="sales_email_order_cancel_template" label="Order Cancellation Email" file="cancel_order_template.html" type="html" module="MappDigital_Cloud" area="frontend"/>
+    <template id="sales_email_order_cancel_guest_template" label="Order Cancellation Guest Email" file="cancel_order_guest_template.html" type="html" module="MappDigital_Cloud" area="frontend"/>
+</config>
