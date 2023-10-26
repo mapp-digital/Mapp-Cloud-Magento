@@ -28,7 +28,7 @@ class OrderSaveAfter implements ObserverInterface
     public function execute(Observer $observer): void
     {
         $order = $observer->getEvent()->getOrder();
-        if ($order->getState() == 'canceled') {
+        if ($order->getOrigData('status') != 'canceled' && $order->getStatus() == 'canceled') {
             $templateVars = [
                 'order_id' => $order->getIncrementId()
             ];
