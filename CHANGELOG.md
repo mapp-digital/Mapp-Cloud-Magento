@@ -42,5 +42,5 @@
 - Message Queue Integration
 - Custom Logging (DB and File based)
 
-# 2.0.1
+# 2.0.2
 - Add support to send email on order cancellation
