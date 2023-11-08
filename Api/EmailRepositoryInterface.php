@@ -23,5 +23,5 @@ interface EmailRepositoryInterface
         array $templateVars,
         string $emailAddress,
         array $from
-    );
+    ): void;
 }
