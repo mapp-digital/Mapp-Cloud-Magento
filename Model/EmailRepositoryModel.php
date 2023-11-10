@@ -15,15 +15,17 @@ use Psr\Log\LoggerInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 
-
 class EmailRepositoryModel implements EmailRepositoryInterface
 {
+    private StateInterface $inlineTranslation;
+
     public function __construct(
         protected TransportBuilder $transportBuilder,
         protected StateInterface $state,
         protected LoggerInterface $logger
-    )
-    {}
+    ){
+        $this->inlineTranslation = $this->state;
+    }
 
     /**
      * {@inheritdoc}
@@ -32,7 +34,7 @@ class EmailRepositoryModel implements EmailRepositoryInterface
         array $templateVars,
         string $emailAddress,
         array $from
-    )
+    ): void
     {
         $templateId = self::TRANSACTIONAL_EMAIL_TEMPLATE_ID;
 
