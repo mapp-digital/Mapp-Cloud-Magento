@@ -7,20 +7,23 @@
 
 namespace MappDigital\Cloud\Api;
 
+use Magento\Sales\Model\Order;
+
 interface EmailRepositoryInterface
 {
-    const TRANSACTIONAL_EMAIL_TEMPLATE_ID = 'sales_email_order_cancel_template';
+    const TRANSACTIONAL_EMAIL_ORDER_CANCEL_TEMPLATE_ID = 'sales_email_order_cancel_template';
+    const TRANSACTIONAL_EMAIL_ORDER_CANCEL_GUEST_TEMPLATE_ID = 'sales_email_order_cancel_guest_template';
 
     /**
      * Send email
      *
-     * @param array $templateVars
+     * @param Order $order
      * @param string $emailAddress
      * @param array $from
      * @return void
      */
     public function sendEmail(
-        array $templateVars,
+        Order $order,
         string $emailAddress,
         array $from
     ): void;

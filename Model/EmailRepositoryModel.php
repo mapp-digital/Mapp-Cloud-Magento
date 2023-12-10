@@ -7,13 +7,15 @@
 
 namespace MappDigital\Cloud\Model;
 
-use MappDigital\Cloud\Api\EmailRepositoryInterface;
 use Magento\Framework\App\Area;
+use Magento\Framework\DataObject;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\Translate\Inline\StateInterface;
-use Psr\Log\LoggerInterface;
+use Magento\Sales\Model\Order;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
+use MappDigital\Cloud\Api\EmailRepositoryInterface;
+use Psr\Log\LoggerInterface;
 
 class EmailRepositoryModel implements EmailRepositoryInterface
 {
@@ -23,7 +25,7 @@ class EmailRepositoryModel implements EmailRepositoryInterface
         protected TransportBuilder $transportBuilder,
         protected StateInterface $state,
         protected LoggerInterface $logger
-    ){
+    ) {
         $this->inlineTranslation = $this->state;
     }
 
@@ -31,13 +33,16 @@ class EmailRepositoryModel implements EmailRepositoryInterface
      * {@inheritdoc}
      */
     public function sendEmail(
-        array $templateVars,
+        Order $order,
         string $emailAddress,
         array $from
-    ): void
-    {
-        $templateId = self::TRANSACTIONAL_EMAIL_TEMPLATE_ID;
-
+    ): void {
+        $templateId = $order->getCustomerIsGuest() ? self::TRANSACTIONAL_EMAIL_ORDER_CANCEL_GUEST_TEMPLATE_ID : self::TRANSACTIONAL_EMAIL_ORDER_CANCEL_TEMPLATE_ID;
+        $templateVars = [
+            'order' => $order,
+            'customer_name' => !$order->getCustomerIsGuest() ? $order->getCustomerName() : $order->getBillingAddress()->getName()
+        ];
+        $transportObject = new DataObject($templateVars);
         try {
             $this->inlineTranslation->suspend();
             $storeScope = ScopeInterface::SCOPE_STORE;
@@ -47,7 +52,7 @@ class EmailRepositoryModel implements EmailRepositoryInterface
             ];
             $transport = $this->transportBuilder->setTemplateIdentifier($templateId, $storeScope)
                 ->setTemplateOptions($templateOptions)
-                ->setTemplateVars($templateVars)
+                ->setTemplateVars($transportObject->getData())
                 ->setFrom($from)
                 ->addTo($emailAddress)
                 ->getTransport();
