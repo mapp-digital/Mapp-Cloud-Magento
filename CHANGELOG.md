@@ -44,3 +44,6 @@
 
 # 2.0.2
 - Add support to send email on order cancellation
+- 
+# 2.0.3
+- Fixing cancel order email for guest
