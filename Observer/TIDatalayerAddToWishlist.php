@@ -50,14 +50,13 @@ class TIDatalayerAddToWishlist extends TIDatalayerCartAbstract
                     )
                 );
             }
-            //$this->subscriptionManager->sendAbandonedCartWishlistUpdate($item, $this->customerSession->getCustomer()->getEmail());
             try {
                 if ($this->connectHelper->getConfigValue('export', 'wishlist_enable')) {
                     $this->publisher->publish($this->getWishlistPublisherName(), $this->jsonSerializer->serialize([
                         'email' => $this->customerSession->getCustomer()->getEmail(),
                         'sku' => $item->getProduct()->getSku(),
                         'createdAt' => $item->getAddedAt(),
-                        'price' => $item->getPrice()
+                        'price' => ($product->getData('price') * $item->getQty())
                     ]));
                     $this->mappCombinedLogger->debug(
                         'Adding Message To Queue for Wishlist Sku: ' . $item->getProduct()->getSku(),

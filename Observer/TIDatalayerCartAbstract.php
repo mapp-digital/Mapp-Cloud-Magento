@@ -25,6 +25,7 @@ use MappDigital\Cloud\Model\Connect\SubscriptionManager;
 use MappDigital\Cloud\Model\Data\Product as MappProductModel;
 use Magento\Wishlist\Model\Item as WishlistItem;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 abstract class TIDatalayerCartAbstract implements ObserverInterface
 {
@@ -42,7 +43,8 @@ abstract class TIDatalayerCartAbstract implements ObserverInterface
         protected CombinedLogger $mappCombinedLogger,
         protected Json $jsonSerializer,
         protected WishlistItem $wishlistItem,
-        protected ProductRepositoryInterface $productRepository
+        protected ProductRepositoryInterface $productRepository,
+        protected TimezoneInterface $timezoneInterface
     ) {
     }
 

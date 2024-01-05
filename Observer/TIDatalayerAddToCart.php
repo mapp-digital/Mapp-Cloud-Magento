@@ -38,26 +38,25 @@ class TIDatalayerAddToCart extends TIDatalayerCartAbstract
                     )
                 );
             }
-//            if ($this->connectHelper->getConfigValue('export', 'abandoned_enable') && $this->customerSession->isLoggedIn()) {
-//                $this->subscriptionManager->sendAbandonedCartWishlistUpdate($item, $this->customerSession->getCustomer()->getEmail());
-//            }
             try {
                 if ($this->connectHelper->getConfigValue('export', 'abandoned_enable') && $this->customerSession->isLoggedIn()) {
                     $this->publisher->publish($this->getAbandonedCartPublisherName(), $this->jsonSerializer->serialize([
                         'email' => $this->customerSession->getCustomer()->getEmail(),
                         'sku' => $item->getProduct()->getSku(),
-                        'createdAt' => $item->getAddedAt(),
+                        'createdAt' => $this->timezoneInterface->date()->format('Y-m-d H:i:s'),
                         'price' => $item->getPrice()
                     ]));
                     $this->mappCombinedLogger->debug(
                         'Adding Message To Queue for Abandoned Sku: ' . $item->getProduct()->getSku(),
-                        __CLASS__, __FUNCTION__
+                        __CLASS__,
+                        __FUNCTION__
                     );
                 }
             } catch (\Exception $exception) {
                 $this->mappCombinedLogger->critical(
                     $exception->getMessage(),
-                    __CLASS__, __FUNCTION__
+                    __CLASS__,
+                    __FUNCTION__
                 );
             }
         }
@@ -69,8 +68,7 @@ class TIDatalayerAddToCart extends TIDatalayerCartAbstract
     public function getPublisherName(): string
     {
         $queueType = $this->isAmqp() ? 'amqp' : 'db';
-        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType, __CLASS__,__FUNCTION__);
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType, __CLASS__, __FUNCTION__);
         return 'mappdigital.cloud.entities.campaigns.abandoned.cart.' . $queueType;
-
     }
 }
