@@ -14,7 +14,7 @@ class TrackingScript
      */
     public static function generateJS($config, $productId)
     {
-        $_psVersion = self::getVersion();
+        $_psVersion = "1.2.0";
 
         $requireArray = "'jquery'";
         $requireArgument = "$";
@@ -320,15 +320,5 @@ class TrackingScript
                     });
                 });
             });";
-    }
-
-    /**
-     * @return mixed
-     */
-    public static function getVersion()
-    {
-        $path = dirname(__FILE__) . '/../composer.json';
-        $packages = json_decode(file_get_contents($path), true);
-        return $packages["version"];
     }
 }

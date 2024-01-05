@@ -1,0 +1,87 @@
+version: '3'
+services:
+    web:
+        image: ${PHPIMAGE}
+        container_name: local.domain.com
+        user: application
+        environment:
+          - WEB_ALIAS_DOMAIN=local.domain.com
+          - WEB_DOCUMENT_ROOT=/home/application/app/pub
+          - PHP_DATE_TIMEZONE=EST
+          - PHP_DISPLAY_ERRORS=1
+          - PHP_MEMORY_LIMIT=4048M
+          - PHP_MAX_EXECUTION_TIME=3000
+          - PHP_POST_MAX_SIZE=900M
+          - PHP_UPLOAD_MAX_FILESIZE=2024M
+          - COMPOSER_VERSION=2
+          - COMPOSER_AUTH=${COMPOSER_AUTH}
+          - XDEBUG_REMOTE_AUTOSTART=1
+          - XDEBUG_REMOTE_CONNECT_BACK=1
+          ## IMPORTANT: please change this ip address to your docker host ip. Get your docker host ip:
+          ## docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' local.domain.com
+          - XDEBUG_REMOTE_HOST=172.27.0.7
+          - XDEBUG_REMOTE_PORT=9000
+        volumes:
+          - ./runner.sh:/runner.sh
+          - ./testdata.php:/testdata.php
+          - ./wait-for-it.sh:/wait-for-it.sh
+          - ./db.php:/db.php
+          - ./app:/home/application/app
+          - "./../../../:/home/application/plugin"
+        ports:
+          - "80:80"
+          - "443:443"
+          - "32823:22"
+        links:
+          - mysql
+        networks:
+          - mapp
+    mysql:
+        image: mariadb:10.4
+        container_name: mysql
+        # ports:
+        #   - "3306:3306"
+        environment:
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_DATABASE=magento
+        volumes:
+          - db-data:/var/lib/mysql
+        networks:
+          - mapp
+    cypress:
+        container_name: cypress
+        entrypoint: ["/bin/bash", "./cypress_entrypoint.sh"]
+        image: "cypress/included:11.2.0"
+        volumes:
+          - ./../cypress:/cypress
+          - ./../cypress.config.js:/cypress.config.js
+          - ./../cypress_entrypoint.sh:/cypress_entrypoint.sh
+          - ./../cypress_run.sh:/cypress_run.sh
+          - ./../results:/results
+          - ./wait-for-it.sh:/wait-for-it.sh
+        networks:
+          - mapp
+    es01:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+        container_name: es01
+        environment:
+            - discovery.type=single-node
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        volumes:
+            - es-data:/usr/share/elasticsearch/data
+        # ports:
+        #     - 9200:9200
+        networks:
+            - mapp
+volumes:
+    es-data:
+        driver: local
+    db-data:
+        external: false
+networks:
+    mapp:
+        name: mapp_e2e_magento
+
