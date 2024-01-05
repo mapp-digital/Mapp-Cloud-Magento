@@ -44,6 +44,11 @@
 
 # 2.0.2
 - Add support to send email on order cancellation
-- 
+
 # 2.0.3
 - Fixing cancel order email for guest
+
+# 2.0.4
+- Adding Abandoned Cart and Wishlist Campaigns
+  - Admin configuration to enable/disabled Cart & Wishlist compaigns >  "Mapp Connect (Engage) - General → Export Connection Configuration"
+  - Message queue consumer and publisher to publish queues
