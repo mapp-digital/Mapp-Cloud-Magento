@@ -13,4 +13,8 @@
     <topic name="mappdigital.cloud.entities.export.amqp" request="string"/>
     <topic name="mappdigital.cloud.entities.export.catalog.product.db" request="string" />
     <topic name="mappdigital.cloud.entities.export.catalog.product.amqp" request="string" />
+    <topic name="mappdigital.cloud.entities.campaigns.abandoned.cart.db" request="string" />
+    <topic name="mappdigital.cloud.entities.campaigns.abandoned.cart.amqp" request="string" />
+    <topic name="mappdigital.cloud.entities.campaigns.wishlist.db" request="string" />
+    <topic name="mappdigital.cloud.entities.campaigns.wishlist.amqp" request="string" />
 </config>

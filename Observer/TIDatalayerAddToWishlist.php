@@ -8,7 +8,6 @@ namespace MappDigital\Cloud\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Quote\Model\Quote\Item;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
 
 class TIDatalayerAddToWishlist extends TIDatalayerCartAbstract
@@ -40,7 +39,8 @@ class TIDatalayerAddToWishlist extends TIDatalayerCartAbstract
 
                 try {
                     $wishlistData['currency'] = $this->checkoutSession->getQuote()->getQuoteCurrencyCode();
-                } catch (NoSuchEntityException $exception) {}
+                } catch (NoSuchEntityException $exception) {
+                }
 
                 $this->checkoutSession->setData(
                     'webtrekk_addtowishlist',
@@ -48,6 +48,28 @@ class TIDatalayerAddToWishlist extends TIDatalayerCartAbstract
                         $this->getSessionData('webtrekk_addtowishlist'),
                         $wishlistData
                     )
+                );
+            }
+            //$this->subscriptionManager->sendAbandonedCartWishlistUpdate($item, $this->customerSession->getCustomer()->getEmail());
+            try {
+                if ($this->connectHelper->getConfigValue('export', 'wishlist_enable')) {
+                    $this->publisher->publish($this->getWishlistPublisherName(), $this->jsonSerializer->serialize([
+                        'email' => $this->customerSession->getCustomer()->getEmail(),
+                        'sku' => $item->getProduct()->getSku(),
+                        'createdAt' => $item->getAddedAt(),
+                        'price' => $item->getPrice()
+                    ]));
+                    $this->mappCombinedLogger->debug(
+                        'Adding Message To Queue for Wishlist Sku: ' . $item->getProduct()->getSku(),
+                        __CLASS__,
+                        __FUNCTION__
+                    );
+                }
+            } catch (\Exception $exception) {
+                $this->mappCombinedLogger->critical(
+                    $exception->getMessage(),
+                    __CLASS__,
+                    __FUNCTION__
                 );
             }
         }

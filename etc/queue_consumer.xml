@@ -28,4 +28,18 @@
               connection="amqp"
               maxMessages="1"
     />
+    <consumer name="mappdigital.cloud.entities.campaigns.abandoned.cart.amqp"
+              queue="mappdigital.cloud.entities.campaigns.abandoned.cart.amqp"
+              consumerInstance="Magento\Framework\MessageQueue\Consumer"
+              handler="MappDigital\Cloud\Model\QueueMessage\Campaigns\AbandonedCart::processMessage"
+              connection="amqp"
+              maxMessages="1"
+    />
+    <consumer name="mappdigital.cloud.entities.campaigns.wishlist.amqp"
+              queue="mappdigital.cloud.entities.campaigns.wishlist.amqp"
+              consumerInstance="Magento\Framework\MessageQueue\Consumer"
+              handler="MappDigital\Cloud\Model\QueueMessage\Campaigns\Wishlist::processMessage"
+              connection="amqp"
+              maxMessages="1"
+    />
 </config>

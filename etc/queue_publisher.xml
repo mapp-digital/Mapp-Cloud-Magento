@@ -25,4 +25,16 @@
     <publisher topic="mappdigital.cloud.entities.export.catalog.product.db">
         <connection name="db" exchange="magento-db" />
     </publisher>
+    <publisher topic="mappdigital.cloud.entities.campaigns.abandoned.cart.db">
+        <connection name="db" exchange="magento-db" />
+    </publisher>
+    <publisher topic="mappdigital.cloud.entities.campaigns.abandoned.cart.amqp">
+        <connection name="amqp" exchange="magento-amqp" />
+    </publisher>
+    <publisher topic="mappdigital.cloud.entities.campaigns.wishlist.db">
+        <connection name="db" exchange="magento-db" />
+    </publisher>
+    <publisher topic="mappdigital.cloud.entities.campaigns.wishlist.amqp">
+        <connection name="amqp" exchange="magento-amqp" />
+    </publisher>
 </config>

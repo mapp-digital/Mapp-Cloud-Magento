@@ -6,36 +6,45 @@
  */
 namespace MappDigital\Cloud\Observer;
 
-use Magento\Catalog\Model\Product as MagentoProductModel;
+use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
 use Magento\Checkout\Model\Session;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Framework\App\DeploymentConfig;
+use Magento\Framework\App\Request\Http;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\MessageQueue\PublisherInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Quote\Model\Quote\Item;
-use Magento\Store\Model\StoreManager;
 use MappDigital\Cloud\Helper\Config;
+use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
+use MappDigital\Cloud\Logger\CombinedLogger;
+use MappDigital\Cloud\Model\Connect\SubscriptionManager;
 use MappDigital\Cloud\Model\Data\Product as MappProductModel;
-use Magento\Catalog\Api\ProductAttributeRepositoryInterface;
-use Magento\Framework\App\Request\Http;
+use Magento\Wishlist\Model\Item as WishlistItem;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 
 abstract class TIDatalayerCartAbstract implements ObserverInterface
 {
-    /**
-     * @param Session $checkoutSession
-     * @param Config $config
-     * @param MappProductModel $mappProductModel
-     * @param ProductAttributeRepositoryInterface $productAttributeRepositoryInterface
-     * @param Http $request
-     */
     public function __construct(
         protected Session $checkoutSession,
         protected Config $config,
         protected MappProductModel $mappProductModel,
         protected ProductAttributeRepositoryInterface $productAttributeRepositoryInterface,
-        protected Http $request
-    )
-    {}
+        protected Http $request,
+        protected ConnectHelper $connectHelper,
+        protected SubscriptionManager $subscriptionManager,
+        protected CustomerSession $customerSession,
+        protected PublisherInterface $publisher,
+        protected DeploymentConfig $deploymentConfig,
+        protected CombinedLogger $mappCombinedLogger,
+        protected Json $jsonSerializer,
+        protected WishlistItem $wishlistItem,
+        protected ProductRepositoryInterface $productRepository
+    ) {
+    }
 
     /**
      * @param Observer $observer
@@ -68,7 +77,7 @@ abstract class TIDatalayerCartAbstract implements ObserverInterface
                     $productData['status'] = 'add';
                     $allAttributesForProduct = [];
 
-                    if($item->getProductType() === 'configurable') {
+                    if ($item->getProductType() === 'configurable') {
                         $selectedOptions = json_decode($item->getOptionsByCode()['attributes']->getValue(), true);
                         foreach ($selectedOptions as $attributeCodeId => $optionValueId) {
                             $attributeRepo = $this->productAttributeRepositoryInterface->get($attributeCodeId);
@@ -85,7 +94,8 @@ abstract class TIDatalayerCartAbstract implements ObserverInterface
 
                     try {
                         $productData['currency'] = $this->checkoutSession->getQuote()->getQuoteCurrencyCode();
-                    } catch (NoSuchEntityException $exception) {}
+                    } catch (NoSuchEntityException $exception) {
+                    }
 
                     return $productData;
                 } catch (NoSuchEntityException $exception) {
@@ -104,5 +114,39 @@ abstract class TIDatalayerCartAbstract implements ObserverInterface
     protected function getSessionData(string $key): array
     {
         return $this->checkoutSession->getData($key) ?? [];
+    }
+
+    /**
+     * @return string
+     */
+    public function getAbandonedCartPublisherName(): string
+    {
+        $queueType = $this->isAmqp() ? 'amqp' : 'db';
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType, __CLASS__, __FUNCTION__);
+        return 'mappdigital.cloud.entities.campaigns.abandoned.cart.' . $queueType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWishlistPublisherName(): string
+    {
+        $queueType = $this->isAmqp() ? 'amqp' : 'db';
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType, __CLASS__, __FUNCTION__);
+        return 'mappdigital.cloud.entities.campaigns.wishlist.' . $queueType;
+    }
+
+    /**
+     * Check if Amqp is used
+     *
+     * @return bool
+     */
+    protected function isAmqp(): bool
+    {
+        try {
+            return (bool)$this->deploymentConfig->get('queue/amqp');
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 }
