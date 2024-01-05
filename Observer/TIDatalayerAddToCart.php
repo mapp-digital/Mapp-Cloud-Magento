@@ -61,14 +61,4 @@ class TIDatalayerAddToCart extends TIDatalayerCartAbstract
             }
         }
     }
-
-    /**
-     * @return string
-     */
-    public function getPublisherName(): string
-    {
-        $queueType = $this->isAmqp() ? 'amqp' : 'db';
-        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType, __CLASS__, __FUNCTION__);
-        return 'mappdigital.cloud.entities.campaigns.abandoned.cart.' . $queueType;
-    }
 }
