@@ -14,7 +14,7 @@ class TrackingScript
      */
     public static function generateJS($config, $productId)
     {
-        $_psVersion = "1.2.1";
+        $_psVersion = "1.2.2";
 
         $requireArray = "'jquery'";
         $requireArgument = "$";
