@@ -42,8 +42,11 @@
 - Message Queue Integration
 - Custom Logging (DB and File based)
 
-# 2.0.2
-- Add support to send email on order cancellation
-- 
-# 2.0.3
+# 1.2.1
+- Fix to null client in Model config breaking admin store configuration page settings
+- Add support for PHP 8.1 back into composer json
 - Fixing cancel order email for guest
+
+# 1.2.2
+- Fixing cancel order email for guest
+- Add support to send email on order cancellation
