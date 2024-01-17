@@ -19,9 +19,10 @@ use MappDigital\Cloud\Helper\TrackingScript;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
 use MappDigital\Cloud\Model\DataLayer;
 
-
 class TIDatalayer extends Template
 {
+    protected $pageConfig;
+
     public function __construct(
         protected Config $config,
         protected DataLayerHelper $dataLayerHelper,
@@ -30,11 +31,12 @@ class TIDatalayer extends Template
         protected Catalog $catalog,
         protected StoreManagerInterface $storeManager,
         protected ScopeConfigInterface $scopeConfig,
-        protected FrameworkPageConfig $pageConfig,
         Context $context,
+        FrameworkPageConfig $pageConfig,
         array $data = []
     ){
         parent::__construct($context, $data);
+        $this->pageConfig = $pageConfig;
     }
 
     /**
