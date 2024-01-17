@@ -49,4 +49,7 @@
 
 # 1.2.2
 - Fixing cancel order email for guest
-- Add support to send email on order cancellation
+- Add support to send email on order 
+
+# 1.2.3
+- Fix Mapp endpoint url for multistore
