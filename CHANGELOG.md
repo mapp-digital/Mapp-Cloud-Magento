@@ -32,7 +32,7 @@
 # 1.1.6
 - use product block view class and catalog helper to retrieve product id
 
-# 2.0.0
+# 1.2.0
 - Connect
 - Acquire
 - Web Push
@@ -42,13 +42,19 @@
 - Message Queue Integration
 - Custom Logging (DB and File based)
 
-# 2.0.2
-- Add support to send email on order cancellation
-
-# 2.0.3
+# 1.2.1
+- Fix to null client in Model config breaking admin store configuration page settings
+- Add support for PHP 8.1 back into composer json
 - Fixing cancel order email for guest
 
-# 2.0.4
+# 1.2.2
+- Fixing cancel order email for guest
+- Add support to send email on order
+
+# 1.2.3
+- Fix Mapp endpoint url for multistore
+
+# 1.2.4
 - Adding Abandoned Cart and Wishlist Campaigns
-  - Admin configuration to enable/disabled Cart & Wishlist compaigns >  "Mapp Connect (Engage) - General → Export Connection Configuration"
-  - Message queue consumer and publisher to publish queues
+- Admin configuration to enable/disabled Cart & Wishlist compaigns >  "Mapp Connect (Engage) - General → Export Connection Configuration"
+- Message queue consumer and publisher to publish queues

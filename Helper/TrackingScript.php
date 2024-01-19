@@ -12,9 +12,9 @@ class TrackingScript
      * @param $config
      * @return string
      */
-    public static function generateJS($config, $productId)
+    public static function generateJS($config, $productId, $storeCode)
     {
-        $_psVersion = self::getVersion();
+        $_psVersion = "1.2.3";
 
         $requireArray = "'jquery'";
         $requireArgument = "$";
@@ -135,7 +135,7 @@ class TrackingScript
                 {$gtmLoader}
                 {$acquireLoader}
 
-                const mappEndpoint = location.protocol + '//' + location.host + '/mappintelligence/data/get/';
+                const mappEndpoint = location.protocol + '//' + location.host + '{$storeCode}/mappintelligence/data/get/';
                 const isProductView = window._ti && window._ti.pageAction && window._ti.pageAction === 'catalog_product_view';
                 const calculatePrices = function() {
                     const costs = window._ti.productCost.split(';');
@@ -320,15 +320,5 @@ class TrackingScript
                     });
                 });
             });";
-    }
-
-    /**
-     * @return mixed
-     */
-    public static function getVersion()
-    {
-        $path = dirname(__FILE__) . '/../composer.json';
-        $packages = json_decode(file_get_contents($path), true);
-        return $packages["version"];
     }
 }
