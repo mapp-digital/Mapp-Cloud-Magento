@@ -15,6 +15,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManager;
 use MappDigital\Cloud\Enum\Connect\ConfigurationPaths;
 use MappDigital\Cloud\Model\Config\Source\SyncMethod;
 use MappDigital\Cloud\Model\Connect\Client as MappConnectClient;
@@ -32,6 +33,7 @@ class ConnectHelper extends AbstractHelper
         protected ScopeConfigInterface $config,
         protected State $state,
         protected MappConnectClientFactory $mappConnectClientFactory,
+        protected StoreManager $storeManager,
         Context $context
     ) {
         parent::__construct($context);
@@ -97,7 +99,7 @@ class ConnectHelper extends AbstractHelper
         return (string)$this->config->getValue(
             self::CONFIG_PREFIX . '/' . $group . '/' . $field,
             ScopeInterface::SCOPE_STORE,
-            $storeId
+            $storeId ?? $this->storeManager->getStore()->getId()
         );
     }
 
