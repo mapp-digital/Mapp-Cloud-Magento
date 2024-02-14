@@ -78,7 +78,7 @@ class ConnectHelper extends AbstractHelper
      */
     public function getConfigValue(string $group, string $field, ?int $storeId = null): string
     {
-        if ($this->state->getAreaCode() === Area::AREA_ADMINHTML) {
+        if ($this->state->getAreaCode() === Area::AREA_ADMINHTML && is_null($storeId)) {
             if ($storeIdParam = $this->request->getParam('store')) {
                 return (string)$this->config->getValue(
                     self::CONFIG_PREFIX . '/' . $group . '/' . $field,
@@ -99,7 +99,7 @@ class ConnectHelper extends AbstractHelper
         return (string)$this->config->getValue(
             self::CONFIG_PREFIX . '/' . $group . '/' . $field,
             ScopeInterface::SCOPE_STORE,
-            $storeId ?? $this->storeManager->getStore()->getId()
+            $storeId ?? $this->storeManager->getStore()?->getId() ?? null
         );
     }
 
@@ -125,7 +125,7 @@ class ConnectHelper extends AbstractHelper
      * @return int|string
      * @throws LocalizedException
      */
-    public function templateIdToConfig($templateId): int|string
+    public function templateIdToConfig($templateId, $storeId = null): int|string
     {
         $map = [
             'sales_email_order_template' => 'mapp_connect_messages/order/template',
@@ -165,7 +165,7 @@ class ConnectHelper extends AbstractHelper
             return 0;
         }
 
-        if ($this->state->getAreaCode() === Area::AREA_ADMINHTML) {
+        if (is_null($storeId) && $this->state->getAreaCode() === Area::AREA_ADMINHTML) {
             if ($storeId = $this->request->getParam('store')) {
                 return (string)$this->config->getValue(
                     $map[$templateId],
@@ -183,7 +183,10 @@ class ConnectHelper extends AbstractHelper
             }
         }
 
-        return (int)$this->config->getValue($map[$templateId], ScopeInterface::SCOPE_STORE);
+        return (int)$this->config->getValue($map[$templateId],
+            ScopeInterface::SCOPE_STORE,
+            $storeId ?? $this->storeManager->getStore()?->getId() ?? null
+        );
     }
 
     /**
