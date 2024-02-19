@@ -53,3 +53,7 @@
 
 # 1.2.3
 - Fix Mapp endpoint url for multistore
+
+# 1.2.4
+- Update Smartpixel to 6.4.4
+- Fix getting store config by store id
