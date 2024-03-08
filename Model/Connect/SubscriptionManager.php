@@ -563,10 +563,10 @@ class SubscriptionManager
             $data['store_id']
         );
 
-        $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_template');
+        $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_template', $order->getStoreId());
 
         if ($order->getData('customer_is_guest')) {
-            $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_guest_template');
+            $messageId = $this->connectHelper->templateIdToConfig('sales_email_order_guest_template', $order->getStoreId());
             if ($this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId())) {
                 $data['group'] = $this->connectHelper->getConfigValue('group', 'guests', $order->getStoreId());
             }

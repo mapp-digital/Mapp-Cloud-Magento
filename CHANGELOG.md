@@ -55,6 +55,10 @@
 - Fix Mapp endpoint url for multistore
 
 # 1.2.4
+- Update Smartpixel to 6.4.4
+- Fix getting store config by store id
+
+# 1.2.5
 - Adding Abandoned Cart and Wishlist Campaigns
 - Admin configuration to enable/disabled Cart & Wishlist compaigns >  "Mapp Connect (Engage) - General → Export Connection Configuration"
 - Message queue consumer and publisher to publish queues

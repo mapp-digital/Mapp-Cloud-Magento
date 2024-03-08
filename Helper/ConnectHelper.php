@@ -15,6 +15,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManager;
 use MappDigital\Cloud\Enum\Connect\ConfigurationPaths;
 use MappDigital\Cloud\Model\Config\Source\SyncMethod;
 use MappDigital\Cloud\Model\Connect\Client as MappConnectClient;
@@ -32,6 +33,7 @@ class ConnectHelper extends AbstractHelper
         protected ScopeConfigInterface $config,
         protected State $state,
         protected MappConnectClientFactory $mappConnectClientFactory,
+        protected StoreManager $storeManager,
         Context $context
     ) {
         parent::__construct($context);
@@ -76,7 +78,7 @@ class ConnectHelper extends AbstractHelper
      */
     public function getConfigValue(string $group, string $field, ?int $storeId = null): string
     {
-        if ($this->state->getAreaCode() === Area::AREA_ADMINHTML) {
+        if ($this->state->getAreaCode() === Area::AREA_ADMINHTML && is_null($storeId)) {
             if ($storeIdParam = $this->request->getParam('store')) {
                 return (string)$this->config->getValue(
                     self::CONFIG_PREFIX . '/' . $group . '/' . $field,
@@ -97,7 +99,7 @@ class ConnectHelper extends AbstractHelper
         return (string)$this->config->getValue(
             self::CONFIG_PREFIX . '/' . $group . '/' . $field,
             ScopeInterface::SCOPE_STORE,
-            $storeId
+            $storeId ?? $this->storeManager->getStore()?->getId() ?? null
         );
     }
 
@@ -123,7 +125,7 @@ class ConnectHelper extends AbstractHelper
      * @return int|string
      * @throws LocalizedException
      */
-    public function templateIdToConfig($templateId): int|string
+    public function templateIdToConfig($templateId, $storeId = null): int|string
     {
         $map = [
             'sales_email_order_template' => 'mapp_connect_messages/order/template',
@@ -163,7 +165,7 @@ class ConnectHelper extends AbstractHelper
             return 0;
         }
 
-        if ($this->state->getAreaCode() === Area::AREA_ADMINHTML) {
+        if (is_null($storeId) && $this->state->getAreaCode() === Area::AREA_ADMINHTML) {
             if ($storeId = $this->request->getParam('store')) {
                 return (string)$this->config->getValue(
                     $map[$templateId],
@@ -181,7 +183,10 @@ class ConnectHelper extends AbstractHelper
             }
         }
 
-        return (int)$this->config->getValue($map[$templateId], ScopeInterface::SCOPE_STORE);
+        return (int)$this->config->getValue($map[$templateId],
+            ScopeInterface::SCOPE_STORE,
+            $storeId ?? $this->storeManager->getStore()?->getId() ?? null
+        );
     }
 
     /**
