@@ -53,3 +53,6 @@
 
 # 1.2.3
 - Fix Mapp endpoint url for multistore
+
+# 1.2.6
+- Default Robots.txt Unreachable fix
