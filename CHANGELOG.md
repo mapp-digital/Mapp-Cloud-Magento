@@ -60,3 +60,6 @@
 
 # 1.2.5
 - Update type hinting issue causing check to resolve false incorrectly
+
+# 1.2.6
+- Default Robots.txt Unreachable fix
