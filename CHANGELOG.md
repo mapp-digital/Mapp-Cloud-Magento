@@ -57,3 +57,6 @@
 # 1.2.4
 - Update Smartpixel to 6.4.4
 - Fix getting store config by store id
+
+# 1.2.5
+- Update type hinting issue causing check to resolve false incorrectly

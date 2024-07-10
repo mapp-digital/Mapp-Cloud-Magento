@@ -113,7 +113,7 @@ class ConsumeQueue
             try {
                 $this->subscriptionManager->sendNewsletterSubscriptionUpdate(
                     $subscriber['subscriber_email'],
-                    $subscriber['subscriber_status'] === Subscriber::STATUS_SUBSCRIBED,
+                    (int)$subscriber['subscriber_status'] === Subscriber::STATUS_SUBSCRIBED,
                     $subscriber['store_id'],
                 );
             } catch (NoSuchEntityException $exception) {
