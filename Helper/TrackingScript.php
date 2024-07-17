@@ -78,7 +78,7 @@ class TrackingScript
                 window.wtSmart._ps && window.wtSmart._ps(64, '$_psVersion');";
             $gtmCreateProductArray = "if(window._ti.hasOwnProperty('shoppingCartStatus')) {
                 var status = 'view';
-                if(window._ti.shoppingCartStatus ==='add') {
+                if(window._ti.shoppingCartStatus ==='add' || window._ti.shoppingCartStatus ==='del') {
                     status = 'basket';
                 }
                 if(window._ti.shoppingCartStatus ==='conf') {
@@ -291,6 +291,8 @@ class TrackingScript
                                 const dataLayerBackup = JSON.stringify(window._ti);
                                 handleAddProductKeys(productAddDataLayer);
                                 calculatePrices();
+                                window._ti.shoppingCartStatus = 'del';
+                                window._ti.productStatus = 'del';
                                 if(document.cookie.indexOf('mapp_debug') !== -1) {
                                     console.log('Mapp Intelligence Remove-From-Cart eventname:', removeFromCartEventName);
                                     console.log('Mapp Intelligence Remove-From-Cart datalayer:', JSON.parse(JSON.stringify(window._ti)));
@@ -305,6 +307,9 @@ class TrackingScript
                                     }
                                     window.wts.push(['linkId', removeFromCartEventName]);
                                     window.wts.push(['send', 'pageupdate', true]);
+                                    window.wts.push(['st', 'del']);
+                                    window._ti.push(['shoppingCartStatus', 'del']);
+                                    window._ti.push(['productStatus', 'del']);
                                 }
                                 window.acquireRemove.push({
                                         event: removeFromCartEventName

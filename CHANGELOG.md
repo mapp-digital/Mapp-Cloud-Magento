@@ -53,3 +53,6 @@
 
 # 1.2.3
 - Fix Mapp endpoint url for multistore
+
+# 1.2.7
+- Intelligence Tracking: Remove from Cart Event
