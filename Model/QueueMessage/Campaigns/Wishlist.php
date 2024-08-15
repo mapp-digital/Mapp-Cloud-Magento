@@ -27,7 +27,7 @@ class Wishlist
         try {
             $messageData = $this->jsonSerializer->unserialize($jsonData);
 
-            $this->mappCombinedLogger->info('MappConnect: -- Wishlist Sync Consumer -- Sending Product SKU to Mapp: ' . $messageData['sku'] ?? $messageData['productSKU'], __CLASS__, __FUNCTION__);
+            $this->mappCombinedLogger->info('MappConnect: -- Wishlist Sync Consumer -- Sending Product SKU to Mapp: ' . ($messageData['sku'] ?? $messageData['productSKU']), __CLASS__, __FUNCTION__);
 
             $this->mappCombinedLogger->debug(
                 'MappConnect: -- Product Sync Consumer -- Sending Wishlist Product data mapp: ' . json_encode($messageData, JSON_PRETTY_PRINT),
