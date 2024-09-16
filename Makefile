@@ -77,5 +77,8 @@ set-version:
 	sed -i 's/"version":\s*"[^"]*"/"version": "$(version)"/' ./composer.json
 	sed -i 's/psVersion\s=\s"[0-9]\+.[0-9]\+.[0-9]\+";/psVersion = "$(version)";/' ./Helper/TrackingScript.php
 
+update-smartpixel:
+	curl https://raw.githubusercontent.com/mapp-digital/Webtrekk-Smart-Pixel/master/packages/core/dist/smart-pixel.min.js --output ./view/frontend/web/js/smartpixel.min.js
+
 zip:
 	bash ./zip.sh	
