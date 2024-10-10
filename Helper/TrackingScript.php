@@ -308,8 +308,6 @@ class TrackingScript
                                     window.wts.push(['linkId', removeFromCartEventName]);
                                     window.wts.push(['send', 'pageupdate', true]);
                                     window.wts.push(['st', 'del']);
-                                    window._ti.push(['shoppingCartStatus', 'del']);
-                                    window._ti.push(['productStatus', 'del']);
                                 }
                                 window.acquireRemove.push({
                                         event: removeFromCartEventName
