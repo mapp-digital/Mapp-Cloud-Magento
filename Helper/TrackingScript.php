@@ -315,7 +315,7 @@ class TrackingScript
                             const productAddToCartMapp = response.responseJSON.addToCartMapp;
                             const addToCartEventName = response.responseJSON.eventName;
                             if (productAddDataLayer && addToCartEventName) {
-                                mappRemoveFromCart({
+                                mappAddToCart({
                                     config: config,
                                     addToCartEventName: addToCartEventName, 
                                     productAddDataLayer: productAddDataLayer, 
