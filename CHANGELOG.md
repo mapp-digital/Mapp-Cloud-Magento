@@ -64,3 +64,6 @@
 # 1.2.6
 - Default Robots.txt Unreachable fix
 - Update Smartpixel to 6.4.5
+- 
+# 1.2.7
+- Add PHP 8.3 compatibility in composer.json
