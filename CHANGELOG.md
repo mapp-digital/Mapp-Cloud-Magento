@@ -53,3 +53,14 @@
 
 # 1.2.3
 - Fix Mapp endpoint url for multistore
+
+# 1.2.4
+- Update Smartpixel to 6.4.4
+- Fix getting store config by store id
+
+# 1.2.5
+- Update type hinting issue causing check to resolve false incorrectly
+
+# 1.2.6
+- Default Robots.txt Unreachable fix
+- Update Smartpixel to 6.4.5

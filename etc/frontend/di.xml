@@ -11,7 +11,7 @@
     <type name="Magento\Framework\App\RouterList">
         <arguments>
             <argument name="routerList" xsi:type="array">
-                <item name="robots" xsi:type="array">
+                <item name="mappRouter" xsi:type="array">
                     <item name="class" xsi:type="string">MappDigital\Cloud\Controller\Router</item>
                     <item name="disable" xsi:type="boolean">false</item>
                     <item name="sortOrder" xsi:type="string">10</item>
