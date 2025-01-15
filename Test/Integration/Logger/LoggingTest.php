@@ -17,12 +17,13 @@ use PHPUnit\Framework\TestCase;
  */
 class LoggingTest extends TestCase
 {
-    private ?ObjectManagerInterface $objectManager;
-    private ?CombinedLogger $combinedLogger;
-    private ?ResourceConnection $resource;
-    private ?LogRepository $logRepository;
-    private ?SearchCriteriaBuilder $searchCriteriaBuilder;
-    private ?FilterBuilder $filterBuilder;
+    private ?ObjectManagerInterface $objectManager = null;
+    private ?CombinedLogger $combinedLogger = null;
+    private ?ResourceConnection $resource = null;
+    private ?\MappDigital\Cloud\Model\LogRepository $logRepository = null;
+    private ?SearchCriteriaBuilder $searchCriteriaBuilder = null;
+    private ?FilterBuilder $filterBuilder = null;
+    private ?\Magento\Framework\DB\Adapter\AdapterInterface $connection = null;
 
     /**
      * @inheritdoc
@@ -33,8 +34,9 @@ class LoggingTest extends TestCase
         $this->combinedLogger = $this->objectManager->get(CombinedLogger::class);
         $this->resource = $this->objectManager->get(ResourceConnection::class);
         $this->connection = $this->resource->getConnection();
-        $this->logRepository = $this->objectManager->get(LogRepository::class);
+        $this->logRepository = $this->objectManager->get(\MappDigital\Cloud\Model\LogRepository::class);
         $this->filterBuilder = $this->objectManager->get(FilterBuilder::class);
+        $this->searchCriteriaBuilder = $this->objectManager->get(SearchCriteriaBuilder::class);
     }
 
     /**
