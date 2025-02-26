@@ -28,7 +28,7 @@ class Get implements HttpGetActionInterface
         Http $request,
         Config $config,
         DataLayerModel $dataLayer,
-        DataLayerHelper $dataLayerHelper
+        DataLayerHelper $dataLayerHelper,
     )
     {
         $this->resultJsonFactory = $resultJsonFactory;
