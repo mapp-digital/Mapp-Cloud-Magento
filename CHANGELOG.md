@@ -54,6 +54,7 @@
 # 1.2.3
 - Fix Mapp endpoint url for multistore
 
+<<<<<<< HEAD
 # 1.2.4
 - Update Smartpixel to 6.4.4
 - Fix getting store config by store id
@@ -64,3 +65,7 @@
 # 1.2.6
 - Default Robots.txt Unreachable fix
 - Update Smartpixel to 6.4.5
+- 
+# 1.2.7
+- Add PHP 8.3 compatibility in composer.json
+- Intelligence Tracking: Remove from Cart Event

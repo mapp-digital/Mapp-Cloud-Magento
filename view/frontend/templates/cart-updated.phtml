@@ -1,0 +1,9 @@
+<?php
+/**
+ * @var $block Magento\Framework\View\Element\Template
+ * @var $viewModel MappDigital\Cloud\ViewModel\CartUpdated
+ */
+$viewModel = $block->getViewModel();
+if ($config = $viewModel->getConfig()): ?>
+    <script type="text/javascript">window.mappCartUpdated = <?= json_encode($config) ?></script>
+<?php endif ?>
