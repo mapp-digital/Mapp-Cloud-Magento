@@ -71,3 +71,6 @@
 
 # 1.2.9
 - Add code improvements to unit tests
+
+# 1.2.10
+- Add code quality improvements

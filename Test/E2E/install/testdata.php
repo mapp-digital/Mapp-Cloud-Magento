@@ -1,5 +1,7 @@
 <?php
 
+namespace MappDigital\Cloud\Test\E2E\install;
+
 class Magento_REST {
     const URL = "http://local.domain.com/rest";
     private $DATA_VARIATION = "";

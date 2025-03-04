@@ -44,4 +44,3 @@ if(key_exists(1, $argv) && function_exists($argv[1])) {
     print_r("\n");
 }
 
-?>
