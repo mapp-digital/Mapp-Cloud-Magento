@@ -20,22 +20,22 @@ class Magento_REST {
         $this->create_colors();
         
         $customer = $this->post("/default/V1/customers", $this->get_customer());
-        echo "Customer created: ". $customer["email"] . " - Test1234!\n";
+        print_r("Customer created: ". $customer["email"] . " - Test1234!\n");
 
         $simple_product = $this->post("/default/V1/products", $this->get_simple_product());
-        echo "Simple product created: " . $simple_product["name"] . "\n";
+        print_r("Simple product created: " . $simple_product["name"] . "\n");
 
         $configurable_product = $this->post("/default/V1/products", $this->get_configurable_product());
         $variant1 = $this->post("/default/V1/products", $this->get_product_variant("green", $this->green_id));
         $variant2 = $this->post("/default/V1/products", $this->get_product_variant("red", $this->red_id));
         $variant3 = $this->post("/default/V1/products", $this->get_product_variant("blue", $this->blue_id));
         $this->link_variations($configurable_product, [$variant1, $variant2, $variant3]);
-        echo "Configurable product created: " . $configurable_product["name"] . "\n";
+        print_r("Configurable product created: " . $configurable_product["name"] . "\n");
 
         $bundleProduct1 = $this->post("/default/V1/products", $this->get_simple_product("Mapp Bundle Item 1", "bundleitem1", 12));
         $bundleProduct2 = $this->post("/default/V1/products", $this->get_simple_product("Mapp Bundle Item 2", "bundleitem2", 99));
         $bundle = $this->post("/default/V1/products", $this->get_bundle($bundleProduct1, $bundleProduct2));
-        echo "Product Bundle created: " . $bundle["name"] . "\n";
+        print_r("Product Bundle created: " . $bundle["name"] . "\n");
 
         $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 1", "otheritem1", 30));
         $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 2", "otheritem2", 31));
@@ -48,7 +48,7 @@ class Magento_REST {
         $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 9", "otheritem9", 38));
         $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 10", "otheritem10", 39));
         $this->post("/default/V1/products", $this->get_simple_product("Other Mapp Item 11", "otheritem11", 40));
-        echo "11 other simple products created!\n";
+        print_r("11 other simple products created!\n");
     }
 
     private function get_bundle($child1, $child2)
