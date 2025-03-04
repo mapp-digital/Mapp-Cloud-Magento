@@ -30,20 +30,20 @@ class PublishTest extends AbstractController
 {
     private ?string $subscriberToDelete = '';
 
-    private ?Session $session;
-    private ?CustomerRepositoryInterface $customerRepository;
-    private ?CustomerRegistry $customerRegistry;
-    private ?Quote $quote;
-    private ?CheckoutSession $checkoutSession;
-    private ?QuoteIdMaskFactory $quoteIdMaskFactory;
-    private ?CartManagementInterface $cartManagement;
-    private ?GuestCartManagementInterface $guestCartManagement;
-    private ?OrderRepository $orderRepository;
-    private ?OrderResource $orderResource;
-    private ?ResourceConnection $resource;
-    private ?AdapterInterface $connection;
-    private ?SubscriberCollectionFactory $subscriberCollectionFactory;
-    private ?SubscriberResource $subscriberResource;
+    private ?Session $session = null;
+    private ?CustomerRepositoryInterface $customerRepository = null;
+    private ?CustomerRegistry $customerRegistry = null;
+    private ?Quote $quote = null;
+    private ?CheckoutSession $checkoutSession = null;
+    private ?QuoteIdMaskFactory $quoteIdMaskFactory = null;
+    private ?CartManagementInterface $cartManagement = null;
+    private ?GuestCartManagementInterface $guestCartManagement = null;
+    private ?OrderRepository $orderRepository = null;
+    private ?OrderResource $orderResource = null;
+    private ?ResourceConnection $resource = null;
+    private ?AdapterInterface $connection = null;
+    private ?SubscriberCollectionFactory $subscriberCollectionFactory = null;
+    private ?SubscriberResource $subscriberResource = null;
     private ?Publish $cronPubish = null;
 
     /**
@@ -143,6 +143,7 @@ class PublishTest extends AbstractController
         $this->assertCount(1, $result);
         $this->assertSame($order->getEntityId(), $result[0]['order_id']);
 
+        sleep(2);
         /**
          * This is being created here as opposed to setUp() due to the `currentTime` being set and used to delete old
          * messages. If this is done in setUp, the current time is _earlier_ than the order creation time as it is
