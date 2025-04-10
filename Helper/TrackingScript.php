@@ -110,15 +110,6 @@ class TrackingScript
             }
             JS;
 
-            $gtmAddToCartPush = "window[config.gtm.datalayer] = window[config.gtm.datalayer] || [];
-                        window[config.gtm.datalayer].push(function() {
-                          this.reset();
-                        });
-                        {$gtmEvent}
-                            window[config.gtm.datalayer].push({
-                                event: '{$config['gtm']['triggerBasket']}',
-                                mapp: {gtmProductArray: JSON.parse(JSON.stringify(window._ti.gtmProductArray))}
-                            });";
             if ($config["gtm"]["load"] === "1") {
                 $gtmLoader = <<<JS
                     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -266,7 +257,15 @@ class TrackingScript
                     }
 
                     {$gtmCreateProductArray}
-                    {$gtmAddToCartPush}
+                    window[data.config.gtm.datalayer] = window[data.config.gtm.datalayer] || [];
+                    window[data.config.gtm.datalayer].push(function() {
+                      this.reset();
+                    });
+                    {$gtmEvent}
+                    window[data.config.gtm.datalayer].push({
+                        event: '{$config['gtm']['triggerBasket']}',
+                        mapp: {gtmProductArray: JSON.parse(JSON.stringify(window._ti.gtmProductArray))}
+                    });
                     setTimeout(function() {
                         restoreDataLayer(JSON.parse(dataLayerBackup));
                         window.wts.push(['linkId', 'false']);
