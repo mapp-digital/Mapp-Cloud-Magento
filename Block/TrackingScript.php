@@ -1,0 +1,34 @@
+<?php
+/**
+ * @author Mapp Digital
+ * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
+ * @package MappDigital_Cloud
+ */
+
+namespace MappDigital\Cloud\Block;
+
+use Magento\Framework\View\Element\Template;
+
+class TrackingScript extends Template
+{
+    public const PS_VERSION = "1.2.6";
+
+    public function getGtmEnabled(): bool
+    {
+        return $this->getConfig()['gtm']['enable'] ?? false;
+    }
+
+    public function getGtmLoad(): string
+    {
+        return $this->getConfig()['gtm']['load'] ?? '';
+    }
+
+    public function getAquire(): string
+    {
+        return $this->getConfig()['acquire'] ?? '';
+    }
+    public function getTiEnable(): bool
+    {
+        return $this->getConfig()['tiEnable'] ?? false;
+    }
+}
