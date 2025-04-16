@@ -9,6 +9,11 @@ namespace MappDigital\Cloud\Block;
 
 use Magento\Framework\View\Element\Template;
 
+/**
+ * @method array getConfig
+ * @method int|null getProductId
+ * @method string getStoreCode
+ */
 class TrackingScript extends Template
 {
     public const PS_VERSION = "1.2.6";

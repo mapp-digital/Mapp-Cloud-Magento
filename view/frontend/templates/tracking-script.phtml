@@ -1,15 +1,7 @@
 <?php /** @var $block MappDigital\Cloud\Block\TrackingScript */ ?>
 <script type="text/javascript">
-    require([
-            'jquery'
-            <?php if ($block->getGtmEnabled()):?>,
-            'wtSmart'
-            <?php endif ?>
-        ], function ($
-            <?php if ($block->getGtmEnabled()):?>,
-                     wtSmart
-            <?php endif ?>
-        ) {
+    require(['jquery'<?php if ($block->getGtmEnabled()):?>, 'wtSmart'<?php endif ?>],
+        function ($<?php if ($block->getGtmEnabled()):?>, wtSmart <?php endif ?>) {
             'use strict';
             <?php
             /********************************
@@ -17,7 +9,7 @@
              ********************************/
             if ($block->getGtmEnabled()):?>
             window.wtSmart = window.wtSmart ? window.wtSmart : wtSmart.use(window, window.document);
-            window.wtSmart._ps && window.wtSmart._ps(64, <?= $block::PS_VERSION ?>);
+            window.wtSmart._ps && window.wtSmart._ps(64, '<?= $block::PS_VERSION ?>');
             <?php endif; ?>
 
             <?php
@@ -31,7 +23,7 @@
                     'gtm.start':
                         new Date().getTime(), event: 'gtm.js'
                 });
-                var f = d.getElementsByTagName(s)[0],
+                const f = d.getElementsByTagName(s)[0],
                     j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
                 j.async = true;
                 j.src =
@@ -46,13 +38,13 @@
              ********************************/
             if ($block->getAquire()): ?>
             (function (e) {
-                var t = document, n = t.createElement('script');
+                const t = document, n = t.createElement('script');
                 n.async = !0, n.defer = !0, n.src = e,
                     t.getElementsByTagName('head')[0].appendChild(n)
             })('<?= $block->getAquire() ?>');
             <?php endif ?>
 
-            const mappEndpoint = location.protocol + '//' + location.host + '{$storeCode}/mappintelligence/data/get/';
+            const mappEndpoint = location.protocol + '//' + location.host + '<?= $block->getStoreCode() ?>/mappintelligence/data/get/';
             const isProductView = window._ti && window._ti.pageAction && window._ti.pageAction === 'catalog_product_view';
             const calculatePrices = () => {
                 const costs = window._ti.productCost.split(';');
@@ -98,7 +90,7 @@
                     if (window._ti.shoppingCartStatus === 'conf') {
                         status = 'confirmation';
                     }
-                    var gtmProduct = {
+                    const gtmProduct = {
                         id: window._ti.productId,
                         status: status,
                         cost: window._ti.productCost,
@@ -119,7 +111,7 @@
                 }
             }
             window._mappAddToCartHelper = function (conf) {
-                var pixel = conf.instance.config;
+                const pixel = conf.instance.config;
                 if (conf.type === 'before' && conf.mode === 'click' && pixel.productStatus === 'add') {
                     pixel.contentGroup = {};
                     pixel.customParameter = {};
@@ -157,7 +149,7 @@
             window.wts.push(['_mappAddToCartHelper']);
             window.dataLayer = window.dataLayer || [];
             $.ajax({
-                url: mappEndpoint + (isProductView ? '?product={$productId}' : ''),
+                url: mappEndpoint + (isProductView ? '?product=<?= $block->getProductId() ?>' : ''),
                 type: 'GET',
                 dataType: 'json',
                 complete: function (response) {
@@ -171,11 +163,9 @@
                                 event: 'addToWishlistMapp',
                                 addToWishlistMapp: JSON.parse(JSON.stringify(response.responseJSON.addToWishlistMapp))
                             });
-
                             window.acquireWishlist.push({
                                 event: 'add-to-wishlist-mapp'
                             });
-
                             if (document.cookie.indexOf('mapp_debug') !== -1) {
                                 console.log('Mapp Intelligence Add-To-Wishlist datalayer:', JSON.parse(JSON.stringify(window.dataLayer)));
                             }
@@ -205,22 +195,22 @@
                     };
                     (function (c, d, a, f) {
                         c.wts = c.wts || [];
-                        var g = function (b) {
-                            var a = '';
+                        const g = function (b) {
+                            let a = '';
                             b.customDomain && b.customPath ? a = b.customDomain + '/' +
                                 b.customPath : b.tiDomain && b.tiId && (a = b.tiDomain + '/resp/api/get/' + b.tiId + '?url=' + encodeURIComponent(c.location.href)
                                 + '&v=5');
-                            if (b.option) for (var d in b.option) a += '&' + d + '=' + encodeURIComponent(b.option[d]);
+                            if (b.option) for (let d in b.option) a += '&' + d + '=' + encodeURIComponent(b.option[d]);
                             return a
                         };
                         if (-1 ===
                             d.cookie.indexOf('wt_r=1')) {
-                            var e = d.getElementsByTagName(a)[0];
+                            const e = d.getElementsByTagName(a)[0];
                             a = d.createElement(a);
                             a.async = !0;
                             a.onload = function () {
                                 if ('undefined' !== typeof c.wt_r && !isNaN(c.wt_r)) {
-                                    var b = new Date, a = b.getTime() + 1E3 * parseInt(c.wt_r);
+                                    const b = new Date, a = b.getTime() + 1E3 * parseInt(c.wt_r);
                                     b.setTime(a);
                                     d.cookie = 'wt_r=1;path=/;expires=' + b.toUTCString()
                                 }
@@ -337,7 +327,7 @@
             <?php // from catalog add to cart widget ?>
             $(document).on('ajax:addToCart', function () {
                 $.ajax({
-                    url: mappEndpoint + ' ? add = 1',
+                    url: mappEndpoint + '?add=1',
                     type: 'GET',
                     dataType: 'json',
                     complete: function (response) {
@@ -360,7 +350,7 @@
             });
             $(document).on('ajax:removeFromCart', () => {
                 $.ajax({
-                    url: mappEndpoint + ' ? remove = 1',
+                    url: mappEndpoint + '?remove=1',
                     type: 'GET',
                     dataType: 'json',
                     complete: function (response) {
