@@ -6,23 +6,19 @@
  */
 namespace MappDigital\Cloud\Block;
 
+use Magento\Catalog\Block\Product\View;
+use Magento\Catalog\Helper\Data as Catalog;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
-use Magento\Framework\View\Page\Config as FrameworkPageConfig;
-use Magento\Catalog\Block\Product\View;
-use Magento\Catalog\Helper\Data as Catalog;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use MappDigital\Cloud\Helper\Config;
-use MappDigital\Cloud\Helper\TrackingScript;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
 use MappDigital\Cloud\Model\DataLayer;
 
 class TIDatalayer extends Template
 {
-    protected $pageConfig;
-
     public function __construct(
         protected Config $config,
         protected DataLayerHelper $dataLayerHelper,
@@ -32,11 +28,9 @@ class TIDatalayer extends Template
         protected StoreManagerInterface $storeManager,
         protected ScopeConfigInterface $scopeConfig,
         Context $context,
-        FrameworkPageConfig $pageConfig,
         array $data = []
     ){
         parent::__construct($context, $data);
-        $this->pageConfig = $pageConfig;
     }
 
     /**
@@ -83,7 +77,15 @@ class TIDatalayer extends Template
      */
     public function getScript(): string
     {
-        return TrackingScript::generateJS($this->config->getConfig(), $this->getProductId(), $this->getStoreCode());
+        return $this->getLayout()
+            ->createBlock(TrackingScript::class)
+            ->setTemplate('MappDigital_Cloud::tracking-script.phtml')
+            ->setData([
+                'config' => $this->config->getConfig(),
+                'product_id' => $this->getProductId(),
+                'store_code' => $this->getStoreCode()
+            ])
+            ->toHtml();
     }
 
 
