@@ -18,20 +18,33 @@ class TrackingScript extends Template
 {
     public const PS_VERSION = "1.2.6";
 
+    /**
+     * @return bool
+     */
     public function getGtmEnabled(): bool
     {
         return $this->getConfig()['gtm']['enable'] ?? false;
     }
 
+    /**
+     * @return string
+     */
     public function getGtmLoad(): string
     {
         return $this->getConfig()['gtm']['load'] ?? '';
     }
 
+    /**
+     * @return string
+     */
     public function getAquire(): string
     {
         return $this->getConfig()['acquire'] ?? '';
     }
+
+    /**
+     * @return bool
+     */
     public function getTiEnable(): bool
     {
         return $this->getConfig()['tiEnable'] ?? false;

@@ -11,7 +11,6 @@ use Magento\Catalog\Helper\Data as Catalog;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
-use Magento\Framework\View\Page\Config as FrameworkPageConfig;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use MappDigital\Cloud\Helper\Config;
@@ -20,8 +19,6 @@ use MappDigital\Cloud\Model\DataLayer;
 
 class TIDatalayer extends Template
 {
-    protected $pageConfig;
-
     public function __construct(
         protected Config $config,
         protected DataLayerHelper $dataLayerHelper,
@@ -31,11 +28,9 @@ class TIDatalayer extends Template
         protected StoreManagerInterface $storeManager,
         protected ScopeConfigInterface $scopeConfig,
         Context $context,
-        FrameworkPageConfig $pageConfig,
         array $data = []
     ){
         parent::__construct($context, $data);
-        $this->pageConfig = $pageConfig;
     }
 
     /**
