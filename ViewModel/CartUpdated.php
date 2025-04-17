@@ -18,6 +18,9 @@ class CartUpdated implements ArgumentInterface
     ) {
     }
 
+    /**
+     * @return array|null
+     */
     public function getConfig(): ?array
     {
         $removeProduct = $this->checkoutSession->getData('webtrekk_removeproduct');
