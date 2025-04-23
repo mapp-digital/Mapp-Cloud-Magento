@@ -155,28 +155,6 @@ class GetTest extends AbstractController
     }
 
     /**
-     * @magentoConfigFixture current_store tagintegration/general/enable 1
-     * @magentoConfigFixture current_store tagintegration/general/tagintegration_id 164891111181113
-     * @magentoConfigFixture current_store tagintegration/general/tagintegration_domain mapp.local.com
-     * @magentoConfigFixture current_store tagintegration/general/custom_domain mapp.local.com
-     * @magentoConfigFixture current_store mapp_acquire/general/enable 1
-     * @magentoConfigFixture current_store mapp_acquire/general/acquire (function(e){var t=document,n=t.createElement("script");n.async=!0,n.defer=!0,n.src=e,t.getElementsByTagName("head")[0].appendChild(n)})("https://go.flx1.com/100-20000.js?id=20000&m=100")
-     * @return void
-     */
-    public function testAcquireRendersOnPageCorrectly()
-    {
-        $this->getRequest()->setMethod(HttpRequest::METHOD_GET);
-        $this->dispatch('/');
-
-        $this->assertStringContainsString('acquireAdd', $this->getResponse());
-        $this->assertStringContainsString('acquireRemove', $this->getResponse());
-        $this->assertStringContainsString('acquireWishlist', $this->getResponse());
-        $this->assertStringContainsString('id=20000', $this->getResponse());
-        $this->assertStringContainsString('m=100', $this->getResponse());
-        $this->assertStringContainsString('c.flx1.com', $this->getResponse());
-    }
-
-    /**
      * @magentoConfigFixture current_store customer/captcha/enable 0
      * @magentoConfigFixture current_store tagintegration/general/enable 1
      * @magentoConfigFixture current_store tagintegration/general/tagintegration_id 164891111181113

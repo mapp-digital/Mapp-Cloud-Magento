@@ -27,7 +27,6 @@ Any PHP 8.2 changes (and beyond) will be made with backwards compatibility in mi
 The configuration for the Mapp Cloud module is split into 8 sections. These include:
 * `tagintegration` (Mapp Intelligence - Tag Integration)
 * `mapp_gtm` (Mapp Intelligence - Google Tag Manager)
-* `mapp_acquire` (Mapp Acquire)
 * `mapp_connect` (Mapp Engage (Connect) - General)
 * `mapp_connect_messages` (Mapp Engage (Connect) - Emails)
 * `mapp_web_push` (Mapp Web Push)
@@ -39,18 +38,6 @@ few options that require additional context.
 
 ##### Below are some examples of configuration that may need some additional context if using them.
 ---
-
-**[`mapp_connect/export/sync_method`](../etc/system.xml#L156) - Mapp Acquire**
-
-The Mapp functionality is built into the way that Mapp Intelligence works. This is because the module takes the 
-JS snippet from this field, `preg_match`es the relevant parts for the IDs, and then adds that into the path for the
-intelligence JS sections. 
-
-Due to the way that this works, it's worth noting that this is not built to function with multiple JS snippets in one
-store. This works via store scoping, so if you need to add a snippet per store, that is very much possible.
-
-Requests for the wishlist have also been added to enable adding/removing from the wishlist as well into acquire. This
-is all done on the fly via the cacheable JS snippet added via the module.
 
 **[`mapp_connect/export/sync_method`](../etc/config.xml#L28) - Synchronisation method**
 
@@ -199,7 +186,6 @@ should be
 
 ##### Configuration in the Module
 
-`\MappDigital\Cloud\Enum\Acquire\ConfigurationPaths` &
 `\MappDigital\Cloud\Enum\Connect\ConfigurationPaths` &
 `\MappDigital\Cloud\Enum\GTM\ConfigurationPaths` &
 `\MappDigital\Cloud\Enum\TagIntegration\ConfigurationPaths` - These enums contain the configuration paths for a lot of those that

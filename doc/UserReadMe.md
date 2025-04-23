@@ -12,7 +12,6 @@ The namespace of the module has been kept as `mapp_digital/cloud` with the mappc
 
 1. [Configuration](#configuration-of-the-module)
    1. [Mapp Intelligence](#mapp-intelligence)
-   2. [Mapp Acquire](#mapp-acquire)
    3. [Mapp Web Push Integration](#mapp-web-push-integration)
    4. [Mapp Logging](#mapp-logging)
    5. [Mapp Entity Exports For Products, Customers, And Transactions](#mapp-entity-exports-for-products-customers-and-transactions)
@@ -23,7 +22,6 @@ The namespace of the module has been kept as `mapp_digital/cloud` with the mappc
 The configuration for the Mapp Cloud module is split into 8 sections. These include:
 * `tagintegration` (Mapp Intelligence - Tag Integration)
 * `mapp_gtm` (Mapp Intelligence - Google Tag Manager)
-* `mapp_acquire` (Mapp Acquire)
 * `mapp_connect` (Mapp Engage (Connect) - General)
 * `mapp_connect_messages` (Mapp Engage (Connect) - Emails)
 * `mapp_web_push` (Mapp Web Push)
@@ -43,17 +41,6 @@ that are then used for the data on the shopfront
 
 If you also need to load the data into / via the Google Tag Manager (GTM) then the details can be populated in here. All
 events will then be triggered for the correct services
-
-#### Mapp Acquire
-
-**Stores -> Configuration -> Mapp Cloud -> Acquire**
-
-Here a single field is available. You should add in the acquire snippet provided to you from Mapp into this section
-in order for it to be utilised within Magento.
-
-It is worth confirming here that you are unable to add more than one snippet into the text area. If you need a different
-snippet for a different store, this field value will have to be set on the store scope for each different site
-you need a different value for.
 
 #### Mapp Engage via Connect
 

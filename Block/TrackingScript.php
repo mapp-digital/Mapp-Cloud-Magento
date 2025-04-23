@@ -35,14 +35,6 @@ class TrackingScript extends Template
     }
 
     /**
-     * @return string
-     */
-    public function getAquire(): string
-    {
-        return $this->getConfig()['acquire'] ?? '';
-    }
-
-    /**
      * @return bool
      */
     public function getTiEnable(): bool

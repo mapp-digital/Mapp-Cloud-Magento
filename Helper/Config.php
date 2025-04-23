@@ -10,7 +10,6 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Store\Model\ScopeInterface;
-use MappDigital\Cloud\Enum\Acquire\ConfigurationPaths as AcquireConfigPaths;
 use MappDigital\Cloud\Enum\GTM\ConfigurationPaths as GTMConfigPaths;
 use MappDigital\Cloud\Enum\TagIntegration\ConfigurationPaths as TagIntegrationConfigPaths;
 
@@ -41,20 +40,6 @@ class Config extends AbstractHelper
     }
 
     /**
-     * @return string|null
-     */
-    private function getAcquireLink()
-    {
-        $acquireScript = $this->scopeConfig->getValue(AcquireConfigPaths::XML_PATH_ACQUIRE->value, ScopeInterface::SCOPE_STORE);
-
-        if(!is_null($acquireScript) && preg_match('/id=(\d+?)&m=(\d+?)\D/', $acquireScript, $ids)) {
-            return 'https://c.flx1.com/' . $ids[2] . '-' . $ids[1] .'.js?id=' . $ids[1] . '&m=' . $ids[2];
-        }
-
-        return null;
-    }
-
-    /**
      * @return array
      */
     public function getGTMConfig(): array
@@ -81,7 +66,6 @@ class Config extends AbstractHelper
             'customDomain' => $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_CUSTOM_DOMAIN->value, ScopeInterface::SCOPE_STORE),
             'customPath' => $this->scopeConfig->getValue(TagIntegrationConfigPaths::XML_PATH_CUSTOM_PATH->value, ScopeInterface::SCOPE_STORE),
             'option' => (object)[],
-            'acquire' => $this->getAcquireLink(),
             'gtm' => $this->getGTMConfig()
         ];
     }

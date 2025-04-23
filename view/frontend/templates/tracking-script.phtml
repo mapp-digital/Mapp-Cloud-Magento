@@ -143,9 +143,6 @@
                 }
             };
             window.wts = window.wts || [];
-            window.acquireAdd = window.acquireAdd || [];
-            window.acquireRemove = window.acquireRemove || [];
-            window.acquireWishlist = window.acquireWishlist || [];
             window.wts.push(['_mappAddToCartHelper']);
             window.dataLayer = window.dataLayer || [];
             $.ajax({
@@ -162,9 +159,6 @@
                             window.dataLayer.push({
                                 event: 'addToWishlistMapp',
                                 addToWishlistMapp: JSON.parse(JSON.stringify(response.responseJSON.addToWishlistMapp))
-                            });
-                            window.acquireWishlist.push({
-                                event: 'add-to-wishlist-mapp'
                             });
                             if (document.cookie.indexOf('mapp_debug') !== -1) {
                                 console.log('Mapp Intelligence Add-To-Wishlist datalayer:', JSON.parse(JSON.stringify(window.dataLayer)));
@@ -271,9 +265,6 @@
                     }
                     window.wts.push(['linkId', data.addToCartEventName]);
                     window.wts.push(['send', 'pageupdate', true]);
-                    window.acquireAdd.push({
-                        event: data.addToCartEventName
-                    });
                 }
 
                 gtmCreateProductArray()
@@ -315,9 +306,6 @@
                     window.wts.push(['send', 'pageupdate', true]);
                     window.wts.push(['st', 'del']);
                 }
-                window.acquireRemove.push({
-                    event: data.removeFromCartEventName
-                });
                 setTimeout(function () {
                     restoreDataLayer(JSON.parse(dataLayerBackup));
                     window.wts.push(['linkId', 'false']);

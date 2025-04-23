@@ -13,21 +13,17 @@
                 <value id="mapp-intelligence1" type="host">*.webtrekk.net</value>
                 <value id="mapp-intelligence2" type="host">*.wt-eu02.net</value>
                 <value id="mapp-intelligence-fbc" type="host">https://fbc.wcfbc.net</value>
-                <value id="mapp-acquire" type="host">https://*.flx1.com/</value>
-                <value id="mapp-acquire-cookie" type="host">https://dmp.adform.net/</value>
             </values>
         </policy>
         <policy id="script-src">
             <values>
                 <value id="mapp-intelligence-ti" type="host">https://responder.wt-safetag.com</value>
-                <value id="mapp-acquire" type="host">https://*.flx1.com/</value>
                 <value id="mapp-gtm" type="host">https://www.googletagmanager.com</value>
                 <value id="mapp-gstatic" type="host">https://*.gstatic.com</value>
             </values>
         </policy>
         <policy id="connect-src">
             <values>
-                <value id="mapp-acquire" type="host">https://*.flx1.com/</value>
                 <value id="mapp-gstatic" type="host">https://*.gstatic.com</value>
                 <value id="mapp-firebase-jamie" type="host">https://jamie.g.shortest-route.com</value>
                 <value id="mapp-firebase-googleapis" type="host">https://*.googleapis.com</value>
