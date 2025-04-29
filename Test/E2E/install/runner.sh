@@ -54,8 +54,9 @@ function install {
 		--use-secure-admin=1 \
 		--admin-use-security-key=1 \
 		--session-save=files \
-		--search-engine=elasticsearch7 \
-		--elasticsearch-host=es01
+		--search-engine=opensearch \
+		--opensearch-host=os01 \
+		--opensearch-port=9200
 
 
 		log "Disable Two Factor Authorization"
