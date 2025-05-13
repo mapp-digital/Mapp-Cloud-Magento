@@ -14,7 +14,7 @@ class TrackingScript
      */
     public static function generateJS($config, $productId, $storeCode)
     {
-        $_psVersion = "1.2.6";
+        $_psVersion = "1.2.11";
 
         $requireArray = "'jquery'";
         $requireArgument = "$";
@@ -110,12 +110,12 @@ class TrackingScript
             }
             JS;
 
-            $gtmAddToCartPush = "window[config.gtm.datalayer] = window[config.gtm.datalayer] || [];
-                        window[config.gtm.datalayer].push(function() {
+            $gtmAddToCartPush = "window['{$config['gtm']['datalayer']}'] = window['{$config['gtm']['datalayer']}'] || [];
+                        window['{$config['gtm']['datalayer']}'].push(function() {
                           this.reset();
                         });
                         {$gtmEvent}
-                            window[config.gtm.datalayer].push({
+                            window['{$config['gtm']['datalayer']}'].push({
                                 event: '{$config['gtm']['triggerBasket']}',
                                 mapp: {gtmProductArray: JSON.parse(JSON.stringify(window._ti.gtmProductArray))}
                             });";
@@ -229,8 +229,8 @@ class TrackingScript
                         {$tiLoader}
                         if(config.gtm.enable === '1') {
                             {$gtmCreateProductArray}
-                            window[config.gtm.datalayer] = window[config.gtm.datalayer] || [];
-                            window[config.gtm.datalayer].push({
+                            window['{$config['gtm']['datalayer']}'] = window['{$config['gtm']['datalayer']}'] || [];
+                            window['{$config['gtm']['datalayer']}'].push({
                                 event: 'mapp.load',
                                 mapp: JSON.parse(JSON.stringify(window._ti))
                             });
