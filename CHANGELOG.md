@@ -69,5 +69,5 @@
 - Add PHP 8.3 compatibility in composer.json
 - Intelligence Tracking: Remove from Cart Event
 
-# 1.3.0
+# 1.2.12
 - Remove Ability to Add Acquire Script
