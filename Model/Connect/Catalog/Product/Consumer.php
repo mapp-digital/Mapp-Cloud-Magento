@@ -23,6 +23,7 @@ use Magento\Store\Model\Store;
 use MappDigital\Cloud\Enum\Connect\ConfigurationPaths as ConnectConfigurationPaths;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Logger\CombinedLogger;
+use Magento\Store\Api\StoreRepositoryInterface;
 
 class Consumer
 {
@@ -38,7 +39,8 @@ class Consumer
         private DeploymentConfig $deploymentConfig,
         private UrlBuilder $imageUrlBuilder,
         private Cache $imageCache,
-        private GetSalableQuantityDataBySku $getSalableQuantityDataBySku
+        private GetSalableQuantityDataBySku $getSalableQuantityDataBySku,
+        private StoreRepositoryInterface $storeRepository,
     ) {}
 
     /**
@@ -51,7 +53,7 @@ class Consumer
     {
         try {
             $productData = $this->jsonSerializer->unserialize($productDataJson);
-            $product = $this->productRepository->get($productData['sku'], false, $productData['store_id'], true);
+            $product = $this->productRepository->get($productData['sku'], false, Store::DEFAULT_STORE_ID, true);
 
             $this->mappCombinedLogger->info('MappConnect: -- Product Sync Consumer -- Sending Product SKU to Mapp: ' . $product->getSku(), __CLASS__,__FUNCTION__);
 
@@ -62,8 +64,9 @@ class Consumer
             $data['productURL'] = $product->getProductUrl();
             $data['category'] = $this->getProductCategoryImplodedString($product);
             $data['stockTotal'] = "{$this->getProductTotalQty($product)}";
-            $data['store_id'] = $productData['store_id'] ?? 0;
+            $data['store_id'] = Store::DEFAULT_STORE_ID;
             $this->addMediaUrlsIncludingDomainToData($product, $data);
+            $this->addLocalizedDataToProduct($product, $data);
 
             if (is_object($product->getExtensionAttributes())) {
                 $data['extension_attributes'] = $this->getAllProductExtensionAttributesAsArray($product);
@@ -235,6 +238,123 @@ class Consumer
             return $this->deploymentConfig->get('directories/document_root_is_pub') == true;
         } catch (Exception) {
             return false;
+        }
+    }
+
+    /**
+     * Add localized product data for different stores
+     *
+     * @param ProductInterface $product
+     * @param array $data
+     * @return void
+     */
+    private function addLocalizedDataToProduct(ProductInterface $product, array &$data): void
+    {
+        try {
+            $localizedProductNames = [];
+            $localizedDescriptions = [];
+            $localizedProductPrices = [];
+            $localizedMsrps = [];
+            $localizedProductURLs = [];
+
+            $storeList = $this->storeRepository->getList();
+
+            foreach ($storeList as $store) {
+                // Skip admin store
+                if ($store->getId() == 0) {
+                    continue;
+                }
+
+                try {
+                    // Get country code from store configuration
+                    $countryCode = $this->coreConfig->getValue(
+                        'general/country/default',
+                        ScopeInterface::SCOPE_STORE,
+                        $store->getId()
+                    );
+
+                    // Get currency code from store configuration
+                    $currencyCode = $this->coreConfig->getValue(
+                        'currency/options/default',
+                        ScopeInterface::SCOPE_STORE,
+                        $store->getId()
+                    );
+
+                    if (!$countryCode || !$currencyCode) {
+                        continue;
+                    }
+
+                    // Load product for this store view
+                    $storeProduct = $this->productRepository->getById(
+                        $product->getId(),
+                        false,
+                        $store->getId()
+                    );
+
+                    // Add localized product name
+                    if ($storeProduct->getName()) {
+                        $localizedProductNames[$countryCode] = $storeProduct->getName();
+                    }
+
+                    // Add localized description
+                    if ($storeProduct->getDescription()) {
+                        $localizedDescriptions[$countryCode] = $storeProduct->getDescription();
+                    }
+
+                    // Add localized product price
+                    $price = $storeProduct->getPrice() ?:
+                        $storeProduct->getMinimalPrice() ??
+                        $storeProduct->getFinalPrice();
+                    if ($price) {
+                        $localizedProductPrices[$currencyCode] = $price;
+                    }
+
+                    // Add localized MSRP if available
+                    if ($storeProduct->getMsrp()) {
+                        $localizedMsrps[$currencyCode] = $storeProduct->getMsrp();
+                    }
+
+                    // Add localized product URL
+                    if ($storeProduct->getProductUrl()) {
+                        $localizedProductURLs[$countryCode] = $storeProduct->getProductUrl();
+                    }
+
+                } catch (Exception $e) {
+                    $this->mappCombinedLogger->error(
+                        'MappConnect: -- Product Sync Consumer -- Error getting localized data for store ' . $store->getId() . ': ' . $e->getMessage(),
+                        __CLASS__,
+                        __FUNCTION__
+                    );
+                }
+            }
+
+            // Add localized data to the product data
+            if (!empty($localizedProductNames)) {
+                $data['localizedProductNames'] = $localizedProductNames;
+            }
+
+            if (!empty($localizedDescriptions)) {
+                $data['localizedDescriptions'] = $localizedDescriptions;
+            }
+
+            if (!empty($localizedProductPrices)) {
+                $data['localizedProductPrices'] = $localizedProductPrices;
+            }
+
+            if (!empty($localizedMsrps)) {
+                $data['localizedMsrps'] = $localizedMsrps;
+            }
+
+            if (!empty($localizedProductURLs)) {
+                $data['localizedProductURLs'] = $localizedProductURLs;
+            }
+
+        } catch (Exception $e) {
+            $this->mappCombinedLogger->error(
+                'MappConnect: -- Product Sync Consumer -- Error adding localized data: ' . $e->getMessage(),
+                __CLASS__,
+                __FUNCTION__
+            );
         }
     }
 }

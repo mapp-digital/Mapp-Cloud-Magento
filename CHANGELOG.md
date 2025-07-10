@@ -68,3 +68,12 @@
 # 1.2.7
 - Add PHP 8.3 compatibility in composer.json
 - Intelligence Tracking: Remove from Cart Event
+
+# 1.2.9
+- Add code improvements to unit tests
+
+# 1.2.10
+- Add code quality improvements
+
+# 1.2.14
+- Support for Multiple Store View Products
