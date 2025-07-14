@@ -330,23 +330,23 @@ class Consumer
 
             // Add localized data to the product data
             if (!empty($localizedProductNames)) {
-                $data['localizedProductNames'] = $localizedProductNames;
+                $data['localizedProductNames'] = $this->jsonSerializer->serialize($localizedProductNames);
             }
 
             if (!empty($localizedDescriptions)) {
-                $data['localizedDescriptions'] = $localizedDescriptions;
+                $data['localizedDescriptions'] = $this->jsonSerializer->serialize($localizedDescriptions);
             }
 
             if (!empty($localizedProductPrices)) {
-                $data['localizedProductPrices'] = $localizedProductPrices;
+                $data['localizedProductPrices'] = $this->jsonSerializer->serialize($localizedProductPrices);
             }
 
             if (!empty($localizedMsrps)) {
-                $data['localizedMsrps'] = $localizedMsrps;
+                $data['localizedMsrps'] = $this->jsonSerializer->serialize($localizedMsrps);
             }
 
             if (!empty($localizedProductURLs)) {
-                $data['localizedProductURLs'] = $localizedProductURLs;
+                $data['localizedProductURLs'] = $this->jsonSerializer->serialize($localizedProductURLs);
             }
 
         } catch (Exception $e) {
