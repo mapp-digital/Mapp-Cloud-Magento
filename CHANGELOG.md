@@ -77,3 +77,6 @@
 
 # 1.2.14
 - Support for Multiple Store View Products
+
+# 1.2.15
+- Fixing console return error for product sync
