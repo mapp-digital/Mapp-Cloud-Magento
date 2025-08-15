@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\App\State;
+use Magento\Framework\Console\Cli;
 
 /**
  * Class AbstractCommand
@@ -54,10 +55,10 @@ abstract class AbstractCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int|null
      * @throws Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $s = time();
         $this->setInput($input)->setOutput($output);
@@ -74,11 +75,13 @@ abstract class AbstractCommand extends Command
                 "<error>[!] Exception encountered: %s",
                 $e->getMessage()
             ));
+            return Cli::RETURN_FAILURE;
         }
 
         if ($this->getVerbosity()) {
             $this->writeRunTime($s);
         }
+        return Cli::RETURN_SUCCESS;
     }
 
     /**
