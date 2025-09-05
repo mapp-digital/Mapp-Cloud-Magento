@@ -285,10 +285,11 @@ class Consumer
                     }
 
                     // Load product for this store view
-                    $storeProduct = $this->productRepository->getById(
-                        $product->getId(),
+                    $storeProduct = $this->productRepository->get(
+                        $product->getSku(),
                         false,
-                        $store->getId()
+                        $store->getId(),
+                        true
                     );
 
                     // Add localized product name
