@@ -252,7 +252,7 @@ class Client
      * @param String|NULL $queryString
      * @return string
      */
-    public function getRequestHash(string $url, string $body = null, string $queryString = null): string
+    public function getRequestHash(string $url, ?string $body = null, ?string $queryString = null): string
     {
         $url = preg_replace('/^.*\/api\/v/', '/api/v', $url);
 

@@ -4,3 +4,5 @@ node_modules
 *.zip
 .env
 results
+vendor
+composer.lock

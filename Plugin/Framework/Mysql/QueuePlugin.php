@@ -25,7 +25,7 @@ class QueuePlugin
         Queue $subject,
         EnvelopeInterface $envelope,
         bool $requeue = true,
-        string $rejectionMessage = null
+        ?string $rejectionMessage = null
     ) : array {
 
         if ($rejectionMessage === ConsumeQueue::RETRY_MESSAGE) {
