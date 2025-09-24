@@ -18,6 +18,9 @@ class CartUpdated implements ArgumentInterface
     ) {
     }
 
+    /**
+     * @return array|null
+     */
     public function getConfig(): ?array
     {
         $removeProduct = $this->checkoutSession->getData('webtrekk_removeproduct');
@@ -31,16 +34,16 @@ class CartUpdated implements ArgumentInterface
         $dataLayer = $this->config->removeParameterByBlacklist($dataLayer);
 
         $productData = [
-            "id" => $product['entity_id'] ?? "",
-            "name" => $product['name'] ?? "",
-            "sku" => $product['sku'] ?? "",
-            "price" => $product['price'] ?? "",
-            "specialPrice" => $product['special_price'] ?? "",
-            "qty" => $product['qty'] ?? "",
-            "category" => implode(' ; ', $product['category_ids'] ?? []),
-            "url" => $product['url_key'] ?? "",
-            "img" => $product['image'] ?? "",
-            "currency" => $product['currency'] ?? ""
+            'id' => $product['entity_id'] ?? '',
+            'name' => $product['name'] ?? '',
+            'sku' => $product['sku'] ?? '',
+            'price' => $product['price'] ?? '',
+            'specialPrice' => $product['special_price'] ?? '',
+            'qty' => $product['qty'] ?? '',
+            'category' => implode(' ; ', $product['category_ids'] ?? []),
+            'url' => $product['url_key'] ?? '',
+            'img' => $product['image'] ?? '',
+            'currency' => $product['currency'] ?? ''
         ];
 
         $data = [

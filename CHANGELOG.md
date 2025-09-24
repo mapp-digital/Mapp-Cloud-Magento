@@ -74,3 +74,6 @@
 
 # 1.2.10
 - Add code quality improvements
+
+# 1.2.14
+- Support for Multiple Store View Products
