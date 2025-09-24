@@ -14,6 +14,7 @@ class Magento_REST {
     private $red_id;
     private $green_id;
     private $blue_id;
+    private $attribute_sets;
 
     function __construct() {
         $this->get_token();
