@@ -74,3 +74,8 @@
 
 # 1.2.10
 - Add code quality improvements
+
+# 1.3.0
+- Support for Multiple Store View Products
+- Update Smartpixel to latest (6.6.1)
+- Refractor TrackingScript helper to be proper block/template
