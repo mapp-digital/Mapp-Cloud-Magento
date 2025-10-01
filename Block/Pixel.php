@@ -57,7 +57,7 @@ class Pixel extends Template implements IdentityInterface
      * @return array
      * @throws NoSuchEntityException
      */
-    public function getIdentities()
+    public function getIdentities(): array
     {
         return [
             'pixel_webpush_' . $this->storeManager->getStore()->getId() . '_js_config',

@@ -94,3 +94,17 @@ https://local.domain.com
 }
 ```
 Run `make plugin-install` to apply changes in src directoy to running server. For certain changes you also need to run `make upgrade` or `make flush`.
+
+## Possible issues
+### Cannot start server (dev or regular)
+```
+Error response from daemon: driver failed programming external connectivity on endpoint local.domain.com (924b9aff4491280ba4e2e80a1ea4096fdb597b14285279138d2689164726a304): Error starting userland proxy: listen tcp4 0.0.0.0:80: bind: address already in use
+make: *** [Makefile:30: dev-server-start] Error 1
+```
+
+Most likely Apache is running locally listening for port 80. \
+Resolution: map docker port 80 to port 8080 in Test/E2E/install/docker-compose.yaml (use `8080:80` instead of `80:80`)
+
+### Unable to create-project since authentication issue
+during `make install`. Even describing auth details manually cannot solve issue \
+_**see env.example from project root**_

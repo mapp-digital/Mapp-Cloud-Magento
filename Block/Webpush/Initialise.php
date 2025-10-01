@@ -40,7 +40,7 @@ class Initialise extends Template
     /**
      * @return string
      */
-    protected function _toHtml()
+    protected function _toHtml(): string
     {
         if ($this->cookieManager->getCookie(AddWebpushFirebaseLayoutHandlePlugin::COOKIE_NAME_WEBPUSH_SET)) {
             return '';
@@ -53,7 +53,7 @@ class Initialise extends Template
      * @param $html
      * @return string
      */
-    protected function _afterToHtml($html)
+    protected function _afterToHtml(string $html): string
     {
         try {
             if ($this->canInitJsFiles() && !$this->cookieManager->getCookie(AddWebpushFirebaseLayoutHandlePlugin::COOKIE_NAME_WEBPUSH_SET)) {
@@ -117,6 +117,8 @@ JS;
         } catch (\Exception $exception) {
             $this->mappCombinedLogger->error('Error Trying to initialise assets for webpush functionality: ' . $exception->getMessage(), __CLASS__, __FUNCTION__);
         }
+
+        return [];
     }
 
     /**

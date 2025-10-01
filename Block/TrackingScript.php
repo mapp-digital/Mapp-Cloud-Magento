@@ -16,7 +16,7 @@ use Magento\Framework\View\Element\Template;
  */
 class TrackingScript extends Template
 {
-    public const PS_VERSION = "1.3.0";
+    public const PS_VERSION = "1.4.0";
 
     /**
      * @return bool

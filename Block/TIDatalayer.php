@@ -36,7 +36,7 @@ class TIDatalayer extends Template
     /**
      * @return string
      */
-    protected function _toHtml()
+    protected function _toHtml(): string
     {
         if (!$this->config->isEnabled()) {
             return '';

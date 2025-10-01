@@ -38,7 +38,7 @@ class FirebaseData extends AbstractBlock implements IdentityInterface
      *
      * @return string
      */
-    protected function _toHtml()
+    protected function _toHtml(): string
     {
         try {
             if ($this->_scopeConfig->getValue('mapp_web_push/general/enable', ScopeInterface::SCOPE_STORE, $this->storeManager->getStore()->getId())) {
@@ -95,7 +95,7 @@ JS;
      * @return array
      * @throws NoSuchEntityException
      */
-    public function getIdentities()
+    public function getIdentities(): array
     {
         return [
             'firebase_' . $this->storeManager->getStore()->getId(),
