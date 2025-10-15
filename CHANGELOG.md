@@ -82,3 +82,6 @@
 
 # 1.4.0
 - roll out support for PHP 8.4 
+
+# 1.4.1
+- CodeSniffer changes for safe HTML output

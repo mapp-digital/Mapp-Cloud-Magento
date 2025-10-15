@@ -15,13 +15,13 @@ if (class_exists('Magento\Framework\View\Helper\SecureHtmlRenderer')):
      * @var Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
      */
     ?>
-    <?= $secureRenderer->renderTag(
+    <?= /* noEscape */ $secureRenderer->renderTag(
     'script',
     ['type' => 'text/javascript'],
     'window._ti=' . $this->getDataLayer() . ';',
     false);
     ?>
 <?php else: ?>
-    <script type="text/javascript">window._ti = <?= $block->getDataLayer(); ?>;</script>
+    <script type="text/javascript">window._ti = <?= $escaper->escapeHtml($block->getDataLayer()) ?>;</script>
 <?php endif ?>
-<?= $block->getScript(); ?>
+<?= /* noEscape */ $block->getScript(); ?>

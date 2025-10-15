@@ -9,7 +9,7 @@
              ********************************/
             if ($block->getGtmEnabled()):?>
             window.wtSmart = window.wtSmart ? window.wtSmart : wtSmart.use(window, window.document);
-            window.wtSmart._ps && window.wtSmart._ps(64, '<?= $block::PS_VERSION ?>');
+            window.wtSmart._ps && window.wtSmart._ps(64, '<?= $escaper->escapeHtml($block::PS_VERSION) ?>');
             <?php endif; ?>
 
             <?php
@@ -29,7 +29,7 @@
                 j.src =
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
                 f.parentNode.insertBefore(j, f);
-            })(window, document, 'script', '<?= $block->getConfig()['gtm']['datalayer'] ?>', '<?= $block->getConfig()['gtm']['id'] ?>');
+            })(window, document, 'script', '<?= $escaper->escapeHtml($block->getConfig()['gtm']['datalayer']) ?>', '<?= $escaper->escapeHtml($block->getConfig()['gtm']['id']) ?>');
             <?php endif; ?>
 
             <?php
@@ -41,10 +41,10 @@
                 const t = document, n = t.createElement('script');
                 n.async = !0, n.defer = !0, n.src = e,
                     t.getElementsByTagName('head')[0].appendChild(n)
-            })('<?= $block->getAquire() ?>');
+            })('<?= $escaper->escapeHtml($block->getAquire()) ?>');
             <?php endif ?>
 
-            const mappEndpoint = location.protocol + '//' + location.host + '<?= $block->getStoreCode() ?>/mappintelligence/data/get/';
+            const mappEndpoint = location.protocol + '//' + location.host + '<?= $escaper->escapeHtml($block->getStoreCode()) ?>/mappintelligence/data/get/';
             const isProductView = window._ti && window._ti.pageAction && window._ti.pageAction === 'catalog_product_view';
             const calculatePrices = () => {
                 const costs = window._ti.productCost.split(';');
@@ -149,7 +149,7 @@
             window.wts.push(['_mappAddToCartHelper']);
             window.dataLayer = window.dataLayer || [];
             $.ajax({
-                url: mappEndpoint + (isProductView ? '?product=<?= $block->getProductId() ?>' : ''),
+                url: mappEndpoint + (isProductView ? '?product=<?= $escaper->escapeHtml($block->getProductId()) ?>' : ''),
                 type: 'GET',
                 dataType: 'json',
                 complete: function (response) {
@@ -188,10 +188,10 @@
                      ********************************/
                     if ($block->getTiEnable()): ?>
                     window._tiConfig = {
-                        tiId: '<?= $block->getConfig()['tiId']?>',
-                        tiDomain: '<?= $block->getConfig()['tiDomain']?>',
-                        customDomain: '<?= $block->getConfig()['customDomain']?>',
-                        customPath: '<?= $block->getConfig()['customPath']?>'
+                        tiId: '<?= $escaper->escapeHtml($block->getConfig()['tiId']) ?>',
+                        tiDomain: '<?= $escaper->escapeHtml($block->getConfig()['tiDomain']) ?>',
+                        customDomain: '<?= $escaper->escapeHtml($block->getConfig()['customDomain']) ?>',
+                        customPath: '<?= $escaper->escapeHtml($block->getConfig()['customPath']) ?>'
                     };
                     (function (c, d, a, f) {
                         c.wts = c.wts || [];
@@ -225,7 +225,7 @@
                         }
                     })(window, document, 'script', _tiConfig);
                     window.wts = window.wts || [];
-                    window.wts.push(['_ps', 64, '<?= $block::PS_VERSION ?>']);
+                    window.wts.push(['_ps', 64, '<?= $escaper->escapeHtml($block::PS_VERSION) ?>']);
                     <?php
                     /********************************
                      * END TI
@@ -282,10 +282,10 @@
                     this.reset();
                 });
                 <?php if ($block->getConfig()["gtm"]["triggerBasket"] === "mapp.load"): ?>
-                window.wtSmart.action.data.add('<?= $block->getConfig()["gtm"]["event"]?>');
+                window.wtSmart.action.data.add('<?= $escaper->escapeHtml($block->getConfig()["gtm"]["event"]) ?>');
                 <?php endif ?>
                 window[data.config.gtm.datalayer].push({
-                    event: '<?= $block->getConfig()['gtm']['triggerBasket']?>',
+                    event: '<?= $escaper->escapeHtml($block->getConfig()['gtm']['triggerBasket']) ?>',
                     mapp: {gtmProductArray: JSON.parse(JSON.stringify(window._ti.gtmProductArray))}
                 });
                 setTimeout(function () {

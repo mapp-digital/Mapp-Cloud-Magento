@@ -5,5 +5,5 @@
  */
 $viewModel = $block->getViewModel();
 if ($config = $viewModel->getConfig()): ?>
-    <script type="text/javascript">window.mappCartUpdated = <?= json_encode($config) ?></script>
+    <script type="text/javascript">window.mappCartUpdated = <?= $escaper->escapeHtml(json_encode($config)) ?></script>
 <?php endif ?>

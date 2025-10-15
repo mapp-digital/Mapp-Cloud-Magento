@@ -8,10 +8,10 @@
 use MappDigital\Cloud\Block\Webpush\Initialise;
 
 /** @var $block Initialise */
-if ($block->canInitJsFiles() && $alias = $block->getAlias()) {
-    foreach ($block->getPageAssets() as $url) {
-        echo '<script type="text/javascript" async defer src="' . $url . '"> </script>' . PHP_EOL;
-    }
+if ($block->canInitJsFiles() && $alias = $block->getAlias()): ?>
+    <?php foreach ($block->getPageAssets() as $url): ?>
+        <script type="text/javascript" async defer src="<?= $escaper->escapeHtml($url) ?>"> </script>' . PHP_EOL;
+    <?php endforeach ?>
 
-    echo '<script>' . $block->getUserConfirmJs() . '</script>';
-}
+    <script><?= $escaper->escapeHtml($block->getUserConfirmJs()) ?></script>
+<?php endif ?>
