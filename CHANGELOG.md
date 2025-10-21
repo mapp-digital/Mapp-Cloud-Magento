@@ -85,3 +85,6 @@
 
 # 1.4.1
 - CodeSniffer changes for safe HTML output
+
+# 1.4.2
+- Return type addition for console commands

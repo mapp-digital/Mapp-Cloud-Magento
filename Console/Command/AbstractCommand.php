@@ -57,7 +57,7 @@ abstract class AbstractCommand extends Command
      * @return void
      * @throws Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $s = time();
         $this->setInput($input)->setOutput($output);
@@ -74,11 +74,15 @@ abstract class AbstractCommand extends Command
                 "<error>[!] Exception encountered: %s",
                 $e->getMessage()
             ));
+
+            return Command::FAILURE;
         }
 
         if ($this->getVerbosity()) {
             $this->writeRunTime($s);
         }
+
+        return Command::SUCCESS;
     }
 
     /**
