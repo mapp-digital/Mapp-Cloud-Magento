@@ -88,3 +88,6 @@
 
 # 1.4.2
 - Return type addition for console commands
+
+# 1.4.3
+- Forcing product load for store view to fix the Localization sync issue 
