@@ -49,7 +49,7 @@
 
 # 1.2.2
 - Fixing cancel order email for guest
-- Add support to send email on order 
+- Add support to send email on order
 
 # 1.2.3
 - Fix Mapp endpoint url for multistore
@@ -90,4 +90,9 @@
 - Return type addition for console commands
 
 # 1.4.3
-- Forcing product load for store view to fix the Localization sync issue 
+- Forcing product load for store view to fix the Localization sync issue
+
+# 1.5.0
+- Adding Abandoned Cart and Wishlist Campaigns
+- Admin configuration to enable/disabled Cart & Wishlist compaigns >  "Mapp Connect (Engage) - General → Export Connection Configuration"
+- Message queue consumer and publisher to publish queues

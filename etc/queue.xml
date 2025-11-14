@@ -30,4 +30,18 @@
                handler="MappDigital\Cloud\Model\Connect\Catalog\Product\Consumer::processMessage"
                maxMessages="1"/>
     </broker>
+    <broker topic="mappdigital.cloud.entities.campaigns.abandoned.cart.db" exchange="magento-db" type="db">
+        <queue name="mappdigital.cloud.entities.campaigns.abandoned.cart.db"
+               consumer="mappdigital.cloud.entities.campaigns.abandoned.cart.db"
+               consumerInstance="Magento\Framework\MessageQueue\Consumer"
+               handler="MappDigital\Cloud\Model\QueueMessage\Campaigns\AbandonedCart::processMessage"
+               maxMessages="1"/>
+    </broker>
+    <broker topic="mappdigital.cloud.entities.campaigns.wishlist.db" exchange="magento-db" type="db">
+        <queue name="mappdigital.cloud.entities.campaigns.wishlist.db"
+               consumer="mappdigital.cloud.entities.campaigns.wishlist.db"
+               consumerInstance="Magento\Framework\MessageQueue\Consumer"
+               handler="MappDigital\Cloud\Model\QueueMessage\Campaigns\Wishlist::processMessage"
+               maxMessages="1"/>
+    </broker>
 </config>

@@ -11,5 +11,7 @@
         <binding id="mappDigitalCloudTriggersConsumeAmqp" topic="mappdigital.cloud.triggers.consume_amqp" destinationType="queue" destination="mappdigital.cloud.triggers.consume_amqp"/>
         <binding id="mappDigitalCloudExportEntitiesAmqp" topic="mappdigital.cloud.entities.export.amqp" destinationType="queue" destination="mappdigital.cloud.entities.export.amqp"/>
         <binding id="mappDigitalCloudExportCatalogProductAmqp" topic="mappdigital.cloud.entities.export.catalog.product.amqp" destinationType="queue" destination="mappdigital.cloud.entities.export.catalog.product.amqp"/>
+        <binding id="mappDigitalCloudCampaignsAbandonedCartAmqp" topic="mappdigital.cloud.entities.campaigns.abandoned.cart.amqp" destinationType="queue" destination="mappdigital.cloud.entities.campaigns.abandoned.cart.amqp"/>
+        <binding id="mappDigitalCloudCampaignsWishlistAmqp" topic="mappdigital.cloud.entities.campaigns.wishlist.amqp" destinationType="queue" destination="mappdigital.cloud.entities.campaigns.wishlist.amqp"/>
     </exchange>
 </config>

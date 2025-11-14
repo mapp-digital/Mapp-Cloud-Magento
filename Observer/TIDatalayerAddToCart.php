@@ -8,6 +8,7 @@ namespace MappDigital\Cloud\Observer;
 
 use Magento\Catalog\Model\Product as MagentoProductModel;
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use MappDigital\Cloud\Helper\DataLayer as DataLayerHelper;
 
@@ -17,8 +18,9 @@ class TIDatalayerAddToCart extends TIDatalayerCartAbstract
      * @param Observer $observer
      * @return void
      * @throws NoSuchEntityException
+     * @throws LocalizedException
      */
-    public function execute(Observer $observer)
+    public function execute(Observer $observer): void
     {
         if ($this->config->isEnabled()) {
             $item = $observer->getEvent()->getData('quote_item');
@@ -34,6 +36,27 @@ class TIDatalayerAddToCart extends TIDatalayerCartAbstract
                         $this->getSessionData('webtrekk_addproduct'),
                         $this->getProductData($item)
                     )
+                );
+            }
+            try {
+                if ($this->connectHelper->getConfigValue('export', 'abandoned_enable') && $this->customerSession->isLoggedIn()) {
+                    $this->publisher->publish($this->getAbandonedCartPublisherName(), $this->jsonSerializer->serialize([
+                        'email' => $this->customerSession->getCustomer()->getEmail(),
+                        'sku' => $item->getProduct()->getSku(),
+                        'createdAt' => $this->timezoneInterface->date()->format('Y-m-d H:i:s'),
+                        'price' => $item->getPrice()
+                    ]));
+                    $this->mappCombinedLogger->debug(
+                        'Adding Message To Queue for Abandoned Sku: ' . $item->getProduct()->getSku(),
+                        __CLASS__,
+                        __FUNCTION__
+                    );
+                }
+            } catch (\Exception $exception) {
+                $this->mappCombinedLogger->critical(
+                    $exception->getMessage(),
+                    __CLASS__,
+                    __FUNCTION__
                 );
             }
         }
