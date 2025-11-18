@@ -90,4 +90,11 @@
 - Return type addition for console commands
 
 # 1.4.3
-- Forcing product load for store view to fix the Localization sync issue 
+- Forcing product load for store view to fix the Localization sync issue
+
+# 1.5.0
+
+- Adding Abandoned Cart and Wishlist Campaigns
+- Admin configuration to enable/disabled Cart & Wishlist compaigns >  "Mapp Connect (Engage) - General → Export Connection Configuration"
+- Message queue consumer and publisher to publish queues
+- Fixing Order Sync issue

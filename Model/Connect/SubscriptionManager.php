@@ -529,6 +529,25 @@ class SubscriptionManager
     public function getFullOrderDataFromOrderObjectForExport(OrderInterface $order): array
     {
         $data = $order->getData();
+        // Normalize created_at to ISO 8601 (UTC) and provide Unix timestamp in milliseconds for consumers that expect it
+        // Magento stores dates as UTC strings (Y-m-d H:i:s). Ensure explicit UTC formatting for downstream systems.
+        // If created_at is missing on the Order (can happen in some event timings), initialize it to now in UTC.
+        $createdAtRaw = $order->getCreatedAt() ?: ($data['created_at'] ?? null);
+        if ($createdAtRaw) {
+            try {
+                $dt = new \DateTime($createdAtRaw, new \DateTimeZone('UTC'));
+            } catch (\Exception $e) {
+                // Fallback: attempt without timezone then set to UTC
+                $dt = new \DateTime($createdAtRaw);
+                $dt->setTimezone(new \DateTimeZone('UTC'));
+            }
+        } else {
+            // created_at not present on $order; set it manually to current UTC time
+            $dt = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
+        // Overwrite created_at with ISO 8601 UTC, and add alternative representation
+        $data['created_at'] = $dt->format('c');
+        $data['created_at_unix_ms'] = $dt->getTimestamp() * 1000;
         $data['items'] = [];
         unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
 
