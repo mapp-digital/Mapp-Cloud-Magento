@@ -611,6 +611,10 @@ class SubscriptionManager
             $data['unsubscribe'] = true;
         }
 
+        if ($isSubscribed && !array_key_exists('subscribe', $data)) {
+            $data['subscribe'] = true;
+        }
+
         return $data;
     }
 
