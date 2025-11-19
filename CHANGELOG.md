@@ -96,3 +96,4 @@
 - Adding Abandoned Cart and Wishlist Campaigns
 - Admin configuration to enable/disabled Cart & Wishlist compaigns >  "Mapp Connect (Engage) - General → Export Connection Configuration"
 - Message queue consumer and publisher to publish queues
+- Fixing Subscribed users to the correct "Subscriber" group in Engage
