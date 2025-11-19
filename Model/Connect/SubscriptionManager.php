@@ -547,7 +547,6 @@ class SubscriptionManager
         }
         // Overwrite created_at with ISO 8601 UTC, and add alternative representation
         $data['created_at'] = $dt->format('c');
-        $data['created_at_unix_ms'] = $dt->getTimestamp() * 1000;
         $data['items'] = [];
         unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
 
