@@ -99,3 +99,4 @@
 - Message queue consumer and publisher to publish queues
 - Fixing Subscribed users to the correct "Subscriber" group in Engage
 - Fixing Order Sync issue
+- Fixing Order Item sync duplicate issue.

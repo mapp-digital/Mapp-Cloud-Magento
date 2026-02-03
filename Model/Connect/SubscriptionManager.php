@@ -26,6 +26,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\StoreManager;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Logger\CombinedLogger;
+use MappDigital\Cloud\Model\Config\Source\OrderItemExportMode;
 use Zend_Db_Exception;
 
 class SubscriptionManager
@@ -550,7 +551,31 @@ class SubscriptionManager
         $data['items'] = [];
         unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
 
-        foreach ($order->getAllVisibleItems() as $item) {
+        $exportMode = $this->connectHelper->getConfigValue('export', 'order_item_export_mode', $order->getStoreId());
+        switch ($exportMode) {
+            case OrderItemExportMode::PARENT_ONLY:
+                $items = $order->getAllVisibleItems();
+                break;
+            case OrderItemExportMode::CHILD_ONLY:
+                $items = [];
+                foreach ($order->getAllItems() as $item) {
+                    if ($item->getParentItem()) {
+                        $items[] = $item;
+                    } elseif (!$item->getHasChildren()) {
+                        $items[] = $item;
+                    }
+                }
+                break;
+            case OrderItemExportMode::PARENT_AND_CHILD:
+                $items = $order->getAllItems();
+                break;
+            case OrderItemExportMode::DEFAULT:
+            default:
+                $items = $order->getAllVisibleItems();
+                break;
+        }
+
+        foreach ($items as $item) {
             $itemData = $item->getData();
             $itemData['base_image'] = $this->productHelper->getImageUrl($item->getProduct());
             $itemData['url_path'] = $item->getProduct()->getProductUrl();

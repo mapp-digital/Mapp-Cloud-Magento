@@ -290,6 +290,11 @@
                         <field id="sync_method">1</field>
                     </depends>
                 </field>
+                <field id="order_item_export_mode" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Order Item Export Mode</label>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\OrderItemExportMode</source_model>
+                    <comment>Determine which order items to export.</comment>
+                </field>
             </group>
             <group id="group" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Mapp Engage Groups</label>

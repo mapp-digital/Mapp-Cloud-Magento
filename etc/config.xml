@@ -31,6 +31,7 @@ customerRpTokenCreatedAt</attribute_blacklist>
                 <transaction_retry_max>10</transaction_retry_max>
                 <newsletter_retry_max>10</newsletter_retry_max>
                 <transaction_send_on_status>new</transaction_send_on_status>
+                <order_item_export_mode>default</order_item_export_mode>
             </export>
         </mapp_connect>
         <mapp_web_push>
