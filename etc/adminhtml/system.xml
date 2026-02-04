@@ -291,9 +291,16 @@
                     </depends>
                 </field>
                 <field id="order_item_export_mode" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Order Item Export Mode</label>
+                    <label>Order Items Export Behavior</label>
                     <source_model>MappDigital\Cloud\Model\Config\Source\OrderItemExportMode</source_model>
-                    <comment>Determine which order items to export.</comment>
+                    <comment><![CDATA[
+Sync Configuration Options:</br>
+
+1. Default - Sync child products only</br>
+2. Parent Only - Sync parent product type exclusively</br>
+3. Child Only - Sync child products exclusively (without parent)</br>
+4. Parent and Child - Sync both parent and child products together
+]]></comment>
                 </field>
             </group>
             <group id="group" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
