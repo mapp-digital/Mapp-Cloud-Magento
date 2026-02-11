@@ -93,10 +93,9 @@
 - Forcing product load for store view to fix the Localization sync issue
 
 # 1.5.0
-
 - Adding Abandoned Cart and Wishlist Campaigns
 - Admin configuration to enable/disabled Cart & Wishlist compaigns >  "Mapp Connect (Engage) - General → Export Connection Configuration"
-- Message queue consumer and publisher to publish queues
+- Fixing issues around message queue consumer and publisher to publish queues
 - Fixing Subscribed users to the correct "Subscriber" group in Engage
 - Fixing Order Sync issue
 - Fixing Order Item sync duplicate issue.

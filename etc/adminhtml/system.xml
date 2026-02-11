@@ -296,7 +296,7 @@
                     <comment><![CDATA[
 Sync Configuration Options:</br>
 
-1. Default - Sync child products only</br>
+1. Default - Sync top level product</br>
 2. Parent Only - Sync parent product type exclusively</br>
 3. Child Only - Sync child products exclusively (without parent)</br>
 4. Parent and Child - Sync both parent and child products together
