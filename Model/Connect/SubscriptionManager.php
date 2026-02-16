@@ -26,6 +26,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\StoreManager;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use MappDigital\Cloud\Logger\CombinedLogger;
+use MappDigital\Cloud\Model\Config\Source\OrderItemExportMode;
 use Zend_Db_Exception;
 
 class SubscriptionManager
@@ -529,10 +530,52 @@ class SubscriptionManager
     public function getFullOrderDataFromOrderObjectForExport(OrderInterface $order): array
     {
         $data = $order->getData();
+        // Normalize created_at to ISO 8601 (UTC) and provide Unix timestamp in milliseconds for consumers that expect it
+        // Magento stores dates as UTC strings (Y-m-d H:i:s). Ensure explicit UTC formatting for downstream systems.
+        // If created_at is missing on the Order (can happen in some event timings), initialize it to now in UTC.
+        $createdAtRaw = $order->getCreatedAt() ?: ($data['created_at'] ?? null);
+        if ($createdAtRaw) {
+            try {
+                $dt = new \DateTime($createdAtRaw, new \DateTimeZone('UTC'));
+            } catch (\Exception $e) {
+                // Fallback: attempt without timezone then set to UTC
+                $dt = new \DateTime($createdAtRaw);
+                $dt->setTimezone(new \DateTimeZone('UTC'));
+            }
+        } else {
+            // created_at not present on $order; set it manually to current UTC time
+            $dt = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
+        // Overwrite created_at with ISO 8601 UTC, and add alternative representation
+        $data['created_at'] = $dt->format('c');
         $data['items'] = [];
         unset($data['status_histories'], $data['extension_attributes'], $data['addresses'], $data['payment']);
 
-        foreach ($order->getAllVisibleItems() as $item) {
+        $exportMode = $this->connectHelper->getConfigValue('export', 'order_item_export_mode', $order->getStoreId());
+        switch ($exportMode) {
+            case OrderItemExportMode::PARENT_ONLY:
+                $items = $order->getAllVisibleItems();
+                break;
+            case OrderItemExportMode::CHILD_ONLY:
+                $items = [];
+                foreach ($order->getAllItems() as $item) {
+                    if ($item->getParentItem()) {
+                        $items[] = $item;
+                    } elseif (!$item->getHasChildren()) {
+                        $items[] = $item;
+                    }
+                }
+                break;
+            case OrderItemExportMode::PARENT_AND_CHILD:
+                $items = $order->getAllItems();
+                break;
+            case OrderItemExportMode::DEFAULT:
+            default:
+                $items = $order->getAllVisibleItems();
+                break;
+        }
+
+        foreach ($items as $item) {
             $itemData = $item->getData();
             $itemData['base_image'] = $this->productHelper->getImageUrl($item->getProduct());
             $itemData['url_path'] = $item->getProduct()->getProductUrl();
@@ -609,6 +652,10 @@ class SubscriptionManager
 
         if (!$isSubscribed) {
             $data['unsubscribe'] = true;
+        }
+
+        if ($isSubscribed && !array_key_exists('subscribe', $data)) {
+            $data['subscribe'] = true;
         }
 
         return $data;

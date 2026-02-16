@@ -35,6 +35,26 @@ class TIDatalayerRemoveFromCart extends TIDatalayerCartAbstract
                     )
                 );
             }
+            try {
+                if ($this->connectHelper->getConfigValue('export', 'abandoned_enable') && $this->customerSession->isLoggedIn()) {
+                    $this->publisher->publish($this->getAbandonedCartPublisherName(), $this->jsonSerializer->serialize([
+                        'email' => $this->customerSession->getCustomer()->getEmail(),
+                        'productSKU' => $item->getProduct()->getSku(),
+                        'delete' => true
+                    ]));
+                    $this->mappCombinedLogger->debug(
+                        'Adding Message To Queue for Removing Abandoned Sku: ' . $item->getProduct()->getSku(),
+                        __CLASS__,
+                        __FUNCTION__
+                    );
+                }
+            } catch (\Exception $exception) {
+                $this->mappCombinedLogger->critical(
+                    $exception->getMessage(),
+                    __CLASS__,
+                    __FUNCTION__
+                );
+            }
         }
     }
 }

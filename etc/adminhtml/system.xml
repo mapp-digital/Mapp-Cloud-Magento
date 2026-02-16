@@ -255,6 +255,14 @@
                     <label>Enable Sales Transaction Synchronization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="abandoned_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable Abandoned Cart Campaigns</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="wishlist_enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable Wishlist Campaigns</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="transaction_retry_max" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Max Order Request Retry Count</label>
                     <validate>validate-number</validate>
@@ -281,6 +289,18 @@
                         <field id="newsletter_enable">1</field>
                         <field id="sync_method">1</field>
                     </depends>
+                </field>
+                <field id="order_item_export_mode" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Order Items Export Behavior</label>
+                    <source_model>MappDigital\Cloud\Model\Config\Source\OrderItemExportMode</source_model>
+                    <comment><![CDATA[
+Sync Configuration Options:</br>
+
+1. Default - Sync top level product</br>
+2. Parent Only - Sync parent product type exclusively</br>
+3. Child Only - Sync child products exclusively (without parent)</br>
+4. Parent and Child - Sync both parent and child products together
+]]></comment>
                 </field>
             </group>
             <group id="group" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">

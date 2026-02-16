@@ -49,6 +49,18 @@ class Transport implements TransportInterface
                 $data['messageId'] = $this->getMessageId();
                 $data['email'] = $to;
 
+                if (array_key_exists('param_order_created_at_datetime', $data)) {
+                    try {
+                        $dt = new \DateTime($data['param_order_created_at_datetime'], new \DateTimeZone('UTC'));
+                    } catch (\Exception $e) {
+                        // Fallback: attempt without timezone then set to UTC
+                        $dt = new \DateTime($data['param_order_created_at_datetime']);
+                        $dt->setTimezone(new \DateTimeZone('UTC'));
+                    }
+                    // Overwrite created_at with ISO 8601 UTC, and add alternative representation
+                    $data['param_order_created_at_datetime'] = $dt->format('c');
+                }
+
                 try {
                     $this->mappCombinedLogger->info(
                         \json_encode(['message' => 'Mapp Connect -- INFO -- Email Being Sent Via Mapp', 'data' => $data])

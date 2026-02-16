@@ -16,6 +16,9 @@
     <event name="wishlist_add_product">
         <observer name="ti_datalayer_add_to_wishlist" instance="MappDigital\Cloud\Observer\TIDatalayerAddToWishlist" />
     </event>
+    <event name="controller_action_predispatch_wishlist_index_remove">
+        <observer name="ti_datalayer_remove_from_wishlist" instance="MappDigital\Cloud\Observer\RemoveFromWishlist" />
+    </event>
 	<event name="checkout_onepage_controller_success_action">
         <observer name="ti_datalayer_order_success" instance="MappDigital\Cloud\Observer\TIDatalayerOrderSuccess" />
     </event>
