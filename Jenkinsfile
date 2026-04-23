@@ -10,7 +10,5 @@ javascriptPipelinePixelPlugin {
         version: '',
         publish: ':'
     ]
-    npmRegistries = [
-        []
-    ]
+    npmRegistries = []
 }
