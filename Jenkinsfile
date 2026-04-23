@@ -6,9 +6,9 @@ javascriptPipelinePixelPlugin {
     artifacts = '**'
     sonarScript = 'bash sonar.sh'
     npmScripts = [
-        install: '',
+        install: ':',
         version: '',
-        publish: ''
+        publish: ':'
     ]
     npmRegistries = [
         []
