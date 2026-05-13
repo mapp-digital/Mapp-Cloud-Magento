@@ -36,7 +36,6 @@ class MappConnectCustomerGroupUpdate implements ObserverInterface
                 $mappConnectClient = $this->getMappConnectClient();
                 $customerData = $observer->getCustomerDataObject()->__toArray();
                 $customerData['group'] = $this->connectHelper->getConfigValue('group', 'customers');
-                $customerData['subscribe'] = true;
 
                 $this->mappCombinedLogger->debug(
                     sprintf('Mapp Connect: -- GROUP -- Sending Customer data to group %s', $this->connectHelper->getConfigValue('group', 'customers')),
