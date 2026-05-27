@@ -100,5 +100,5 @@
 - Fixing Order Sync issue
 - Fixing Order Item sync duplicate issue.
 
-# 1.5.1
+# 1.5.2
 - Removing hardcoded "subscribe": true on customer creation.
