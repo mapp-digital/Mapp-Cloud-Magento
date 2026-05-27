@@ -99,3 +99,6 @@
 - Fixing Subscribed users to the correct "Subscriber" group in Engage
 - Fixing Order Sync issue
 - Fixing Order Item sync duplicate issue.
+
+# 1.5.1
+- Removing hardcoded "subscribe": true on customer creation.
