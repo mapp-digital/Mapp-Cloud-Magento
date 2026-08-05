@@ -102,3 +102,8 @@
 
 # 1.5.2
 - Removing hardcoded "subscribe": true on customer creation.
+
+# 1.5.3
+- Fix key collision in localised product sync for multi-store configurations where multiple store views share the same country or currency code
+- Apply first-write-wins guard on localised names, descriptions, prices, MSRPs, and URLs to prevent silent data overwrites
+- Fix implicit truthy checks on numeric getters (price, MSRP, description) to use strict null comparison

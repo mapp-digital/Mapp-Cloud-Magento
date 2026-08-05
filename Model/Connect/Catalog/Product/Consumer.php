@@ -292,31 +292,31 @@ class Consumer
                         true
                     );
 
-                    // Add localized product name
-                    if ($storeProduct->getName()) {
+                    // Add localized product name (first-write-wins to prevent key collision)
+                    if (!isset($localizedProductNames[$countryCode]) && $storeProduct->getName()) {
                         $localizedProductNames[$countryCode] = $storeProduct->getName();
                     }
 
-                    // Add localized description
-                    if ($storeProduct->getDescription()) {
+                    // Add localized description (first-write-wins to prevent key collision)
+                    if (!isset($localizedDescriptions[$countryCode]) && $storeProduct->getDescription() !== null) {
                         $localizedDescriptions[$countryCode] = $storeProduct->getDescription();
                     }
 
-                    // Add localized product price
+                    // Add localized product price (first-write-wins to prevent key collision)
                     $price = $storeProduct->getPrice() ?:
                         $storeProduct->getMinimalPrice() ??
                         $storeProduct->getFinalPrice();
-                    if ($price) {
+                    if (!isset($localizedProductPrices[$currencyCode]) && $price !== null) {
                         $localizedProductPrices[$currencyCode] = $price;
                     }
 
-                    // Add localized MSRP if available
-                    if ($storeProduct->getMsrp()) {
+                    // Add localized MSRP if available (first-write-wins to prevent key collision)
+                    if (!isset($localizedMsrps[$currencyCode]) && $storeProduct->getMsrp() !== null) {
                         $localizedMsrps[$currencyCode] = $storeProduct->getMsrp();
                     }
 
-                    // Add localized product URL
-                    if ($storeProduct->getProductUrl()) {
+                    // Add localized product URL (first-write-wins to prevent key collision)
+                    if (!isset($localizedProductURLs[$countryCode]) && $storeProduct->getProductUrl()) {
                         $localizedProductURLs[$countryCode] = $storeProduct->getProductUrl();
                     }
 
