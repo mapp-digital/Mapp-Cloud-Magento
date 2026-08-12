@@ -107,3 +107,4 @@
 - Fix key collision in localised product sync for multi-store configurations where multiple store views share the same country or currency code
 - Apply first-write-wins guard on localised names, descriptions, prices, MSRPs, and URLs to prevent silent data overwrites
 - Fix implicit truthy checks on numeric getters (price, MSRP, description) to use strict null comparison
+- Skip store views belonging to websites where the product is not assigned during localised data sync

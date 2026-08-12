@@ -258,10 +258,16 @@ class Consumer
             $localizedProductURLs = [];
 
             $storeList = $this->storeRepository->getList();
+            $productWebsiteIds = $product->getWebsiteIds();
 
             foreach ($storeList as $store) {
                 // Skip admin store
                 if ($store->getId() == 0) {
+                    continue;
+                }
+
+                // Skip store views belonging to websites where the product is not assigned
+                if (!in_array($store->getWebsiteId(), $productWebsiteIds)) {
                     continue;
                 }
 
