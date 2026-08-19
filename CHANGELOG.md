@@ -108,3 +108,5 @@
 - Apply first-write-wins guard on localised names, descriptions, prices, MSRPs, and URLs to prevent silent data overwrites
 - Fix implicit truthy checks on numeric getters (price, MSRP, description) to use strict null comparison
 - Skip store views belonging to websites where the product is not assigned during localised data sync
+- Fix Product Sync Consumer crashing for configurable, bundle, and grouped products due to MSI `validateProductType` exception
+- Add product type guard in `getProductTotalQty()` using `IsSourceItemManagementAllowedForProductTypeInterface` to skip saleable qty lookup for non-simple product types

@@ -17,6 +17,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\InventoryConfigurationApi\Exception\SkuIsNotAssignedToStockException;
+use Magento\InventoryConfigurationApi\Model\IsSourceItemManagementAllowedForProductTypeInterface;
 use Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
@@ -41,6 +42,7 @@ class Consumer
         private Cache $imageCache,
         private GetSalableQuantityDataBySku $getSalableQuantityDataBySku,
         private StoreRepositoryInterface $storeRepository,
+        private IsSourceItemManagementAllowedForProductTypeInterface $isSourceItemManagementAllowedForProductType,
     ) {}
 
     /**
@@ -89,15 +91,20 @@ class Consumer
     }
 
     /**
+     * Get total salable quantity for a product.
+     *
+     * Non-simple product types (configurable, bundle, grouped) do not support
+     * MSI source item management and will return 0.
+     *
      * @param Product $product
-     * @return mixed
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
-     * @throws InputException
-     * @throws SkuIsNotAssignedToStockException
+     * @return int
      */
     private function getProductTotalQty(Product $product): int
     {
+        if (!$this->isSourceItemManagementAllowedForProductType->execute($product->getTypeId())) {
+            return 0;
+        }
+
         $qty = 0;
 
         foreach ($this->getSalableQuantityDataBySku->execute($product->getSku()) as $stockInfo) {
