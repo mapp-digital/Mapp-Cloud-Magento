@@ -17,6 +17,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\InventoryConfigurationApi\Exception\SkuIsNotAssignedToStockException;
+use Magento\InventoryConfigurationApi\Model\IsSourceItemManagementAllowedForProductTypeInterface;
 use Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
@@ -41,6 +42,7 @@ class Consumer
         private Cache $imageCache,
         private GetSalableQuantityDataBySku $getSalableQuantityDataBySku,
         private StoreRepositoryInterface $storeRepository,
+        private IsSourceItemManagementAllowedForProductTypeInterface $isSourceItemManagementAllowedForProductType,
     ) {}
 
     /**
@@ -89,15 +91,20 @@ class Consumer
     }
 
     /**
+     * Get total salable quantity for a product.
+     *
+     * Non-simple product types (configurable, bundle, grouped) do not support
+     * MSI source item management and will return 0.
+     *
      * @param Product $product
-     * @return mixed
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
-     * @throws InputException
-     * @throws SkuIsNotAssignedToStockException
+     * @return int
      */
     private function getProductTotalQty(Product $product): int
     {
+        if (!$this->isSourceItemManagementAllowedForProductType->execute($product->getTypeId())) {
+            return 0;
+        }
+
         $qty = 0;
 
         foreach ($this->getSalableQuantityDataBySku->execute($product->getSku()) as $stockInfo) {
@@ -258,10 +265,16 @@ class Consumer
             $localizedProductURLs = [];
 
             $storeList = $this->storeRepository->getList();
+            $productWebsiteIds = $product->getWebsiteIds();
 
             foreach ($storeList as $store) {
                 // Skip admin store
                 if ($store->getId() == 0) {
+                    continue;
+                }
+
+                // Skip store views belonging to websites where the product is not assigned
+                if (!in_array($store->getWebsiteId(), $productWebsiteIds)) {
                     continue;
                 }
 
@@ -292,31 +305,31 @@ class Consumer
                         true
                     );
 
-                    // Add localized product name
-                    if ($storeProduct->getName()) {
+                    // Add localized product name (first-write-wins to prevent key collision)
+                    if (!isset($localizedProductNames[$countryCode]) && $storeProduct->getName()) {
                         $localizedProductNames[$countryCode] = $storeProduct->getName();
                     }
 
-                    // Add localized description
-                    if ($storeProduct->getDescription()) {
+                    // Add localized description (first-write-wins to prevent key collision)
+                    if (!isset($localizedDescriptions[$countryCode]) && $storeProduct->getDescription() !== null) {
                         $localizedDescriptions[$countryCode] = $storeProduct->getDescription();
                     }
 
-                    // Add localized product price
+                    // Add localized product price (first-write-wins to prevent key collision)
                     $price = $storeProduct->getPrice() ?:
                         $storeProduct->getMinimalPrice() ??
                         $storeProduct->getFinalPrice();
-                    if ($price) {
+                    if (!isset($localizedProductPrices[$currencyCode]) && $price !== null) {
                         $localizedProductPrices[$currencyCode] = $price;
                     }
 
-                    // Add localized MSRP if available
-                    if ($storeProduct->getMsrp()) {
+                    // Add localized MSRP if available (first-write-wins to prevent key collision)
+                    if (!isset($localizedMsrps[$currencyCode]) && $storeProduct->getMsrp() !== null) {
                         $localizedMsrps[$currencyCode] = $storeProduct->getMsrp();
                     }
 
-                    // Add localized product URL
-                    if ($storeProduct->getProductUrl()) {
+                    // Add localized product URL (first-write-wins to prevent key collision)
+                    if (!isset($localizedProductURLs[$countryCode]) && $storeProduct->getProductUrl()) {
                         $localizedProductURLs[$countryCode] = $storeProduct->getProductUrl();
                     }
 
