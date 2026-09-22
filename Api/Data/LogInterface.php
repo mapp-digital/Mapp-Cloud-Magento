@@ -46,7 +46,7 @@ interface LogInterface
     /**
      * Set log_id
      * @param string $logId
-     * @return \MappDigital\Cloud\Log\Api\Data\LogInterface
+     * @return \MappDigital\Cloud\Api\Data\LogInterface
      */
     public function setLogId($logId);
 
@@ -59,7 +59,7 @@ interface LogInterface
     /**
      * Set severity
      * @param string $severity
-     * @return \MappDigital\Cloud\Log\Api\Data\LogInterface
+     * @return \MappDigital\Cloud\Api\Data\LogInterface
      */
     public function setSeverity($severity);
 
@@ -72,7 +72,7 @@ interface LogInterface
     /**
      * Set log_data
      * @param string $logData
-     * @return \MappDigital\Cloud\Log\Api\Data\LogInterface
+     * @return \MappDigital\Cloud\Api\Data\LogInterface
      */
     public function setLogData($logData);
 
@@ -85,8 +85,7 @@ interface LogInterface
     /**
      * Set class_function
      * @param string $classFunction
-     * @return \MappDigital\Cloud\Log\Api\Data\LogInterface
+     * @return \MappDigital\Cloud\Api\Data\LogInterface
      */
     public function setClassFunction($classFunction);
 }
-

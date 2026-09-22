@@ -19,8 +19,7 @@ class TransportBuilderPlugin
     public function __construct(
         protected ConnectHelper $mappConnectHelper,
         protected FactoryInterface $templateFactory
-    )
-    {
+    ) {
         $this->reset();
     }
 

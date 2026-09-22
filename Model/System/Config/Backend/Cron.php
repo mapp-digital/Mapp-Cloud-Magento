@@ -30,8 +30,7 @@ abstract class Cron extends Value
         ?AbstractDb $resourceCollection = null,
         $runModelPath = '',
         array $data = []
-    )
-    {
+    ) {
         $this->runModelPath = $runModelPath;
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
     }

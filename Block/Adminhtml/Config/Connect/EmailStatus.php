@@ -27,6 +27,7 @@ class EmailStatus extends Field
      */
     protected function _getElementHtml(AbstractElement $element): string
     {
-        return "<span>This functionality is currently <span style='color: red'>Disabled.</span> Please ensure you enable Mapp emails via the General tab";;
+        return "<span>This functionality is currently <span style='color: red'>Disabled.</span> Please ensure you enable Mapp emails via the General tab";
+        ;
     }
 }

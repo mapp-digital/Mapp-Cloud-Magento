@@ -183,7 +183,8 @@ class ConnectHelper extends AbstractHelper
             }
         }
 
-        return (int)$this->config->getValue($map[$templateId],
+        return (int)$this->config->getValue(
+            $map[$templateId],
             ScopeInterface::SCOPE_STORE,
             $storeId ?? $this->storeManager->getStore()?->getId() ?? null
         );

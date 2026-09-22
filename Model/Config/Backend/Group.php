@@ -18,7 +18,8 @@ class Group implements OptionSourceInterface
     public function __construct(
         protected ConnectHelper $helper,
         protected ManagerInterface $messageManager
-    ) {}
+    ) {
+    }
 
     /**
      * @return array

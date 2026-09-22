@@ -95,10 +95,10 @@ class PublishTest extends AbstractController
         $this->assertIsNumeric($order->getEntityId());
 
         $result = $this->connection->fetchAll(
-                $this->connection->select()->from(
-                    $this->connection->getTableName(SubscriptionManager::ORDER_CHANGELOG_TABLE_NAME)
-                )
-            ) ?? [];
+            $this->connection->select()->from(
+                $this->connection->getTableName(SubscriptionManager::ORDER_CHANGELOG_TABLE_NAME)
+            )
+        ) ?? [];
 
         $this->assertCount(1, $result);
         $this->assertSame($order->getEntityId(), $result[0]['order_id']);
@@ -116,10 +116,10 @@ class PublishTest extends AbstractController
         $this->dispatch('newsletter/subscriber/new');
 
         $result = $this->connection->fetchAll(
-                $this->connection->select()->from(
-                    $this->connection->getTableName(SubscriptionManager::NEWSLETTER_CHANGELOG_TABLE_NAME)
-                )
-            ) ?? [];
+            $this->connection->select()->from(
+                $this->connection->getTableName(SubscriptionManager::NEWSLETTER_CHANGELOG_TABLE_NAME)
+            )
+        ) ?? [];
 
         $this->assertCount(1, $result);
     }
@@ -135,10 +135,10 @@ class PublishTest extends AbstractController
         $order = $this->createAndReturnOrder();
 
         $result = $this->connection->fetchAll(
-                $this->connection->select()->from(
-                    $this->connection->getTableName(SubscriptionManager::ORDER_CHANGELOG_TABLE_NAME)
-                )
-            ) ?? [];
+            $this->connection->select()->from(
+                $this->connection->getTableName(SubscriptionManager::ORDER_CHANGELOG_TABLE_NAME)
+            )
+        ) ?? [];
 
         $this->assertCount(1, $result);
         $this->assertSame($order->getEntityId(), $result[0]['order_id']);
@@ -153,10 +153,10 @@ class PublishTest extends AbstractController
         $this->cronPubish->publishOrders();
 
         $result = $this->connection->fetchAll(
-                $this->connection->select()->from(
-                    $this->connection->getTableName(SubscriptionManager::ORDER_CHANGELOG_TABLE_NAME)
-                )
-            ) ?? [];
+            $this->connection->select()->from(
+                $this->connection->getTableName(SubscriptionManager::ORDER_CHANGELOG_TABLE_NAME)
+            )
+        ) ?? [];
 
         $this->assertCount(0, $result);
     }

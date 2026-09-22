@@ -25,7 +25,7 @@ class SyncProductCatalog extends AbstractCommand
         private PublisherInterface $publisher,
         private Json $jsonSerializer,
         $name = null
-    ){
+    ) {
         parent::__construct($resource, $state, $name);
     }
 

@@ -7,4 +7,3 @@
 use Magento\Framework\Component\ComponentRegistrar;
 
 ComponentRegistrar::register(ComponentRegistrar::MODULE, 'MappDigital_Cloud', __DIR__);
-

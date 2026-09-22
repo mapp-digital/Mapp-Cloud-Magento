@@ -21,7 +21,8 @@ class MappConnectCustomerGroupUpdate implements ObserverInterface
         protected ScopeConfigInterface $scopeConfig,
         protected ConnectHelper $connectHelper,
         protected CombinedLogger $mappCombinedLogger
-    ) {}
+    ) {
+    }
 
     /**
      * @throws GuzzleException
@@ -39,13 +40,15 @@ class MappConnectCustomerGroupUpdate implements ObserverInterface
 
                 $this->mappCombinedLogger->debug(
                     sprintf('Mapp Connect: -- GROUP -- Sending Customer data to group %s', $this->connectHelper->getConfigValue('group', 'customers')),
-                    __CLASS__, __FUNCTION__,
+                    __CLASS__,
+                    __FUNCTION__,
                     ['data' => $customerData]
                 );
 
                 $this->mappCombinedLogger->info(
                     \json_encode($customerData, JSON_PRETTY_PRINT),
-                    __CLASS__, __FUNCTION__,
+                    __CLASS__,
+                    __FUNCTION__,
                     ['data' => $customerData]
                 );
 

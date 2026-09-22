@@ -16,7 +16,8 @@ class TIDatalayerOrderSuccess implements ObserverInterface
     public function __construct(
         protected Session $checkoutSession,
         protected Config $config
-    ) {}
+    ) {
+    }
 
     /**
      * @param Observer $observer

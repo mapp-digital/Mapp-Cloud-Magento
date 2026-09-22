@@ -26,7 +26,8 @@ class SubscriptionManagerPlugin
         protected ConnectHelper $connectHelper,
         protected SubscriptionManager $subscriptionManager,
         protected CombinedLogger $mappCombinedLogger
-    ) {}
+    ) {
+    }
 
     // -----------------------------------------------
     // LEGACY METHODS VIA PLUGIN INTERCEPTORS
@@ -80,8 +81,8 @@ class SubscriptionManagerPlugin
 
         try {
             if ($this->connectHelper->getConfigValue('export', 'newsletter_enable')) {
-                $this->mappCombinedLogger->info('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Guest Newsletter Unsubscribe',__CLASS__, __FUNCTION__);
-                $this->mappCombinedLogger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Base Method: unsubscribe',__CLASS__, __FUNCTION__);
+                $this->mappCombinedLogger->info('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Guest Newsletter Unsubscribe', __CLASS__, __FUNCTION__);
+                $this->mappCombinedLogger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- After Base Method: unsubscribe', __CLASS__, __FUNCTION__);
 
                 $this->subscriptionManager->sendNewsletterSubscriptionUpdate(
                     $result->getEmail(),
@@ -92,10 +93,10 @@ class SubscriptionManagerPlugin
                 $this->mappCombinedLogger->debug('Mapp Connect: -- PLUGIN INTERCEPTOR -- Sent Event Via LEGACY Connect Client', __CLASS__, __FUNCTION__);
             }
         } catch (GuzzleException $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made',__CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made', __CLASS__, __FUNCTION__, ['exception' => $exception]);
             $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         } catch (LocalizedException $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred',__CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', __CLASS__, __FUNCTION__, ['exception' => $exception]);
             $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         }
 

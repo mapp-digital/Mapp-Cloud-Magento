@@ -27,7 +27,8 @@ class Client
 
     public function __construct(
         protected ConnectHelper $connectHelper
-    ) {}
+    ) {
+    }
 
     /**
      * @param array $options
@@ -181,7 +182,7 @@ class Client
      * @return mixed
      * @throws GuzzleException|LocalizedException
      */
-    public function put($url, $data = NULL)
+    public function put($url, $data = null)
     {
         $req = $this->getClient()->request('PUT', $url, [
             'headers' => [
@@ -200,7 +201,7 @@ class Client
      * @return mixed
      * @throws GuzzleException|LocalizedException
      */
-    public function post($url, $data = NULL)
+    public function post($url, $data = null)
     {
         $req = $this->getClient()->request('POST', $url, [
             'headers' => [
@@ -224,7 +225,8 @@ class Client
             "request-hash" => $this->getRequestHash(
                 $request->getUri()->getPath(),
                 $request->getBody(),
-                $request->getUri()->getQuery()),
+                $request->getUri()->getQuery()
+            ),
             "exp" => time() + 3600
         ];
 

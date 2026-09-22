@@ -19,8 +19,7 @@ class Clean
         ResourceConnection $resource,
         CombinedLogger $mappCombinedLogger,
         ScopeConfigInterface $config
-    )
-    {
+    ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
         $this->mappCombinedLogger = $mappCombinedLogger;

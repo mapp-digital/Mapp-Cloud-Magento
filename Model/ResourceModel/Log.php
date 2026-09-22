@@ -21,4 +21,3 @@ class Log extends AbstractDb
         $this->_init('mappdigital_cloud_log', LogInterface::LOG_ID);
     }
 }
-

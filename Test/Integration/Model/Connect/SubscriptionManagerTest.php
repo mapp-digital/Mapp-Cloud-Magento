@@ -21,7 +21,7 @@ class SubscriptionManagerTest extends TestCase
     private ?ResourceConnection $resource;
     private ?AdapterInterface $connection;
     private ?OrderRepository $orderRepository;
-    private ?OrderFactory$orderFactory;
+    private ?OrderFactory $orderFactory;
     private ?SubscriptionManager $subscriptionManager;
 
     /**

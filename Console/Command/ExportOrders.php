@@ -21,7 +21,7 @@ class ExportOrders extends AbstractCommand
         ResourceConnection $resource,
         State $state,
         $name = null
-    ){
+    ) {
         parent::__construct($resource, $state, $name);
     }
 

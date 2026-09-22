@@ -35,7 +35,8 @@ class Customer extends AbstractData
      */
     public function __construct(
         protected Session $customerSession
-    ) {}
+    ) {
+    }
 
     private function generate()
     {

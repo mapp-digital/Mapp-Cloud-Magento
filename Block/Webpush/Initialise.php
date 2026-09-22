@@ -116,6 +116,7 @@ JS;
             ];
         } catch (\Exception $exception) {
             $this->mappCombinedLogger->error('Error Trying to initialise assets for webpush functionality: ' . $exception->getMessage(), __CLASS__, __FUNCTION__);
+            return [];
         }
     }
 

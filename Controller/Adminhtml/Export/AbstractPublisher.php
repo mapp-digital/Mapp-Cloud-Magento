@@ -61,7 +61,7 @@ abstract class AbstractPublisher extends Action
     public function getPublisherName(): string
     {
         $queueType = $this->isAmqp() ? 'amqp' : 'db';
-        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType . ' and adding type ' . ucfirst(static::PUBLISH_KEY), __CLASS__,__FUNCTION__);
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType . ' and adding type ' . ucfirst(static::PUBLISH_KEY), __CLASS__, __FUNCTION__);
         return 'mappdigital.cloud.entities.export.' . $queueType;
     }
 
@@ -79,6 +79,4 @@ abstract class AbstractPublisher extends Action
             return false;
         }
     }
-
 }
-

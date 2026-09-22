@@ -13,7 +13,8 @@ class Cart extends AbstractData
     public function __construct(
         protected Session $checkoutSession,
         protected Product $product
-    ) {}
+    ) {
+    }
 
     private function generate()
     {

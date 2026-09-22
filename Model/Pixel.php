@@ -36,7 +36,8 @@ class Pixel
         private Firebase $firebase,
         private ScopeConfigInterface $scopeConfig,
         private StoreManager $storeManager
-    ) {}
+    ) {
+    }
 
     /**
      * Get the main data for pixel-webpush.min.js file as defined in configuration

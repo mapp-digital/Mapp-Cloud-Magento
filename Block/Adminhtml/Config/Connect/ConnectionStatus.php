@@ -52,7 +52,9 @@ class ConnectionStatus extends Field
             if ($mappConnectClient->ping()) {
                 $connection = true;
             }
-        } catch (Exception|GuzzleException $exception) {}
+        } catch (Exception|GuzzleException $exception) {
+
+        }
 
         if ($connection) {
             $html = "<span style='color: green'>Connection Successful</span>";

@@ -24,5 +24,4 @@ class LogLevel extends AbstractRenderer
 
         return "Debug";
     }
-
 }

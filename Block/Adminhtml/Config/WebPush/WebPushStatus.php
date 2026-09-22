@@ -6,7 +6,6 @@
  */
 namespace MappDigital\Cloud\Block\Adminhtml\Config\WebPush;
 
-
 use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
@@ -28,6 +27,7 @@ class WebPushStatus extends Field
      */
     protected function _getElementHtml(AbstractElement $element): string
     {
-        return "<span>This functionality is currently <span style='color: red'>Disabled.</span> Please ensure you enable Mapp Web Push via the General tab";;
+        return "<span>This functionality is currently <span style='color: red'>Disabled.</span> Please ensure you enable Mapp Web Push via the General tab";
+        ;
     }
 }

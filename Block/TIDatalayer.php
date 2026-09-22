@@ -29,7 +29,7 @@ class TIDatalayer extends Template
         protected ScopeConfigInterface $scopeConfig,
         Context $context,
         array $data = []
-    ){
+    ) {
         parent::__construct($context, $data);
     }
 

@@ -29,7 +29,8 @@ class Sftp
     public function __construct(
         protected StoreManagerInterface $storeManager,
         protected ScopeConfigInterface $scopeConfig
-    ) {}
+    ) {
+    }
 
     /**
      * Connect to an SFTP server using specified configuration

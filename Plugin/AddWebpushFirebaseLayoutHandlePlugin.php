@@ -23,7 +23,8 @@ class AddWebpushFirebaseLayoutHandlePlugin
 
     public function __construct(
         private CookieManagerInterface $cookieManager
-    ) {}
+    ) {
+    }
 
     /**
      * Add handle only when user hasn't had it initialised to avoid needlessly loading JS onto the page

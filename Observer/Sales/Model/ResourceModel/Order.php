@@ -25,11 +25,7 @@ class Order implements ObserverInterface
     ) {
     }
 
-    /**
-     * @param Order $subject
-     * @param Interceptor $interceptor
-     * @param OrderInterface $order
-     * @return OrderInterface
+    /**     * @return OrderInterface
      * @throws LocalizedException
      * @throws GuzzleException
      */
@@ -52,9 +48,7 @@ class Order implements ObserverInterface
         return $order;
     }
 
-    /**
-     * @param OrderInterface $order
-     * @return void
+    /**     * @return void
      * @throws LocalizedException
      */
     public function updateCartAndWishlistCampaigns(OrderInterface $order) : void

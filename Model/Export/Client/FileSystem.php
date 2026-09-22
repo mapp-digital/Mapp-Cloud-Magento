@@ -17,7 +17,8 @@ class FileSystem
     public function __construct(
         protected StoreManagerInterface $storeManager,
         protected ScopeConfigInterface $scopeConfig
-    ) {}
+    ) {
+    }
 
     /**
      * @return string

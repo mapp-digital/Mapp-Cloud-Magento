@@ -69,9 +69,9 @@ class Order extends AbstractData
                 $productData['price'] = $item->getPrice();
                 $productData['cost'] = $item->getPrice();
 
-                $productData['attributes'] = array();
-                $allAttributesForProduct = array();
-                if($item->getProductType() === 'configurable') {
+                $productData['attributes'] = [];
+                $allAttributesForProduct = [];
+                if ($item->getProductType() === 'configurable') {
                     $selectedOptions = $item->getProductOptions()['info_buyRequest']['super_attribute'];
                     foreach ($selectedOptions as $attributeCodeId => $optionValueId) {
                         $attributeRepo = $this->productAttributeRepositoryInterface->get($attributeCodeId);
@@ -83,7 +83,7 @@ class Order extends AbstractData
                 $existingProductData = $tmp;
             } catch (NoSuchEntityException $exception) {
                 $this->mappCombinedLogger->error(sprintf('Mapp Connect: -- ERROR -- Sending setting datalayer products: %s', $exception->getMessage()), __CLASS__, __FUNCTION__, ['exception' => $exception]);
-                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
             }
         }
 

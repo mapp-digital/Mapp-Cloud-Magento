@@ -24,8 +24,7 @@ class PixelDataTest extends AbstractController
         $this->getRequest(HttpRequest::METHOD_GET);
         $this->dispatch('/pixel-webpush.min.js');
 
-        foreach (
-            [
+        foreach ([
                 'test_service_url',
                 'test_webpush_script_included',
                 'test_use_user_matching',

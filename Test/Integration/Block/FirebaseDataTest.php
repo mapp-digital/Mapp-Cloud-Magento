@@ -26,8 +26,7 @@ class FirebaseDataTest extends AbstractController
         $this->getRequest(HttpRequest::METHOD_GET);
         $this->dispatch('/firebase-messaging-sw.js');
 
-        foreach (
-            [
+        foreach ([
                 'test_firebase_version',
                 'test_api_key',
                 'test_auth_domain',

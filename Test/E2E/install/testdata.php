@@ -2,7 +2,8 @@
 
 namespace MappDigital\Cloud\Test\E2E\install;
 
-class Magento_REST {
+class Magento_REST
+{
     const URL = "http://local.domain.com/rest";
     private $DATA_VARIATION = "";
     private $token;
@@ -16,7 +17,8 @@ class Magento_REST {
     private $blue_id;
     private $attribute_sets;
 
-    function __construct() {
+    function __construct()
+    {
         $this->get_token();
         $this->get_attribute_data();
         $this->create_categories();
@@ -121,8 +123,8 @@ class Magento_REST {
                         "value" => "0"
                     ]
                 ]
-        ]      
-    ];
+            ]
+        ];
     }
 
     private function get_config_option()
@@ -147,9 +149,9 @@ class Magento_REST {
     {
         $sku = $parent["sku"];
         $this->post("/default/V1/configurable-products/$sku/options", $this->get_config_option());
-        for ($i=0; $i < count($children); $i++) { 
+        for ($i=0; $i < count($children); $i++) {
             $variant = $children[$i];
-           $this->post("/default/V1/configurable-products/$sku/child", $this->get_child_sku($variant));
+            $this->post("/default/V1/configurable-products/$sku/child", $this->get_child_sku($variant));
         }
     }
 
@@ -161,7 +163,8 @@ class Magento_REST {
         ];
     }
 
-    private function get_simple_product($name ="Mapp Simple Product", $sku="mappsimple", $price=70) {
+    private function get_simple_product($name = "Mapp Simple Product", $sku = "mappsimple", $price = 70)
+    {
         $name = "{$name}{$this->DATA_VARIATION}";
         $sku = "{$sku}{$this->DATA_VARIATION}";
         return [
@@ -189,7 +192,7 @@ class Magento_REST {
                             "is_in_stock" => true
                         ]
                 ]
-            ]      
+                ]
         ];
     }
 
@@ -219,7 +222,7 @@ class Magento_REST {
                         "is_in_stock" => true
                     ]
                 ]
-            ]      
+            ]
         ];
     }
 
@@ -256,11 +259,11 @@ class Magento_REST {
                     "value" =>  $color_id
                     ]
                 ]
-            ]      
+            ]
         ];
     }
 
-    private function get_attribute_data() 
+    private function get_attribute_data()
     {
         $query = $this->get_query("attribute_group_name", "Product Details");
         $attribute_set_goups = $this->get("/default/V1/products/attribute-sets/groups/list$query");
@@ -273,14 +276,15 @@ class Magento_REST {
         $this->attribute_sets = $this->get("/default/V1/products/attribute-sets/$this->attribute_set_id/attributes");
         for ($i=0; $i < count($this->attribute_sets); $i++) {
             $el = $this->attribute_sets[$i];
-            if($el["attribute_code"] === "color") {
+            if ($el["attribute_code"] === "color") {
                 $this->color_attribute_id = $el["attribute_id"];
                 break;
             }
         }
     }
 
-    private function get_attribute_payload() {
+    private function get_attribute_payload()
+    {
         return [
             "attributeSetId" => $this->attribute_set_id,
             "attributeGroupId" => $this->attribute_group_id,
@@ -296,7 +300,7 @@ class Magento_REST {
                   "name" => "MAPP main category{$this->DATA_VARIATION}",
                   "is_active" => true,
                   "include_in_menu" => true
-            ]   
+            ]
         ];
     
         $sub_category = [
@@ -305,7 +309,7 @@ class Magento_REST {
                   "name" => "MAPP sub category{$this->DATA_VARIATION}",
                   "is_active" => true,
                   "include_in_menu" => true
-            ]  
+            ]
         ];
         $this->category1 = $this->post("/default/V1/categories", $main_category);
         $sub_category["category"]["parent_id"] = $this->category1["id"];
@@ -354,7 +358,7 @@ class Magento_REST {
             ]
         ],
          "password"=> "Test1234!"
-    ];
+        ];
     }
 
     private function get_query($field, $value, $condition = "eq")
@@ -365,8 +369,8 @@ class Magento_REST {
     }
 
     private function get_token()
-    {   
-        $data = array("username" => "admin", "password" => "test1234");
+    {
+        $data = ["username" => "admin", "password" => "test1234"];
         $endpoint = "/V1/integration/admin/token";
         $this->token = $this->request("POST", $endpoint, $data);
     }
@@ -387,13 +391,13 @@ class Magento_REST {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, self::URL . $endpoint);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-        if($method === "POST") {
+        if ($method === "POST") {
             $data_string = json_encode($body);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json' , $authorization]);
         $response = curl_exec($ch);
         return json_decode($response, true);
     }

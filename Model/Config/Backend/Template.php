@@ -11,7 +11,6 @@ use Magento\Framework\Data\OptionSourceInterface;
 use MappDigital\Cloud\Helper\ConnectHelper;
 use Magento\Framework\Message\ManagerInterface;
 
-
 class Template implements OptionSourceInterface
 {
     private static ?array $cache = null;
@@ -19,7 +18,8 @@ class Template implements OptionSourceInterface
     public function __construct(
         protected ConnectHelper $helper,
         protected ManagerInterface $messageManager
-    ) {}
+    ) {
+    }
 
     /**
      * @return array

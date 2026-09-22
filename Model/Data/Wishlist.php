@@ -14,7 +14,8 @@ class Wishlist extends AbstractData
     public function __construct(
         protected Session $checkoutSession,
         protected Product $product
-    ) {}
+    ) {
+    }
 
     /**
      * @return void

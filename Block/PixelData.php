@@ -64,7 +64,7 @@ class PixelData extends AbstractBlock implements IdentityInterface
         $pixelData = $this->pixelData->getPixelData();
         $firebaseData = $this->pixelData->getFirebaseData();
 
-        $pixelJsFilePartsPath = $this->magentoModuleDirectory->getDir('MappDigital_Cloud','view') . '/public/js/';
+        $pixelJsFilePartsPath = $this->magentoModuleDirectory->getDir('MappDigital_Cloud', 'view') . '/public/js/';
         $pixelMinJs = \file_get_contents($pixelJsFilePartsPath . 'pixel-part-2.js');
 
         return <<<JS

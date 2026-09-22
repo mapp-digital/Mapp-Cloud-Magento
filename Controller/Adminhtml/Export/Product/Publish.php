@@ -13,4 +13,3 @@ class Publish extends AbstractPublisher
 {
     const PUBLISH_KEY = 'product';
 }
-

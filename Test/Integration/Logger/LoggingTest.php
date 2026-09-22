@@ -266,5 +266,4 @@ class LoggingTest extends TestCase
             return false;
         }
     }
-
 }

@@ -86,4 +86,3 @@ class Log extends AbstractModel implements LogInterface
         return $this->setData(self::CLASS_FUNCTION, $classFunction);
     }
 }
-

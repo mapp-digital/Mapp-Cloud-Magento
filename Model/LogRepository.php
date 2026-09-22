@@ -29,7 +29,8 @@ class LogRepository implements LogRepositoryInterface
         protected LogCollectionFactory $logCollectionFactory,
         protected LogSearchResultsInterfaceFactory $searchResultsFactory,
         protected CollectionProcessorInterface $collectionProcessor
-    ) {}
+    ) {
+    }
 
     /**
      * @inheritDoc
@@ -111,4 +112,3 @@ class LogRepository implements LogRepositoryInterface
         return $this->delete($this->get($logId));
     }
 }
-

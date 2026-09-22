@@ -21,7 +21,8 @@ class NewsletterSubscriber implements NewsletterSubscriberInterface
         private EmailValidator $emailValidator,
         private SubscriptionManager $subscriptionManager,
         private Json $jsonSerializer
-    ){}
+    ) {
+    }
 
     /**
      * @param string $email

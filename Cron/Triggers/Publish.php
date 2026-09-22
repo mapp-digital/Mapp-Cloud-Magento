@@ -30,8 +30,7 @@ class Publish
         Json $jsonSerializer,
         SubscriptionManager $subscriptionManager,
         CombinedLogger $mappCombinedLogger
-    )
-    {
+    ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
         $this->publisher = $publisher;

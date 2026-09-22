@@ -47,7 +47,7 @@ class Config extends AbstractHelper
     {
         $acquireScript = $this->scopeConfig->getValue(AcquireConfigPaths::XML_PATH_ACQUIRE->value, ScopeInterface::SCOPE_STORE);
 
-        if(!is_null($acquireScript) && preg_match('/id=(\d+?)&m=(\d+?)\D/', $acquireScript, $ids)) {
+        if (!is_null($acquireScript) && preg_match('/id=(\d+?)&m=(\d+?)\D/', $acquireScript, $ids)) {
             return 'https://c.flx1.com/' . $ids[2] . '-' . $ids[1] .'.js?id=' . $ids[1] . '&m=' . $ids[2];
         }
 

@@ -17,13 +17,13 @@ use Zend_Db_Exception;
  * Indexer recurring setup
  *
  * @codeCoverageIgnore
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Recurring implements InstallSchemaInterface
 {
     public function __construct(
         private SubscriptionManager $subscriptionManager
-    ) {}
+    ) {
+    }
 
     /**
      * @param SchemaSetupInterface $setup

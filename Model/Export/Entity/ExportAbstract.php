@@ -24,8 +24,7 @@ abstract class ExportAbstract
         protected Sftp $sftp,
         protected MappFilesystemExport $mappFilesystemExport,
         private Consumer $productConsumer
-    )
-    {
+    ) {
         $this->directoryWriter = $this->magentoFileSystemManager->getDirectoryWrite(DirectoryList::VAR_DIR);
     }
 
@@ -44,7 +43,7 @@ abstract class ExportAbstract
 
         $stream = $this->directoryWriter->openFile($filePath, 'w+');
 
-        foreach (array_chunk($this->getCsvContentForExport(),1000) as $rows) {
+        foreach (array_chunk($this->getCsvContentForExport(), 1000) as $rows) {
             foreach ($rows as $row) {
                 $stream->writeCsv($row);
             }
@@ -79,10 +78,10 @@ abstract class ExportAbstract
             $data = [];
             foreach (static::ALL_COLUMNS_IN_ORDER as $column) {
                 $data[] = '"' . str_replace(
-                        ['"', '\\'],
-                        ['""', '\\\\'],
-                        $entity->getData($column) ?: ''
-                    ) . '"';
+                    ['"', '\\'],
+                    ['""', '\\\\'],
+                    $entity->getData($column) ?: ''
+                ) . '"';
             }
 
             $rows[] = $data;

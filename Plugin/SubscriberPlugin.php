@@ -23,7 +23,8 @@ class SubscriberPlugin
         protected ConnectHelper $connectHelper,
         protected CombinedLogger $mappCombinedLogger,
         protected SubscriptionManager $subscriptionManager
-    ) {}
+    ) {
+    }
 
     // -----------------------------------------------
     // LEGACY METHODS VIA PLUGIN INTERCEPTORS
@@ -51,17 +52,13 @@ class SubscriberPlugin
                     true,
                     $subject->getStoreId() ?? $result->getStoreId()
                 );
-
-                $this->mappCombinedLogger->debug(
-                    \json_encode(['Type' => 'MappConnect: -- PLUGIN INTERCEPTOR -- Newsletter Send Event Via Connect Client', 'data' => $data]), __CLASS__, __FUNCTION__
-                );
             }
         } catch (GuzzleException $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect',__CLASS__, __FUNCTION__, ['exception' => $exception]);
-            $this->mappCombinedLogger->critical($exception->getTraceAsString(),__CLASS__, __FUNCTION__);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', __CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         } catch (Exception $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred',__CLASS__, __FUNCTION__, ['exception' => $exception]);
-            $this->mappCombinedLogger->critical($exception->getTraceAsString(),__CLASS__, __FUNCTION__);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', __CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         }
 
         return $result;
@@ -89,17 +86,13 @@ class SubscriberPlugin
                     false,
                     $result->getStoreId()
                 );
-
-                $this->mappCombinedLogger->debug(
-                    \json_encode(['Type' => 'MappConnect: -- PLUGIN INTERCEPTOR -- Newsletter Send Event Via Connect Client', 'data' => $data]), __CLASS__, __FUNCTION__
-                );
             }
         } catch (GuzzleException $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect',__CLASS__, __FUNCTION__, ['exception' => $exception]);
-            $this->mappCombinedLogger->critical($exception->getTraceAsString(),__CLASS__, __FUNCTION__);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', __CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         } catch (Exception $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred',__CLASS__, __FUNCTION__, ['exception' => $exception]);
-            $this->mappCombinedLogger->critical($exception->getTraceAsString(),__CLASS__, __FUNCTION__);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', __CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         }
 
         return $result;
@@ -127,17 +120,13 @@ class SubscriberPlugin
                     true,
                     $subject->getStoreId()
                 );
-
-                $this->mappCombinedLogger->debug(
-                    \json_encode(['Type' => 'MappConnect: -- PLUGIN INTERCEPTOR -- Newsletter Send Event Via Connect Client', 'data' => $data]), __CLASS__, __FUNCTION__
-                );
             }
         } catch (GuzzleException $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect',__CLASS__, __FUNCTION__, ['exception' => $exception]);
-            $this->mappCombinedLogger->critical($exception->getTraceAsString(),__CLASS__, __FUNCTION__);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', __CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         } catch (Exception $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred',__CLASS__, __FUNCTION__, ['exception' => $exception]);
-            $this->mappCombinedLogger->critical($exception->getTraceAsString(),__CLASS__, __FUNCTION__);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', __CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         }
 
         return $result;
@@ -168,17 +157,13 @@ class SubscriberPlugin
                     false,
                     $subject->getStoreId()
                 );
-
-                $this->mappCombinedLogger->debug(
-                    \json_encode(['Type' => 'MappConnect: -- PLUGIN INTERCEPTOR -- Newsletter Send Event Via Connect Client', 'data' => $data]), __CLASS__, __FUNCTION__
-                );
             }
         } catch (GuzzleException $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect',__CLASS__, __FUNCTION__, ['exception' => $exception]);
-            $this->mappCombinedLogger->critical($exception->getTraceAsString(),__CLASS__, __FUNCTION__);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect', __CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         } catch (Exception $exception) {
-            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred',__CLASS__, __FUNCTION__, ['exception' => $exception]);
-            $this->mappCombinedLogger->critical($exception->getTraceAsString(),__CLASS__, __FUNCTION__);
+            $this->mappCombinedLogger->error('Mapp Connect -- ERROR -- A General Error Has Occurred', __CLASS__, __FUNCTION__, ['exception' => $exception]);
+            $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
         }
 
         return $result;

@@ -150,10 +150,10 @@ class SubscriptionManager
     {
         if ($this->connectHelper->getConfigValue('export', 'customer_enable', $order->getStoreId())
             && $order->getData('customer_is_guest')) {
-            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Sending Guest User To Connect', __CLASS__,__FUNCTION__);
+            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Sending Guest User To Connect', __CLASS__, __FUNCTION__);
 
             $data = $this->getGuestCustomerDataFromOrderObjectForExport($order);
-            $this->mappCombinedLogger->info(\json_encode(['Type' => 'Guest User Group Add', $data], JSON_PRETTY_PRINT), __CLASS__,__FUNCTION__);
+            $this->mappCombinedLogger->info(\json_encode(['Type' => 'Guest User Group Add', $data], JSON_PRETTY_PRINT), __CLASS__, __FUNCTION__);
             $this->connectHelper->getMappConnectClient()->event('user', $data);
         }
     }
@@ -182,8 +182,10 @@ class SubscriptionManager
             $data = $this->getFullOrderDataFromOrderObjectForExport($order);
             try {
                 $this->mappCombinedLogger->info(
-                    \json_encode(['Type' => 'MappConnect: -- SubscriptionManager -- Sending Order Transaction Request To Connect', 'data' => $data],
-                        JSON_PRETTY_PRINT),
+                    \json_encode(
+                        ['Type' => 'MappConnect: -- SubscriptionManager -- Sending Order Transaction Request To Connect', 'data' => $data],
+                        JSON_PRETTY_PRINT
+                    ),
                     __CLASS__,
                     __FUNCTION__
                 );
@@ -360,7 +362,7 @@ class SubscriptionManager
             'NEW.`subscriber_id`'
         );
 
-        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__,__FUNCTION__);
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__, __FUNCTION__);
         $triggerObject->addStatement($trigger);
         $this->connection->dropTrigger($triggerObject->getName());
         $this->connection->createTrigger($triggerObject);
@@ -426,7 +428,7 @@ class SubscriptionManager
                 ($event === Trigger::EVENT_INSERT) ? 'NEW.`entity_id`' : 'OLD.`entity_id`'
             );
 
-            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__,__FUNCTION__);
+            $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__, __FUNCTION__);
             $triggerObject->addStatement($trigger);
             $this->connection->dropTrigger($triggerObject->getName());
             $this->connection->createTrigger($triggerObject);
@@ -465,7 +467,7 @@ class SubscriptionManager
             'NEW.`entity_id`'
         );
 
-        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__,__FUNCTION__);
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Creating DB Trigger: ' . $triggerObject->getName(), __CLASS__, __FUNCTION__);
         $triggerObject->addStatement($trigger);
         $this->connection->dropTrigger($triggerObject->getName());
         $this->connection->createTrigger($triggerObject);
@@ -480,7 +482,7 @@ class SubscriptionManager
     {
         foreach ([Trigger::EVENT_DELETE, Trigger::EVENT_INSERT, Trigger::EVENT_UPDATE] as $event) {
             foreach ([$this->resource->getTableName('sales_order'), $this->resource->getTableName('newsletter_subscriber')] as $table) {
-                $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Dropping DB Trigger: ' . $this->getTriggerName($table, $event), __CLASS__,__FUNCTION__);
+                $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Dropping DB Trigger: ' . $this->getTriggerName($table, $event), __CLASS__, __FUNCTION__);
                 $this->connection->dropTrigger($this->getTriggerName($table, $event));
             }
         }
@@ -720,7 +722,7 @@ class SubscriptionManager
     public function getPublisherName(): string
     {
         $queueType = $this->isAmqp() ? 'amqp' : 'db';
-        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType, __CLASS__,__FUNCTION__);
+        $this->mappCombinedLogger->debug('MappConnect: -- SubscriptionManager -- Using Consumer Queue Type Of: ' . $queueType, __CLASS__, __FUNCTION__);
         return 'mappdigital.cloud.triggers.consume_' . $queueType;
     }
 

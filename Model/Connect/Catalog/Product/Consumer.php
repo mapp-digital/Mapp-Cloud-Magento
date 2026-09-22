@@ -43,7 +43,8 @@ class Consumer
         private GetSalableQuantityDataBySku $getSalableQuantityDataBySku,
         private StoreRepositoryInterface $storeRepository,
         private IsSourceItemManagementAllowedForProductTypeInterface $isSourceItemManagementAllowedForProductType,
-    ) {}
+    ) {
+    }
 
     /**
      * @param string $productDataJson
@@ -57,7 +58,7 @@ class Consumer
             $productData = $this->jsonSerializer->unserialize($productDataJson);
             $product = $this->productRepository->get($productData['sku'], false, Store::DEFAULT_STORE_ID, true);
 
-            $this->mappCombinedLogger->info('MappConnect: -- Product Sync Consumer -- Sending Product SKU to Mapp: ' . $product->getSku(), __CLASS__,__FUNCTION__);
+            $this->mappCombinedLogger->info('MappConnect: -- Product Sync Consumer -- Sending Product SKU to Mapp: ' . $product->getSku(), __CLASS__, __FUNCTION__);
 
             $data = $product->getData();
             $data['productName'] = $product->getName();
@@ -76,7 +77,8 @@ class Consumer
 
             $this->mappCombinedLogger->debug(
                 'MappConnect: -- Product Sync Consumer -- Sending Product data mapp: ' . json_encode($data, JSON_PRETTY_PRINT),
-                __CLASS__, __FUNCTION__,
+                __CLASS__,
+                __FUNCTION__,
                 ['data' => $data]
             );
 
@@ -84,7 +86,8 @@ class Consumer
         } catch (\Exception $exception) {
             $this->mappCombinedLogger->critical(
                 'MappConnect: -- Product Sync Consumer -- Error when sending to Mapp: ' . json_encode($exception->getTraceAsString(), JSON_PRETTY_PRINT),
-                __CLASS__, __FUNCTION__,
+                __CLASS__,
+                __FUNCTION__,
                 ['exception' => $exception->getTraceAsString()]
             );
         }
@@ -166,7 +169,9 @@ class Consumer
         foreach ($product->getCategoryIds() ?? [] as $categoryId) {
             try {
                 $productAvailableInCategory[] = $this->categoryRepository->get($categoryId)->getName();
-            } catch (NoSuchEntityException) {}
+            } catch (NoSuchEntityException) {
+
+            }
         }
 
         return implode(', ', $productAvailableInCategory ?? []) ?? '';
@@ -207,7 +212,7 @@ class Consumer
             $domain = (string)$this->coreConfig->getValue(Store::XML_PATH_SECURE_BASE_URL);
 
             if (!str_contains($mediaUrl, $domain)) {
-                $this->baseDomainForImagePaths = rtrim($mediaUrl,'/');
+                $this->baseDomainForImagePaths = rtrim($mediaUrl, '/');
             } else {
                 if (!$this->isPubDocumentRoot()) {
                     $domain .= 'pub/';

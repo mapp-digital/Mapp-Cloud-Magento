@@ -16,7 +16,9 @@ class AbstractData extends DataObject
      */
     protected $_data = [];
 
-    public function __construct(){}
+    public function __construct()
+    {
+    }
 
     /**
      * @param mixed $data
@@ -62,8 +64,8 @@ class AbstractData extends DataObject
     public function setArray($name, $value)
     {
         if (!empty($name)) {
-            if(!isset($this->_data[$name])) {
-                $this->_data[$name] = array();
+            if (!isset($this->_data[$name])) {
+                $this->_data[$name] = [];
             }
             $this->_data[$name][] = $value;
         }

@@ -39,7 +39,8 @@ class Firebase
     public function __construct(
         private ScopeConfigInterface $scopeConfig,
         private StoreManager $storeManager
-    ) {}
+    ) {
+    }
 
     /**
      * Get the main data for firebase-messaging-sw.js file as defined in configuration

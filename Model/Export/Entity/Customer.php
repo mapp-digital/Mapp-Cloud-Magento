@@ -40,8 +40,7 @@ class Customer extends ExportAbstract
         Sftp $sftp,
         MappFilesystemExport $mappFilesystemExport,
         Consumer $productConsumer
-    )
-    {
+    ) {
         parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport, $productConsumer);
     }
 
@@ -85,10 +84,10 @@ class Customer extends ExportAbstract
                 }
 
                 $data[] = '"' . str_replace(
-                        ['"', '\\'],
-                        ['""', '\\\\'],
-                        $gender ?? $entity->getData($column) ?? ''
-                    ) . '"';
+                    ['"', '\\'],
+                    ['""', '\\\\'],
+                    $gender ?? $entity->getData($column) ?? ''
+                ) . '"';
             }
 
             $rows[] = $data;

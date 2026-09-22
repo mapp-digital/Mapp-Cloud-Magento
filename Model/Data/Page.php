@@ -26,7 +26,8 @@ class Page extends AbstractData
         protected CatalogSearchHelper $normalSearch,
         protected Advanced $advancedSearch,
         protected Pager $pager
-    ) {}
+    ) {
+    }
 
     private function generate()
     {
@@ -59,7 +60,7 @@ class Page extends AbstractData
 
         if ($request) {
             $action = $request->getFullActionName();
-            if($action === 'catalog_category_view' || $action === 'catalogsearch_result_index') {
+            if ($action === 'catalog_category_view' || $action === 'catalogsearch_result_index') {
                 $this->set('number', $this->pager->getCurrentPage());
             }
             $this->set('action', $action);

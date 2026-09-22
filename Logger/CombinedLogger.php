@@ -34,7 +34,8 @@ class CombinedLogger
         private ScopeConfigInterface $config,
         private Json $jsonSerializer,
         private ManagerInterface $eventManager
-    ) {}
+    ) {
+    }
 
     // -----------------------------------------------
     // ENTRY METHODS

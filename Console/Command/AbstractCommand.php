@@ -54,7 +54,7 @@ abstract class AbstractCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -165,13 +165,13 @@ abstract class AbstractCommand extends Command
         $dtT = new \DateTime("@".(time()-$start));
 
         $this->getOutput()->writeln(sprintf(
-                '<info>Run time: %s</info>',
-                $dtF->diff($dtT)->format('%a days, %h hours, %i minutes and %s seconds')
+            '<info>Run time: %s</info>',
+            $dtF->diff($dtT)->format('%a days, %h hours, %i minutes and %s seconds')
         ));
 
         $this->getOutput()->writeln(sprintf(
-                '<info>Peak Memory: %sb</info>',
-                number_format(memory_get_peak_usage(true))
+            '<info>Peak Memory: %sb</info>',
+            number_format(memory_get_peak_usage(true))
         ));
     }
 }

@@ -13,6 +13,7 @@ use Magento\Catalog\Model\Session;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Catalog\Model\Product as CatalogProductModel;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use MappDigital\Cloud\Logger\CombinedLogger;
 use Psr\Log\LoggerInterface;
@@ -24,7 +25,7 @@ class Product extends AbstractData
      */
     const ATTRIBUTE_SOURCE_TABLE = 'Magento\Eav\Model\Entity\Attribute\Source\Table';
 
-    protected ?CatalogProductModel $product = null;
+    protected ?ProductInterface $product = null;
 
     public function __construct(
         protected Data $catalogData,
@@ -33,7 +34,8 @@ class Product extends AbstractData
         protected ProductRepository $productRepository,
         protected ProductUrlRewriteResource $productUrlRewriteResource,
         protected CombinedLogger $mappCombinedLogger
-    ) {}
+    ) {
+    }
 
     private function generate($productId)
     {
@@ -42,7 +44,9 @@ class Product extends AbstractData
         if (!$this->product) {
             try {
                 $this->product = $this->productRepository->getById($productId);
-            } catch (NoSuchEntityException) {}
+            } catch (NoSuchEntityException) {
+
+            }
         }
 
         if ($this->product) {

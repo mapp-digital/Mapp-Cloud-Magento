@@ -22,7 +22,8 @@ class ConsumeQueue
         private Order $orderExporter,
         private Customer $customerExporter,
         private Product $productExporter
-    ) {}
+    ) {
+    }
 
     /**
      * @param string $message

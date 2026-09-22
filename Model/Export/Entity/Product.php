@@ -14,7 +14,6 @@ use MappDigital\Cloud\Model\Connect\Catalog\Product\Consumer;
 use MappDigital\Cloud\Model\Export\Client\FileSystem as MappFilesystemExport;
 use MappDigital\Cloud\Model\Export\Client\Sftp;
 
-
 class Product extends ExportAbstract
 {
     const EXPORT_FILE_PREFIX = 'catalog_product_';
@@ -55,8 +54,7 @@ class Product extends ExportAbstract
         MagentoFileSystemManager $magentoFilesystemManager,
         Sftp $sftp,
         MappFilesystemExport $mappFilesystemExport
-    )
-    {
+    ) {
         parent::__construct($storeManager, $magentoFilesystemManager, $sftp, $mappFilesystemExport, $productConsumer);
     }
 
@@ -81,7 +79,9 @@ class Product extends ExportAbstract
             foreach ($entity->getCategoryIds() ?? [] as $categoryId) {
                 try {
                     $productAvailableInCategory[] = $this->categoryRepository->get($categoryId)->getName();
-                } catch (NoSuchEntityException) {}
+                } catch (NoSuchEntityException) {
+
+                }
             }
 
             $entity->setData('category', implode(', ', $productAvailableInCategory));
@@ -98,10 +98,10 @@ class Product extends ExportAbstract
                 }
 
                 $data[] = '"' . str_replace(
-                        ['"', '\\'],
-                        ['""', '\\\\'],
-                        $dataEntry ?: ''
-                    ) . '"';
+                    ['"', '\\'],
+                    ['""', '\\\\'],
+                    $dataEntry ?: ''
+                ) . '"';
             }
 
             $rows[] = $data;

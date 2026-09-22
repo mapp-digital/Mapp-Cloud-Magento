@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2023 Mapp Digital US, LLC (https://www.mapp.com)
  * @package MappDigital_Cloud
  */
-Namespace MappDigital\Cloud\Api;
+namespace MappDigital\Cloud\Api;
 
 interface NewsletterSubscriberInterface
 {

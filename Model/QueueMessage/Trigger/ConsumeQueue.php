@@ -38,8 +38,7 @@ class ConsumeQueue
         private SubscriptionManager $subscriptionManager,
         private PublisherInterface $publisher,
         private ScopeConfigInterface $coreConfig
-    )
-    {
+    ) {
         $this->connection = $resource->getConnection();
     }
 
@@ -74,9 +73,9 @@ class ConsumeQueue
                     $this->orderRepository->get($order['order_id'])
                 );
             } catch (NoSuchEntityException $exception) {
-                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
             } catch (Exception | Throwable $exception) {
-                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
                 $attempt = $order['attempt'] ?? 0;
 
                 if ($attempt < $this->getMaxOrderRetryCount()) {
@@ -85,7 +84,7 @@ class ConsumeQueue
                         'attempt' => $attempt + 1
                     ];
 
-                    $this->mappCombinedLogger->info('Adding Retry For Order ID: ' . $orderId, __CLASS__,__FUNCTION__);
+                    $this->mappCombinedLogger->info('Adding Retry For Order ID: ' . $orderId, __CLASS__, __FUNCTION__);
                 }
             }
         }
@@ -117,16 +116,16 @@ class ConsumeQueue
                     $subscriber['store_id'],
                 );
             } catch (NoSuchEntityException $exception) {
-                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
             } catch (Exception | Throwable $exception) {
-                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__,__FUNCTION__);
+                $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
                 $attempt = $newsletterSubscriberIdsToUpdate['newsletter'][$subscriber['subscriber_id']]['attempt'] ?? 0;
                 if ($attempt <= $this->getMaxNewsletterRetryCount()) {
                     $idsToRepublish['newsletter'][$subscriber['subscriber_id']] = [
                         'subscriber_id' => $subscriber['subscriber_id'],
                         'attempt' => $attempt + 1
                     ];
-                    $this->mappCombinedLogger->info('Adding Retry For Subscriber ID: ' . $subscriber['subscriber_id'], __CLASS__,__FUNCTION__);
+                    $this->mappCombinedLogger->info('Adding Retry For Subscriber ID: ' . $subscriber['subscriber_id'], __CLASS__, __FUNCTION__);
                 }
             }
         }

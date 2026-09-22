@@ -29,8 +29,7 @@ class Get implements HttpGetActionInterface
         Config $config,
         DataLayerModel $dataLayer,
         DataLayerHelper $dataLayerHelper
-    )
-    {
+    ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->request = $request;
         $this->config = $config;
@@ -113,7 +112,7 @@ class Get implements HttpGetActionInterface
                 "price" => $dataLayer['addProductPrice'] ?? "",
                 "specialPrice" => $dataLayer['addProductSpecialPrice'] ?? "",
                 "qty" => $dataLayer['addProductQty'] ?? "",
-                "category" => implode(' ; ',$dataLayer['addProductCategories'] ?? []),
+                "category" => implode(' ; ', $dataLayer['addProductCategories'] ?? []),
                 "url" => $dataLayer['addProductUrlKey'] ?? "",
                 "img" => $dataLayer['addProductImage'] ?? "",
                 "currency" => $dataLayer['addProductCurrency'] ?? ""
