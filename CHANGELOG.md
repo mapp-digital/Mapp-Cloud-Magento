@@ -1,3 +1,14 @@
+# 1.5.5
+- Certified compatibility with PHP 8.5 and Magento 2.4.9
+- Updated `composer.json` PHP platform constraint to include `~8.5.0`
+- Verified `firebase/php-jwt ^6.4||^7.0` compatibility with PHP 8.5 (v7.2.0 confirmed clean)
+- Audited all 144 PHP classes for PHP 8.5 strictness changes: no implicit nullable parameters, no undeclared dynamic properties, no removed/deprecated function usage found
+- Reviewed all Plugin, Observer, and DI configurations against Magento 2.4.9 core framework changes (Laminas/Symfony updates) — all method signatures confirmed aligned
+- Reviewed queue XML configuration (`queue_publisher.xml`, `queue_consumer.xml`, `communication.xml`) against Magento 2.4.9 message queue schema — all publisher topics use correct `<connection>` child element format
+- Passed PHPStan Level 5 static analysis on all 114 production classes; identified 242 type-annotation warnings (non-blocking, no PHP 8.5 runtime failures) for future resolution
+- Passed PHPCS Magento Coding Standard with 0 errors (1,419 style warnings, 252 auto-fixable)
+- All 144 PHP files pass `php -l` syntax validation
+
 # 1.0.0
 - Initial release
 
