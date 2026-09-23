@@ -8,30 +8,27 @@ namespace MappDigital\Cloud\Framework\Mail;
 
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Mail\TransportInterface;
 use MappDigital\Cloud\Logger\CombinedLogger;
 use MappDigital\Cloud\Model\Connect\Client as MappConnectClient;
-use Psr\Log\LoggerInterface;
 
 class Transport implements TransportInterface
 {
     protected MappConnectClient $mappConnectClient;
-    private CombinedLogger $mappCombinedLogger;
+    private ?CombinedLogger $mappCombinedLogger;
     protected array $parameters = [];
     protected string $messageId = '';
 
     public function __construct(
         MappConnectClient $mappConnectClient,
         string $messageId = '',
-        array $parameters = []
+        array $parameters = [],
+        ?CombinedLogger $mappCombinedLogger = null
     ) {
         $this->mappConnectClient = $mappConnectClient;
         $this->messageId = $messageId;
         $this->parameters = $parameters;
-
-        // Use OM to be backwards compatible
-        $this->mappCombinedLogger = ObjectManager::getInstance()->create(CombinedLogger::class);
+        $this->mappCombinedLogger = $mappCombinedLogger;
     }
 
     /**

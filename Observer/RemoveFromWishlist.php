@@ -23,7 +23,9 @@ class RemoveFromWishlist extends TIDatalayerCartAbstract
         if ($this->config->isEnabled()) {
             try {
                 if ($this->connectHelper->getConfigValue('export', 'wishlist_enable')) {
-                    $wishlistItem = $this->wishlistItem->load($observer->getEvent()->getRequest()->getParam('item'));
+                    $wishlistItemId = (int) $observer->getEvent()->getRequest()->getParam('item');
+                    $this->wishlistItem->getResource()->load($this->wishlistItem, $wishlistItemId);
+                    $wishlistItem = $this->wishlistItem;
                     $product = $this->productRepository->getById($wishlistItem->getProductId());
                     $this->publisher->publish($this->getWishlistPublisherName(), $this->jsonSerializer->serialize([
                         'email' => $this->customerSession->getCustomer()->getEmail(),

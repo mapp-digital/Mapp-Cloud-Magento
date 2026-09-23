@@ -11,6 +11,7 @@ use MappDigital\Cloud\Helper\ConnectHelper;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use MappDigital\Cloud\Framework\Mail\Transport;
 use Magento\Framework\Mail\Template\FactoryInterface;
+use MappDigital\Cloud\Logger\CombinedLogger;
 
 class TransportBuilderPlugin
 {
@@ -18,7 +19,8 @@ class TransportBuilderPlugin
 
     public function __construct(
         protected ConnectHelper $mappConnectHelper,
-        protected FactoryInterface $templateFactory
+        protected FactoryInterface $templateFactory,
+        protected CombinedLogger $mappCombinedLogger
     ) {
         $this->reset();
     }
@@ -44,7 +46,7 @@ class TransportBuilderPlugin
                 "newsletter_subscription_success_email_template",
                 "newsletter_subscription_un_email_template"
             ])) {
-            $result = new Transport($mappConnectClient, 0, []);
+            $result = new Transport($mappConnectClient, 0, [], $this->mappCombinedLogger);
             $this->reset();
             return $result;
         }
@@ -75,7 +77,7 @@ class TransportBuilderPlugin
                 $params['params'][$label] = $filer->filter($v['value']);
             }
 
-            $result = new Transport($mappConnectClient, $messageId, $params);
+            $result = new Transport($mappConnectClient, $messageId, $params, $this->mappCombinedLogger);
             $this->reset();
 
             return $result;

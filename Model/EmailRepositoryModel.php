@@ -50,7 +50,7 @@ class EmailRepositoryModel implements EmailRepositoryInterface
                 'area' => Area::AREA_FRONTEND,
                 'store' => Store::DEFAULT_STORE_ID
             ];
-            $transport = $this->transportBuilder->setTemplateIdentifier($templateId, $storeScope)
+            $transport = $this->transportBuilder->setTemplateIdentifier($templateId)
                 ->setTemplateOptions($templateOptions)
                 ->setTemplateVars($transportObject->getData())
                 ->setFrom($from)
