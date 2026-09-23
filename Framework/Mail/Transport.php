@@ -59,28 +59,28 @@ class Transport implements TransportInterface
                 }
 
                 try {
-                    $this->mappCombinedLogger->info(
+                    $this->mappCombinedLogger?->info(
                         \json_encode(['message' => 'Mapp Connect -- INFO -- Email Being Sent Via Mapp', 'data' => $data]),
                         __CLASS__,
                         __FUNCTION__
                     );
                     $this->mappConnectClient->event('email', $data);
                 } catch (GuzzleException $exception) {
-                    $this->mappCombinedLogger->error(
+                    $this->mappCombinedLogger?->error(
                         'Mapp Connect -- ERROR -- Connection Could Not Be Made To Connect',
                         __CLASS__,
                         __FUNCTION__,
                         ['exception' => $exception]
                     );
-                    $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
+                    $this->mappCombinedLogger?->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
                 } catch (Exception $exception) {
-                    $this->mappCombinedLogger->error(
+                    $this->mappCombinedLogger?->error(
                         'Mapp Connect -- ERROR -- A General Error Has Occurred',
                         __CLASS__,
                         __FUNCTION__,
                         ['exception' => $exception]
                     );
-                    $this->mappCombinedLogger->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
+                    $this->mappCombinedLogger?->critical($exception->getTraceAsString(), __CLASS__, __FUNCTION__);
                 }
             }
         }

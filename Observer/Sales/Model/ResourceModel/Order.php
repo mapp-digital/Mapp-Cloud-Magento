@@ -25,7 +25,8 @@ class Order implements ObserverInterface
     ) {
     }
 
-    /**     * @return OrderInterface
+    /**
+     * @return OrderInterface
      * @throws LocalizedException
      * @throws GuzzleException
      */
@@ -48,7 +49,8 @@ class Order implements ObserverInterface
         return $order;
     }
 
-    /**     * @return void
+    /**
+     * @return void
      * @throws LocalizedException
      */
     public function updateCartAndWishlistCampaigns(OrderInterface $order) : void
