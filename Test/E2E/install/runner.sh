@@ -9,7 +9,11 @@ function uninstall {
 	log "Reset app directory..."
 	log "Delete existing data in app directory..."
         find /home/application/app/ -mindepth 1 ! -regex '^/home/application/app/source.*' -delete
-        
+
+        reset_db
+}
+
+function reset_db {
         wait_for_db
         log "Resetting database..."
 	php /db.php drop_db
