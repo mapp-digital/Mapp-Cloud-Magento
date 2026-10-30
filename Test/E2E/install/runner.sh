@@ -82,6 +82,10 @@ function install {
 		log "Finish up installation..."
 		/home/application/app/bin/magento indexer:reindex
 		/home/application/app/bin/magento setup:upgrade
+		# without this, the first test run gets every JS/CSS/template file generated on request,
+		# which is slow enough to time out the first page load and keep the checkout spinner up
+		log "Deploying static files for the storefront..."
+		/home/application/app/bin/magento setup:static-content:deploy -f --area=frontend --theme=Magento/blank en_US
 		/home/application/app/bin/magento maintenance:disable
 		wait_for_magento
 		

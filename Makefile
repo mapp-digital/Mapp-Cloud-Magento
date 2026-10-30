@@ -3,7 +3,7 @@
 -include .env
 export
 
-PHP8=webdevops/php-apache:8.4
+PHP8=webdevops/php-apache:8.5
 USER_NAME := $(shell id -un)
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
@@ -24,13 +24,13 @@ install:
 start-server:
 	make prepare-host
 	make check
-	cd ./Test/E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker-compose up -d
+	cd ./Test/E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker compose up -d
 	
 dev-server-start:
-	make check && cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker-compose up -d
+	make check && cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker compose up -d
 
 stop-server:
-	cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker-compose down
+	cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker compose down
 	
 tests:
 	make empty-carts

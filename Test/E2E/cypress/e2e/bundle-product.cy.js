@@ -41,11 +41,7 @@ describe("Bundle Product", () => {
       },
     };
     let data;
-    cy.server();
-    cy.route({
-      url: "/mappintelligence/data/get/*",
-      method: "get",
-    }).as("getData");
+    cy.intercept("GET", /\/mappintelligence\/data\/get\//).as("getData");
 
     cy.visit("/mapp-bundle.html", { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
 

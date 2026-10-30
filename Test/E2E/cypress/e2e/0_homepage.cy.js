@@ -5,12 +5,10 @@ describe('MappIntelligencePluginTests: Homepage', () => {
     it('homepage basic datalayer', () => {
         let data;
         let gtmData;
-        cy.server();
-        cy.route('GET', '/mappintelligence/data/get').as('get');
+        cy.intercept('GET', /\/mappintelligence\/data\/get/).as('get');
         cy.visit('/', { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } }).then(()=> {
-            cy.wait('@get');
-            cy.get('@get').should('have.property', 'status', 200);
-            cy.get('@get').its('response').then((res) => {
+            cy.wait('@get').its('response').then((res) => {
+                expect(res.statusCode).to.equal(200);
                 expect(res.body.config.tiId).to.equal('136699033798929');
                 expect(res.body.config.tiDomain).to.equal('responder.wt-safetag.com');
                 expect(res.body.config.customDomain).to.equal(null);
