@@ -25,6 +25,8 @@ start-server:
 	make prepare-host
 	make check
 	cd ./Test/E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker compose up -d
+	# the cache folder is not in the image, so Docker creates the volume owned by root
+	docker exec -u root local.domain.com chown application:application /home/application/.cache/composer
 	
 dev-server-start:
 	make check && cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker compose up -d
