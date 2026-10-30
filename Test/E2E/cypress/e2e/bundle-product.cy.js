@@ -46,6 +46,8 @@ describe("Bundle Product", () => {
     cy.visit("/mapp-bundle.html", { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
 
     cy.wait("@getData", { timeout: 30000 }).then(() => {
+      // _ti gets its page data only after the response has been processed, so wait for it
+      cy.window().its("_ti.pageName");
       cy.window().then((win) => {
         data = win._ti;
         expect(data.pageName).to.equal("local.domain.com/mapp-bundle.html");

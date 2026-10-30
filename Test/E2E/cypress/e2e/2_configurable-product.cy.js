@@ -48,6 +48,8 @@ describe('Configurable Product', () => {
 
 
         cy.wait('@getData', {timeout:30000}).then(() => {
+            // _ti gets its page data only after the response has been processed, so wait for it
+            cy.window().its('_ti.pageName');
             cy.window()
                 .then((win) => {
                     data = win._ti;

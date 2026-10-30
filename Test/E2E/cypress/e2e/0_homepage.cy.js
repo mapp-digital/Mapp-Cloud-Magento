@@ -22,6 +22,8 @@ describe('MappIntelligencePluginTests: Homepage', () => {
                 ]);
             });
         });
+        // _ti gets its page data only after the response has been processed, so wait for it
+        cy.window().its('_ti.pageName');
         cy.window()
             .then((win) => {
                 data = win._ti;
