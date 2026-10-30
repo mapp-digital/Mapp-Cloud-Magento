@@ -133,7 +133,9 @@ class DataLayer extends DataObject
             foreach ($data as $key => $value) {
                 $suffix = ucfirst(implode('', explode('_', ucwords($key, '_'))));
                 if (is_object($value) || is_array($value)) {
-                    if (count($value) > 0 && isset($value[0])) {
+                    // count() throws for objects that are not Countable (e.g. customer attribute models)
+                    $isList = is_array($value) || ($value instanceof \Countable && $value instanceof \ArrayAccess);
+                    if ($isList && count($value) > 0 && isset($value[0])) {
                         $this->addVariable($prefix . $suffix, $value);
                     } else {
                         $this->_addArray($prefix . $suffix, $value);
