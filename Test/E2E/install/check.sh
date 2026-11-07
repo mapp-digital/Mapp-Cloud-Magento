@@ -13,7 +13,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     fi
 fi
 
-if [ ! -f $INSTALL/../../../.env ]
+if [ ! -f $INSTALL/../../../.env ] && [ -z "$COMPOSER_AUTH" ]
 then
     echo "Warning: .env file does not exists in project directory - create it like .env.example, or set the environment variable COMPOSER_AUTH yourself - the credentials can be found here: https://commercedeveloper.adobe.com/account/keys"
 fi

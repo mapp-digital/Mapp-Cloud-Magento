@@ -11,8 +11,10 @@ describe("Order Products", () => {
     cy.wait("@trackRequest");
     cy.wait("@trackRequest");
 
-    cy.get('input[name="form_key"]').then(form => {
-      const form_key = form.attr("value");
+    // Magento checks the form key against the form_key cookie. The page's JS sets the cookie and copies it into
+    // the form only after loading, so the form's value can still be the outdated server-rendered one
+    cy.getCookie("form_key").should("exist").then(cookie => {
+      const form_key = cookie.value;
       cy.visit({
         url: '/customer/account/loginPost/',
         responseTimeout: 120000, 

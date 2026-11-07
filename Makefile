@@ -3,7 +3,7 @@
 -include .env
 export
 
-PHP8=webdevops/php-apache:8.4
+PHP8=webdevops/php-apache:8.5
 USER_NAME := $(shell id -un)
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
@@ -24,13 +24,15 @@ install:
 start-server:
 	make prepare-host
 	make check
-	cd ./Test/E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker-compose up -d
+	cd ./Test/E2E/install && MAGENTO_VERSION=2.4-develop && export PHPIMAGE=$(PHP8) && docker compose up -d
+	# the cache folder is not in the image, so Docker creates the volume owned by root
+	docker exec -u root local.domain.com chown application:application /home/application/.cache/composer
 	
 dev-server-start:
-	make check && cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker-compose up -d
+	make check && cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker compose up -d
 
 stop-server:
-	cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker-compose down
+	cd ./Test/E2E/install && export PHPIMAGE=$(PHP8) && docker compose down
 	
 tests:
 	make empty-carts
@@ -43,7 +45,13 @@ cypress:
 	docker exec -it cypress bash
 	
 uninstall:
+ifeq ($(shell uname -s),Darwin)
+	# deleting ~100k files through the Docker Desktop file sharing takes ages, natively it takes seconds
+	find ./Test/E2E/install/app -mindepth 1 ! -regex '\./Test/E2E/install/app/source.*' -delete
+	docker exec -t local.domain.com bash -c "/runner.sh reset_db"
+else
 	docker exec -t local.domain.com bash -c "/runner.sh uninstall"
+endif
 	
 uninstall-mapp:
 	docker exec -t local.domain.com bash -c "/runner.sh uninstall_mapp"

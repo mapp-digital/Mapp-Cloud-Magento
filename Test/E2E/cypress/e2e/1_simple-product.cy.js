@@ -42,16 +42,14 @@ describe('Simple Product', () => {
             }
         }
         let data;
-        cy.server();
-        cy.route({
-            url: '/mappintelligence/data/get/*',
-            method: 'get'
-        }).as('getData');
+        cy.intercept('GET', /\/mappintelligence\/data\/get\//).as('getData');
 
         cy.visit('/mapp-simple-product.html', { responseTimeout: 120000, headers: { "Accept-Encoding": "gzip, deflate" } });
 
 
         cy.wait('@getData', {timeout:30000}).then(() => {
+            // _ti gets its page data only after the response has been processed, so wait for it
+            cy.window().its('_ti.pageName');
             cy.window()
                 .then((win) => {
                     data = win._ti;

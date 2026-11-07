@@ -1,8 +1,11 @@
-version: '3'
+# fixed project name: the folder name "install" alone would give generic names other repos could share
+name: mapp_e2e_magento
 services:
     web:
         image: ${PHPIMAGE}
         container_name: local.domain.com
+        # tiny init as PID 1 forwards the stop signal, so the containers stop right away instead of after 10s
+        init: true
         user: application
         environment:
           - WEB_ALIAS_DOMAIN=local.domain.com
@@ -14,6 +17,10 @@ services:
           - PHP_POST_MAX_SIZE=900M
           - PHP_UPLOAD_MAX_FILESIZE=2024M
           - COMPOSER_VERSION=2
+          # kept in a volume, so later installs skip downloading package versions they already have
+          - COMPOSER_CACHE_DIR=/home/application/.cache/composer
+          # one Magento version takes ~200MiB, so the default of 300MiB would evict the previous version on every upgrade
+          - COMPOSER_CACHE_FILES_MAXSIZE=1GiB
           - COMPOSER_AUTH=${COMPOSER_AUTH}
           - XDEBUG_REMOTE_AUTOSTART=1
           - XDEBUG_REMOTE_CONNECT_BACK=1
@@ -28,6 +35,7 @@ services:
           - ./db.php:/db.php
           - ./app:/home/application/app
           - "./../../../:/home/application/plugin"
+          - composer-cache:/home/application/.cache/composer
         ports:
           - "80:80"
           - "443:443"
@@ -37,8 +45,9 @@ services:
         networks:
           - mapp
     mysql:
-        image: mariadb:10.4
+        image: mariadb:11.8
         container_name: mysql
+        init: true
         # ports:
         #   - "3306:3306"
         environment:
@@ -50,8 +59,9 @@ services:
           - mapp
     cypress:
         container_name: cypress
+        init: true
         entrypoint: ["/bin/bash", "./cypress_entrypoint.sh"]
-        image: "cypress/included:11.2.0"
+        image: "cypress/included:16.2.0"
         volumes:
           - ./../cypress:/cypress
           - ./../cypress.config.js:/cypress.config.js
@@ -62,17 +72,20 @@ services:
         networks:
           - mapp
     os01:
-        image: opensearchproject/opensearch:1.3.11
+        image: opensearchproject/opensearch:2.19.4
         container_name: os01
+        init: true
         environment:
             - discovery.type=single-node
-            - plugins.security.disabled=true
+            - DISABLE_SECURITY_PLUGIN=true
+            - DISABLE_INSTALL_DEMO_CONFIG=true
+            - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
         ulimits:
             memlock:
                 soft: -1
                 hard: -1
         volumes:
-            - os-data:/usr/share/elasticsearch/data
+            - os-data:/usr/share/opensearch/data
         # ports:
         #     - 9200:9200
         networks:
@@ -82,6 +95,8 @@ volumes:
         driver: local
     db-data:
         external: false
+    composer-cache:
+        driver: local
 networks:
     mapp:
         name: mapp_e2e_magento
